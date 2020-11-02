@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connectez vous sur compte FuneraireFrance{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .bls-login-field{
+            width: 50%;
+        }
+
+        .frfu-input{
+            background: #fff;
+            background-clip: padding-box;
+            border: 1px solid #c2c2c2;
+            border-radius: 0;
+            font-family: 'Helvetica Neue Lt',Helvetica,Arial,sans-serif;
+            font-size: 1.8rem;
+            height: 38px;
+            line-height: 1.42857143;
+            padding: 0 9px;
+            box-sizing: border-box;
+        }
+
+        @media only screen and (max-width: 550px){
+            .bls-login-field{
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row mt-5 mb-5">
+        <div class="col-12 p-3">
+            <span class="display-4 text-secondary ml-5">Accès client</span>
+        </div>
+        <div class="col-md-5 ml-auto mr-auto">
+            <form method="post" class="w-100">
+                {% if error %}
+                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+
+                {% if app.user %}
+                    <div class="mb-3">
+                        Vous etes connectés en tant que {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+                    </div>
+                {% endif %}
+                <div class="w-100 pb-2 border-bottom">
+                    <h3 class="pt-2">Clients enregistrés</h3>
+                </div>
+                <div class="w-100 pb-2">
+                    <span class="pt-2" style="color: #696969; font-size: 1rem;">Si vous avez un compte, connectez-vous avec votre adresse email.</span>
+                </div>
+                <div class="input-group form-group mt-2">
+                    <label for="inputEmail" class="d-inline-block bls-login-field">Email</label>
+                    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="bls-login-field frfu-input" required autofocus>
+                </div>
+                <div class="input-group form-group">
+                    <label for="inputPassword" class="d-inline-block bls-login-field">Mot de passe </label>
+                    <input type="password" name="password" id="inputPassword" class="bls-login-field frfu-input" required>
+                </div>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <div class="form-group">
+                    <input type="submit" value="Login" class="action-primary ml-auto mr-auto btn btn-sm">
+                    <a class="ml-auto mr-auto text-dark" href="{{url('reset-password')}}">Mot de passe oublié ?</a>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-5 ml-auto mr-auto">
+            <div class="w-100 pb-2 border-bottom">
+                <h3 class="pt-2">Nouveaux clients</h3>
+            </div>
+            <div class="w-100 pb-2">
+                <span class="pt-2" style="color: #696969; font-size: 1rem;">La création d’un compte a de nombreux avantages : consultation rapide, sauvegarder plusieurs adresses, suivre les commandes, et bien plus encore.</span>
+            </div>
+            <a class="action-primary btn btn-sm" href="/register">Créer un compte</a>     
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

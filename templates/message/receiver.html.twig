@@ -1,0 +1,14 @@
+{% for msg in messages %}
+    <div class="{{(msg.sender.id == app.user.id) ? 'col-12 p-2 d-flex justify-content-end' : 'col-12 p-2 d-flex justify-content-start'}}">
+        <div class="{{(msg.sender.id == app.user.id) ? 'col-6 p-2' : 'col-6 p-2'}}">
+            <div class="{{(msg.sender.id == app.user.id) ? 'bg-primary rounded text-white h-100 w-auto' : 'bg-light rounded text-secondary  h-100 w-auto'}}">
+                {% if msg.photo %}
+                <img class="img-fluid" src="{{'/'~link_image(msg.photo)}}">
+                {% endif %}
+                <p class="{{(msg.sender.id == app.user.id) ? 'd-flex justify-content-end' : 'd-flex justify-content-start'}}">
+                    <span>{{msg.content}}</span>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endfor %}

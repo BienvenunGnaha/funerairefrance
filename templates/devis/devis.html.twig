@@ -1,0 +1,220 @@
+{% extends 'user.html.twig' %}
+
+{% block title %}Devis | FuneraireFrance{% endblock %}
+
+{% block user_block %}
+    <div class="row p-2">
+        {% if devis.isEnabled %}
+            {% set isPro = false %}
+            {% set tax_label = ' Prix(TTC) ' %}
+            {% if app.user %}
+                {% if app.user.type and app.user.type.id == 2 %}
+                    {% set isPro = true %}
+                    {% set tax_label = ' Prix(HT) ' %}
+                {% endif %}
+            {% endif %}
+        <h2 class="m-2">Le devis de votre commande</h2>
+        <div class="col-12">
+            <canvas id="frfu-devis-canvas"  width="500" height="500" style="position: absolute; width: 500px; height: 500px; left: 0px; top: 0px; user-select: none; cursor: default;">
+            </canvas>
+                 
+        </div>
+        <div class="col-lg-8 col-md-10">
+            <div class="row">
+                <div class="col-12 p-2">
+                    {% set details = devis_details(devis, app.user) %}
+                    {% for detail in details.details %}
+                        <div>
+                            <span class="mr-2">{{detail.label~tax_label}}</span><span id="frfu-custom-price-text"  class="ml-2">{{detail.price~' € '}}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="col-12 p-2">
+                    {% if isPro %}
+                        <div>
+                            <span>Total (HT): </span><span>{{details.totalHT~' €'}}</span>
+                        </div>
+                        <div>
+                            <span>Total (TTC): </span><span>{{details.total~' €'}}</span>
+                        </div>
+                        {% else %}
+                            <div>
+                                <span>Total (TTC): </span><span>{{details.total~' €'}}</span>
+                            </div>
+                    {% endif %}
+                </div>
+                <div class="col-12 p-2">
+                        {% if devis.method %}
+
+                            {% if devis.method.id == 1 %}
+                                {% if devis.status.id == 3 and devis.secondFeePayed == false %}
+                                <form class="row d-none" id="frfu-devis-payment-form" method="POST" action="">
+                                    {{form_widget(form._token)}}
+                                    <div class="form-group">
+                                        {{form_label(form.method, 'Choisir votre modalité de paiement')}}
+                                        {{form_widget(form.method, {attr: {'class' : 'form-control'}})}}
+                                    </div>
+                                    <div class="form-group d-none">
+                                        {{form_widget(form.pm, {attr: {'class' : 'form-control'}})}}
+                                    </div>
+                                </form>
+                                <input id="cardholder-name" type="text" class="form-control" placeholder="Full Name">
+                                <form id="setup-form" >
+                                
+                                    <div class="p-3"></div>
+                                    <div id="card-element" class="m-2"></div>
+                                    <div style="height: 15px;"></div>
+                                    <button id="card-button" data-secret="{{clientSecret}}" class="btn btn-primary">Payer</button>
+                                </form>
+                                {% endif %}
+                            {% else %}
+                                {% if devis.requiredUpdatePm == true %}
+                                    <form class="row d-none" id="frfu-devis-payment-form" method="POST" action="{{url('devis-update-payment', {'id': devis.id})}}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('devis-update-payment') }}"/>
+                                        <div class="form-group d-none">
+                                            <input id="devis_payment_pm" name="pm">
+                                        </div>
+                                    </form>
+                                    <input id="cardholder-name" type="text" class="form-control" placeholder="Full Name">
+                                    <form id="setup-form" >
+                                    
+                                        <div class="p-3"></div>
+                                        <div id="card-element" class="m-2"></div>
+                                        <div style="height: 15px;"></div>
+                                        <button id="card-button" data-secret="{{clientSecret}}" class="btn btn-primary">Payer</button>
+                                    </form>
+                                {% endif %}
+                            {% endif %}
+
+                        {% else %}
+                        <form class="row" id="frfu-devis-payment-form" method="POST" action="">
+                            {{form_widget(form._token)}}
+                            <div class="form-group">
+                                {{form_label(form.method, 'Choisir votre modalité de paiement')}}
+                                {{form_widget(form.method, {attr: {'class' : 'form-control'}})}}
+                            </div>
+                            <div class="form-group d-none">
+                                {{form_widget(form.pm, {attr: {'class' : 'form-control'}})}}
+                            </div>
+                        </form>
+                        <input id="cardholder-name" type="text" class="form-control" placeholder="Full Name">
+                        <form id="setup-form" >
+                        
+                            <div class="p-3"></div>
+                            <div id="card-element" class="m-2"></div>
+                            <div style="height: 15px;"></div>
+                            <button id="card-button" data-secret="{{clientSecret}}" class="btn btn-primary">Payer</button>
+                        </form>
+                        {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+            <div class="col-lg-6 col-md-8 ml-auto mr-auto">Le devis n'est pas encore prêt. Nous vous avertirons par mail et par messagerie sur le site accompagné d'une prévisualisation qui sera affiché ici</div>
+        {% endif %}
+    </div>
+    <input id="frfu-canvas-json" type="hidden" value="{{devis.metaData|json_encode()}}">
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function(){
+            {% if devis.isEnabled %}
+            var canvas = new fabric.Canvas('frfu-devis-canvas');
+
+            
+            var json = JSON.parse($('#frfu-canvas-json').val());
+            canvas.loadFromJSON(json, function() {
+            canvas.renderAll(); 
+            },function(o,object){
+                console.log(canvas)
+                object.set('selectable', false);
+            });
+            {% endif %}
+
+            var stripe = Stripe("{{getConfig('stripe_pk').value}}");
+
+            var elements = stripe.elements();
+            var cardElement = elements.create('card', {hidePostalCode: true});
+            cardElement.mount('#card-element');
+            function closeModal() {
+                overlay.style.display='none';
+            }
+
+            var cardholderName = document.getElementById('cardholder-name');
+            var cardButton = document.getElementById('card-button');
+            var clientSecret = cardButton.dataset.secret;
+
+        cardButton.addEventListener('click', function(ev) {
+            ev.preventDefault();
+            stripe.confirmCardSetup(
+                clientSecret,
+                {
+                payment_method: {
+                card: cardElement,
+                billing_details: {
+                name: cardholderName.value,
+                },
+            },
+            }
+        ).then(function(result) {
+      if (result.error) {
+           console.log(result.error);
+           $.notify('Votre moyen de paiement n\'a pas été accepté.', 'error');
+      } else {
+          $.notify('Le paiement est en cours.', 'success');
+         // 
+           $('#devis_payment_pm').val(result.setupIntent.payment_method) ; 
+           setTimeout(function(){
+               $('#frfu-devis-payment-form').trigger('submit');
+           }, 2000);
+        /*}else{
+            $.ajax({
+                    type: "GET",
+                    url : '/user/vendor/payment/card/'+result.setupIntent.payment_method, 
+                    success: function(data){
+                        console.log(data);
+                        $.notify('Votre paiement a été effectué avec succès', 'success');
+                        closeModal();
+                        setTimeout(function(){ window.location.reload(); }, 1000);
+                    },
+                    error: function(error) {
+                        $.notify('Votre paiemment a échoué. Veuillez reessayer ou enregistrer une nouvelle carte de crédit.', 'error');
+                        console.log(error);
+                    }
+            });
+        }*/
+     }   
+  })
+  
+  });
+        /*$('#frfu-payment-stripe-form').submit(function(e){
+            e.preventDefault();
+            var form = new FormData($(this)[0]);
+            $.ajax({
+                type: "POST",
+                url : "{{ url('checkout-cart-stripe') }}",
+                data: form,
+                processData: false,
+                contentType: false,
+                success: function(data){
+                    console.log(data);
+                    $.notify('Félicitation, Votre paiement et votre commande a été accepté.', 'success');
+                    
+                    setTimeout(function(){ window.location.href="{{url('carts-user')}}"; }, 2000);
+                },
+                error: function(error) {
+                    $.notify('Votre paiement n\'a pas été accepté.', 'error');
+                    setTimeout(function(){
+                        window.location.reload();
+                    }, 2000);
+                    console.log(error);
+                }
+            });
+        });*/
+
+
+        });
+    </script>
+{% endblock %}

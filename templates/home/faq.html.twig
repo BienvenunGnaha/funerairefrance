@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FAQ | FuneraireFrance{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+    <div class="h6 mt-3"> <a href="/">Acceuil</a><span> / FAQ</span> </div>
+        <div class="row">
+            
+            <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12 ml-auto mr-auto">
+                
+                <div class="h2 text-center"> FAQ </div>
+                <div class="accordion" id="accordionExample">
+                    {% for i, faq in faqs %}
+                        {% if i == 0 %}
+                            <div class="card">
+                                <div class="card-header" id="headingOne">
+                                    <h2 class="mb-0">
+                                        <button class="btn" type="button" data-toggle="collapse" data-target="{{'#collapse'~i}}" aria-expanded="true" aria-controls="collapseOne">
+                                            <i class="fas fa-eye"></i> {{faq.quiz}}
+                                        </button>
+                                    </h2>
+                                </div>
+
+                                <div id="{{'collapse'~i}}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                    <div class="card-body">
+                                        {{faq.answer}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% else %}
+                            <div class="card">
+                                <div class="card-header" id="headingOne">
+                                    <h2 class="mb-0">
+                                        <button class="btn" type="button" data-toggle="collapse" data-target="{{'#collapse'~i}}" aria-expanded="true" aria-controls="collapseOne">
+                                            <i class="fas fa-eye"></i> {{faq.quiz}}
+                                        </button>
+                                    </h2>
+                                </div>
+
+                                <div id="{{'collapse'~i}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                    <div class="card-body">
+                                        {{faq.answer}}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

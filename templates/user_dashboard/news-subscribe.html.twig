@@ -1,0 +1,24 @@
+{% extends 'user.html.twig' %}
+
+{% block title %}Profil | FuneraireFrance{% endblock %}
+
+
+{% block user_block %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <h4 class="text-secondary">ABONNEMENT À LA LETTRE D’INFORMATION</h4>
+            </div>
+        </div>
+
+        <div class="row">
+            <form action="{{url('user_news_subscribe')}}" class="col-md-6" method="POST">
+                <input type="hidden" value="{{ csrf_token('frfu-user-news-subscribe') }}" name="_token">
+                <input type="checkbox" name="news" id="news" checked>
+                <label for="news">Je m'abonne</label>
+                <button type="submit" class="action-primary d-block">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+    
+{% endblock %}

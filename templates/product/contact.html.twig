@@ -1,0 +1,234 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{prod.name}}, Etre contacté par un conseiller | FuneraireFrance{% endblock %}
+
+{% block stylesheets %}
+        <style>
+            .stepwizard-step p {
+                margin-top: 0px;
+                color:#666;
+            }
+            .stepwizard-row {
+                display: table-row;
+            }
+            .stepwizard {
+                display: table;
+                width: 100%;
+                position: relative;
+            }
+            .stepwizard-step button[disabled] {
+                /*opacity: 1 !important;
+                filter: alpha(opacity=100) !important;*/
+            }
+            .stepwizard .btn.disabled, .stepwizard .btn[disabled], .stepwizard fieldset[disabled] .btn {
+                opacity:1 !important;
+                color:#bbb;
+            }
+            .stepwizard-row:before {
+                top: 14px;
+                bottom: 0;
+                position: absolute;
+                content:" ";
+                width: 100%;
+                height: 1px;
+                background-color: #ccc;
+                z-index: 0;
+            }
+            .stepwizard-step {
+                display: table-cell;
+                text-align: center;
+                position: relative;
+            }
+            .btn-circle {
+                width: 30px;
+                height: 30px;
+                text-align: center;
+                padding: 6px 0;
+                font-size: 12px;
+                line-height: 1.428571429;
+                border-radius: 15px;
+            }
+
+            .border-choice{
+                border: 2px solid black !important;
+            }
+
+        </style>  
+{% endblock %}
+
+{% block body %}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 p-2 ">
+            <div class="h6 mt-3 mb-3 text-secondary"> <a class="text-secondary" href="/">Acceuil</a><a href="{{prod.catId ? url("category_product", {"id" : prod.catId.id}) : '' }}" class="text-secondary">{{prod.catId ? ' / '~prod.catId.name|capitalize : ''}}</a> <a href="{{prod.subCatId ? url('subcat-product', {'id' : prod.subCatId.id}) : '' }}" class="text-secondary">{{prod.subCatId ? ' / '~prod.subCatId.name|capitalize : ''}}</a> <a>{{prod ? ' / '~prod.name|capitalize : ''}}</a> </div> 
+        </div>
+    </div>
+    <div class="row"> 
+        <div class="col-lg-6 col-md-6 col-sm-12 setup-content">
+            <img class="img-fluid" src="{{'/'~link_image(prod.photo)}}">
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 setup-content">
+            <div class="row h6">
+            Recevoir mon devis
+            </div>
+            <div class="row">
+                <div class="col-11 ml-auto mr-auto p-2">
+                    <div class="row">
+                        <div class="col-7  d-flex justify-content-start">
+                            Informations de contact
+                        </div>
+                        <div class="col-5 d-flex justify-content-end text-warning">
+                            * Informations obligatoires
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-11 ml-auto mr-auto border bg-light p-2">
+                    <div class="row">
+                        <div class="col-12">
+                            RECEVEZ IMMÉDIATEMENT ET GRATUITEMENT VOTRE DEVIS PAR EMAIL
+                        </div>
+                        <div class="col-12">
+                            Nous vous envoyons immédiatement un devis qui reprend toutes les options sélectionnées et qui vous indique un prix transparent et détaillé du monument et de la pose. Vous recevrez aussi les photos de votre monument personnalisé.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-11 ml-auto mr-auto">
+                    <form id="" action="" method="POST">
+                        <input type="hidden" name="_token" value="{{ csrf_token('contact-produit') }}"/>
+                        <div class="form-row">
+                       
+                            <div class="form-group col-md-6">
+                                <label class="form-control-label">Prénoms</label>
+                                <input type="text" name="firstName" class="input-field br-25" placeholder="Prénoms" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="form-control-label">Noms</label>
+                                <input type="text" name="name" class="input-field br-25" placeholder="Noms" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                        <label class="form-control-label">Email</label>
+                        <input type="email" name="email" class="input-field br-25" placeholder="Adresse e-mail" required>
+                        </div>
+                        <div class="form-row">
+                             <div class="form-group col-md-6">
+                                <label class="form-control-label">Numéro de téléphone</label>
+                                <input type="phone" name="phone" class="input-field br-25" placeholder="Numéro de téléphone" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="form-control-label">Code postal du cimetière</label>
+                                <input type="text" name="zip" class="input-field br-25" placeholder="Code postal" required>
+                            </div>
+                        </div>
+                        
+                        
+                        <button type="submit" class="action-primary">Etre contacté par un conseiller</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mt-3">
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="row ">
+                        {% if prod.page %}
+                            <div class="col-12 mb-2 border-bottom">
+                                <span class="display-4 text-secondary">DESCRIPTION DÉTAILLÉE</span>
+                            </div>
+
+                            <div class="col-12 mt-2 mb-2">
+                                {{prod.page.content|raw}}
+                            </div>
+                        {% endif %}
+
+                        <div class="col-12 border-bottom text-center p-2"> FICHE TECHNIQUE </div>
+
+                        <div class="col-12 border-bottom text-center p-2 border bg-light">
+                            {% if prod.colorProduct %} 
+                            <div class="row p-2">
+                                <div class="col-6 d-flex justify-content-start"><span>Couleurs</span></div>
+                                <div class="col-6 d-flex justify-content-start"><span>{{prod.colorProduct.name}}</span></div>
+                            </div>
+                            {% endif %}
+                            {% if prod.size %}
+                            <div class="row p-2">
+                                <div class="col-6 d-flex justify-content-start"><span>Tailles</span></div>
+                                <div class="col-6 d-flex justify-content-start"><span>{{prod.size}}</span></div>
+                            </div>
+                            {% endif %}
+                            {% if prod.granitPlaque %}
+                            <div class="row p-2">
+                                <div class="col-6 d-flex justify-content-start"><span>Matière</span></div>
+                                <div class="col-6 d-flex justify-content-start"><span>{{prod.granitPlaque.name}}</span></div>
+                            </div>
+                            {% endif %}
+                            {% if prod.guaranted %}
+                            <div class="row p-2">
+                                <div class="col-6 d-flex justify-content-start"><span>Garantie</span></div>
+                                <div class="col-6 d-flex justify-content-start"><span>{{prod.guaranted}}</span></div>
+                            </div>
+                            {% endif %}
+                            {% if prod.fixation %}
+                            <div class="row p-2">
+                                <div class="col-6 d-flex justify-content-start"><span>Fixation</span></div>
+                                <div class="col-6 d-flex justify-content-start"><span>{{prod.fixxation.name}}</span></div>
+                            </div>
+                            {% endif %}
+                            {% if prod.typeGranit %}
+                            <div class="row p-2">
+                                <div class="col-6 d-flex justify-content-start"><span>Type de Granite</span></div>
+                                <div class="col-6 d-flex justify-content-start"><span>{{prod.typeGranit}}</span></div>
+                            </div>
+                            {% endif %}
+                            {% if prod.nbreColis %}
+                            <div class="row p-2">
+                                <div class="col-6 d-flex justify-content-start"><span>Nombre de colis</span></div>
+                                <div class="col-6 d-flex justify-content-start"><span>{{prod.nbreColis}}</span></div>
+                            </div>
+                            {% endif %}
+                            {% if prod.contenance %}
+                            <div class="row p-2">
+                                <div class="col-6 d-flex justify-content-start"><span>Contenance</span></div>
+                                <div class="col-6 d-flex justify-content-start"><span>{{prod.contenance}}</span></div>
+                            </div>
+                            {% endif %}
+                            {% if prod.motifUrne %}
+                            <div class="row p-2">
+                                <div class="col-6 d-flex justify-content-start"><span>Motif de l'urne</span></div>
+                                <div class="col-6 d-flex justify-content-start"><span>{{prod.UrneMotif.name}}</span></div>
+                            </div>
+                            {% endif %}
+                            {% if prod.eligibleUrne %}
+                            <div class="row p-2">
+                                <div class="col-6 d-flex justify-content-start">Urne Eligible à<span></span></div>
+                                <div class="col-6 d-flex justify-content-start"><span>{{prod.eligible.name}}</span></div>
+                            </div>
+                            {% endif %}
+                            <div class="row p-2">
+                                <div class="col-6 d-flex justify-content-start"><span>Référence du produit</span></div>
+                                <div class="col-6 d-flex justify-content-start"><span>{{prod.reference}}</span></div>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {% include 'includes/resize.html.twig' %}
+    <script>
+        $(document).ready(function () {
+           
+
+        });
+    </script>
+        
+{% endblock %}

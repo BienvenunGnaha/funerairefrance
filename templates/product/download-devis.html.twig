@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Télécharger votre devis | FuneraireFrance{% endblock %}
+
+{% block stylesheets %}
+        <style>
+            .btn-secondary:hover {
+                color: #fff;
+                background-color: #00b3db;
+                border-color: #285e8e; /*set the color you want here*/
+            }
+            .stepwizard-step p {
+                margin-top: 0px;
+                color:#666;
+            }
+            .stepwizard-row {
+                display: table-row;
+            }
+            .stepwizard {
+                display: table;
+                width: 100%;
+                position: relative;
+            }
+            .stepwizard-step button[disabled] {
+                /*opacity: 1 !important;
+                filter: alpha(opacity=100) !important;*/
+            }
+            .stepwizard .btn.disabled, .stepwizard .btn[disabled], .stepwizard fieldset[disabled] .btn {
+                opacity:1 !important;
+                color:#bbb;
+            }
+            .stepwizard-row:before {
+                top: 14px;
+                bottom: 0;
+                position: absolute;
+                content:" ";
+                width: 100%;
+                height: 1px;
+                background-color: #ccc;
+                z-index: 0;
+            }
+            .stepwizard-step {
+                display: table-cell;
+                text-align: center;
+                position: relative;
+            }
+            .btn-circle {
+                width: 30px;
+                height: 30px;
+                text-align: center;
+                padding: 6px 0;
+                font-size: 12px;
+                line-height: 1.428571429;
+                border-radius: 15px;
+            }
+        </style>  
+{% endblock %}
+
+{% block body %}
+
+<div class="container-fluid">
+
+    <div class="row">
+       <div class="col-12">
+       <h2 class="text-secondary m-2">Confirmation de devis</h2>
+        <p>
+            Nous avons bien réceptionné les éléments de votre projet.
+            Vous aller recevoir le récapitulatif de votre devis par mail, ou vous pouvez aussi le télécharger directement en cliquant sur le bouton ci-dessous.
+            Votre conseiller Jean va vous recontacter très rapidement.
+        </p>
+       </div>
+       <div class="col-12 d-flex justify-content-center p-2">
+            <div class="ml-auto mr-auto"><a target="_blank" class="btn btn-secondary btn-lg" href="{{'/'~link_image(devis.download)}}"> <i class="fas fa-download"></i> Télécharger mon devis</a></div>
+       </div>
+       <div class="col-12 d-flex justify-content-center p-2">
+            <span>VIDEO : Nous vous expliquons les prochaines étapes</span>
+       </div>
+       <div class="col-12 d-flex justify-content-center">
+            <iframe width="720" height="400" src="https://www.youtube.com/embed/gPkPBUb_jAA?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe>
+       </div>
+        <div class="col-12">
+         <p class="text-gray">Merci de votre confiance, l’équipe Funeraire France<p>
+       </div>
+    </div>
+
+</div>
+
+{% endblock %}

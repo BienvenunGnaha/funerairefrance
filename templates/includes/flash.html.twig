@@ -1,0 +1,28 @@
+{% if app.session is not null and app.session.started %}
+    {% set _flash_messages = app.session.flashbag.all %}
+    {% if app.user %}
+        {% if app.user.isVerified != 1 %}
+            <div id="flash-messages">
+                <div class="alert alert-danger">
+                    <button type="button" class="alert-close" onclick="this.closest('div').style.display='none'">&times;</button>
+
+                    <span>Votre email n' est pas vérifié. <a href="{{url("user_activation")}}">Vérifiez mon email</a></span>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+    {% if _flash_messages|length > 0 %}
+        <div id="flash-messages">
+            
+            {% for label, messages in _flash_messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }}">
+                        <button type="button" class="alert-close" onclick="this.closest('div').style.display='none'">&times;</button>
+
+                        {{ message|raw }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endif %}

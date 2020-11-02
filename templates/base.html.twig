@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        {% if app.request.query.get('desktop') == null %}
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        {% endif %}
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,700;1,400;1,700&family=Charm&family=Italianno&family=Open+Sans&family=Roboto+Slab&display=swap" rel="stylesheet">
+        <link href="/css/style.css" rel="stylesheet">
+        <link href="/css/step.min.css" rel="stylesheet">
+        <style>
+
+        .input-field{
+            font-stretch: condensed;
+            background: #fff;
+            background-clip: padding-box;
+            border: 1px solid #c2c2c2;
+            border-radius: 0;
+            font-family: 'Helvetica Neue Lt',Helvetica,Arial,sans-serif;
+            font-size: 1.8rem;
+            height: 38px;
+            line-height: 1.42857143;
+            padding: 0 9px;
+            vertical-align: baseline;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            background: #fff;
+            background-clip: padding-box;
+            border: 1px solid #c2c2c2;
+            border-radius: 0;
+            font-family: 'Helvetica Neue Lt',Helvetica,Arial,sans-serif;
+            font-size: 1.8rem;
+            height: auto;
+            line-height: 1.42857143;
+            margin: 0;
+            padding: 10px;
+            vertical-align: baseline;
+            width: 100%;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        .action-primary {
+            background-image: none;
+            background: #3b586d;
+            border: 1px solid #3b586d;
+            color: #fff;
+            cursor: pointer;
+            display: inline-block;
+            font-family: 'Helvetica Neue Lt',Helvetica,Arial,sans-serif;
+            font-weight: 700;
+            padding: 7px 15px;
+            font-size: 1.4rem;
+            box-sizing: border-box;
+            vertical-align: middle;
+        }
+
+        .font-list{
+            font-family: 'Helvetica Neue Lt',Helvetica,Arial,sans-serif;
+            color: #696969;
+        }
+
+
+        .br-15{
+            border-radius: 15px !important;
+        }
+
+        .br-25{
+            border-radius: 25px !important;
+        }
+
+            ::-webkit-scrollbar {
+                width: 12px;
+            }
+
+            ::-webkit-scrollbar-track {
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+                border-radius: 10px;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+            }
+
+            /* .subscription.bg-white {
+                background: none
+            }
+
+
+            .subscription.bg-white .subscription-wrapper {
+                background: #fff
+            }
+
+            .subscription-wrapper {
+                border-radius: 0% 5% 10% 3%/10% 20% 0% 17%;
+                -webkit-transform: perspective(1800px) rotateY(20deg) skewY(1deg) translateX(50px);
+                transform: perspective(1800px) rotateY(20deg) skewY(1deg) translateX(50px);
+                padding: 70px 50px;
+                z-index: 1;
+                width: 100%;
+                background: linear-gradient(80deg, #0030cc 0%, #00a4db 100%);
+                position: absolute;
+                top: 100px
+            }
+
+            .subscription-wrapper {
+                box-shadow: 0px 15px 39px 0px rgba(8, 18, 109, 0.1) !important
+            }
+
+            .subscription-content {
+                -webkit-transform: skewY(-1deg);
+                transform: skewY(-1deg)
+            }
+
+            h3,
+            .h3 {
+                font-size: 30px
+            }
+
+            .flex-fill {
+                -ms-flex: 1 1 auto !important;
+                flex: 1 1 auto !important
+            }
+
+            .subscription.bg-white .form-control {
+                border: 1px solid #ebebeb !important
+            }
+
+            .subscription-wrapper .form-control {
+                height: 60px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 45px
+            }
+
+            .subscription-wrapper .form-control:focus {
+                background: rgba(255, 255, 255, 0.1);
+                outline: 0;
+                box-shadow: none
+            }*/
+
+           .opacity-0 {
+                opacity:0!important;
+            }
+            .opacity-1 {
+                opacity:0.2!important;
+            }
+            .opacity-2 {
+                opacity:0.4!important;
+            }
+            .opacity-3 {
+                opacity:0.6!important;
+            }
+            .opacity-4 {
+                opacity:.8!important;
+            }
+            .opacity-5 {
+                opacity:1!important;
+            }
+
+            .dark-trans{
+                background-color: rgba(51,51,51,0.4);
+            }
+
+            .h-20{
+                height: 20%;
+            }
+
+            .h-80{
+                height: 78%;
+            }
+
+            .wrapper {
+                z-index: 400;
+                display: flex;
+                height: auto;
+                align-items: stretch;
+            }
+
+            #sidebar {
+                min-width: 250px;
+                max-width: 250px;
+                min-height: 100vh;
+                transition: all 0.3s;
+                display: none;       
+            }
+
+            #sidebar.active {
+                margin-left: -250px;
+            }
+
+            a[data-toggle="collapse"] {
+                position: relative;
+            }
+
+            .dropdown-toggle::after {
+                display: block;
+                position: absolute;
+                top: 50%;
+                right: 20px;
+                transform: translateY(-50%);
+            }
+
+            #sidebar .sidebar-header {
+                padding: 20px;
+            }
+
+            #sidebar ul.components {
+                padding: 20px 0;
+                border-bottom: 1px solid #47748b;
+            }
+
+            #sidebar ul p {
+                color: #fff;
+                padding: 10px;
+            }
+
+            #sidebar ul li a {
+                padding: 10px;
+                font-size: 1.1em;
+                display: block;
+                color: rgb(132,152,175);
+            }
+            #sidebar ul li a:hover {
+                color: #7386D5;
+                background: #fff;
+            }
+
+            #sidebar ul li.active > a, a[aria-expanded="true"] {
+                color: #fff;
+                background: #6d7fcc;
+            }
+            ul ul a {
+                font-size: 0.9em !important;
+                padding-left: 30px !important;
+            }
+            .z-index-10{
+                z-index: 10;
+            }
+
+            .z-index-20{
+               z-index: 20; 
+            }
+
+            .z-index-30{
+                z-index: 30;
+            }
+
+            .z-index-40{
+                z-index: 40;
+            }
+
+            .z-index-50{
+                z-index: 50;
+            }
+
+            .z-index-60{
+                z-index: 60;
+            }
+
+            .z-index-70{
+                z-index: 70;
+            }
+
+            .z-index-80{
+                z-index: 80;
+            }
+
+            .z-index-90{
+                z-index: 90;
+            }
+
+            .z-index-100{
+                z-index: 100;
+            }
+
+            .z-index-x-2{
+                z-index: 200;
+            }
+
+            .text-underline{
+                text-decoration: underline !important;
+            }
+
+            .text-dsg{
+                color: darkslategray;
+            }
+
+            .bg-dg{
+                background-color: rgb(105,105,105);
+            }
+
+            .frfu-small-rond{
+                height: 40px;
+                width: 40px;
+                border-radius: 50%;
+            }
+
+            .etape-container:before {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                left: -22px;
+                bottom: -29px;
+            }
+
+            #etape-1:before {
+                content: url(/images/pico/picto-etape-1.png);
+            }
+
+            #etape-2:before {
+                content: url(/images/pico/picto-etape-2.png);
+            }
+
+            #etape-3:before {
+                content: url(/images/pico/picto-etape-3.png);
+            }
+
+            #etape-4:before {
+                content: url(/images/pico/picto-etape-4.png);
+            }
+
+            #etape-5:before {
+                content: url(/images/pico/picto-etape-5.png);
+            }
+        </style>
+        {% block stylesheets %}
+            
+        {% endblock %}
+        
+        <script defer src="/fontawesome-free-5.13.0-web/js/all.js"></script>
+    </head>
+    <body>
+    {% set global_var = global() %}
+    {% set all_pages = global_var.all_pages %}
+    {% set catMenu = global_var.cat_menu %}
+   {#} {% set lastProds = global_var.lastProds %}#}
+    {% set sliders = global_var.slider %}
+    {% set lengthSliders = sliders|length %}
+    {% set lengthCatMenu = global_var.cat_menu|length %}
+    <div class="wrapper" style="background-color: rgb(247,247,247); width: 80%;">
+    <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header d-flex">
+                <div class="col-11">
+                <h3>Funeraire France</h3>
+                </div>
+                <div class="col-1 justify-content-end">
+                    <span id="frfu-close-sidenav" class="text-danger"><i class="fas fa-times"></i></span>
+                </div>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li class=""><a  href="/">ACCUEIL</a></li>
+                <li class=""><a  href="{{url('blog')}}">BLOG</a></li>
+                <li class=""><a  href="{{url('contact')}}">CONTACT</a></li>
+                {% for i, item in catMenu %}
+                    <li class="border-bottom">
+                        {% if item.subcategories|length > 0 %}
+                            <a href="{{'#homeSubmenu'~item.id}}" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">{{item.name|upper}}</a>
+                        {% else %}
+                            <a href="{{url("category_product", {"id" : item.id})}}">{{item.name|upper}}</a>
+                        {% endif %}
+                        
+                        {% if item.subcategories|length > 0 %}
+                            <ul class="collapse list-unstyled" id="{{'homeSubmenu'~item.id}}">
+                            <li>
+                                <a href="{{url("category_product", {"id" : item.id})}}">{{item.name|upper}}</a>
+                            </li>
+                            {% for sub in item.subcategories %}
+                                <li>
+                                    <a href="{{url('subcat-product', {'id' : sub.id})}}">{{sub.name|upper}}</a>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+                    <li class="">
+                        <a href="#homeSubmenuBienChoisir" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">{{getPage(all_pages, 'bien_choisir').name|upper}}</a>
+                        <ul class="collapse list-unstyled" id="homeSubmenuBienChoisir">
+                            <li>
+                                <a href="https://votreguide.funerairefrance.com/index.php/comment-faire-son-devis-de-monument-funeraire-ou-cineraire/">COMMENT FAIRE SON DEVIS DE MONUMENT FUNÉRAIRE</a>
+                            </li>
+                            <li>
+                                <a href="https://votreguide.funerairefrance.com/index.php/quel-est-le-prix-dune-pierre-funerairefrance/">QUEL PRIX POUR UNE PIERRE TOMBALE ?</a>
+                            </li>
+                            <li>
+                                <a href="https://votreguide.funerairefrance.com/index.php/guide-choisir-son-monument-funeraire/">CHOISIR SON MONUMENT FUNÉRAIRE OU CINÉRAIRE</a>
+                            </li>
+                            <li>
+                                <a href="{{url('download-guide')}}">TÉLÉCHARGEZ NOTRE GUIDE "TOUT SAVOIR SUR LES OBSÈQUES ET LA MARBRERIE</a>
+                            </li>
+                        </ul>
+                    </li>
+            </ul>
+        </nav>
+
+    </div>
+    {% include 'includes/submenu.html.twig' %}
+    <div class="container-fluid">
+        {% include 'includes/menu.html.twig' %}
+        
+        <div id="frfu-page-flash" class="row">
+            {% include 'includes/flash.html.twig' %}
+        </div>
+        <div id="frfu-page-content" class="row pb-3">
+            {% block body %}{% endblock %}
+        </div>
+        <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Accéder à votre compte</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{url('app_login')}}" method="POST">
+					<div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-user"></i></span>
+						</div>
+                        <input type="email" value="" name="email" id="inputEmail" class="form-control" required autofocus>
+						
+					</div>
+					<div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-key"></i></span>
+						</div>
+						<input type="password" name="password" id="inputPassword" class="form-control" required>
+					</div>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+					<div class="form-group">
+						<input type="submit" value="Se connecter" class="btn float-right login_btn btn-outline-secondary">
+					</div>
+				</form>
+            </div>
+            <div class="modal-footer">
+                <div class="d-flex justify-content-center links">
+					<span>Pas encore un client? <a href="/register">Créer un compte</a> | </span>
+				</div>
+				<div class="d-flex justify-content-center">
+					<a href="{{url('reset-password')}}">Mot de passe oublié ?</a>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+        <div class="modal fade" id="frfu-ask-call" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Besoin d'aide ? Votre conseiller vous rappelle.</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{url('customer-ask-call')}}" method="POST">
+                            <input type="hidden" name="_token" value="{{ csrf_token('ask-call') }}"/>
+                            <div class="form-row">
+                        
+                                <div class="form-group col-md-6">
+                                    <label class="form-control-label">Prénoms</label>
+                                    <input type="text" name="firstName" class="input-field br-25" placeholder="Prénoms" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="form-control-label">Noms</label>
+                                    <input type="text" name="name" class="input-field br-25" placeholder="Noms" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label class="form-control-label">Email</label>
+                                    <input type="email" name="email" class="input-field br-25" placeholder="Adresse e-mail" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="form-control-label">Numéro de téléphone</label>
+                                    <input type="phone" name="phone" class="input-field br-25" placeholder="Numéro de téléphone" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label class="form-control-label">Message</label>
+                                    <textarea name="message" placeholder="message"></textarea>
+                                </div>
+                            </div>
+                            <button type="submit" class="action-primary">Envoyer une demande</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="button-product-modal" type="button" class="btn btn-primary d-none" data-toggle="modal" data-target="#productModal"></button>
+        <div id="productModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+
+                </div>
+            </div>
+        </div>
+        {% include 'includes/footer.html.twig' %}
+        
+    </div>
+        <script src="/js/fabric.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+        <script src="/js/notify.js"></script>
+        <script src="https://js.stripe.com/v3/"></script>
+        {% include 'includes/resize.html.twig' %}
+        <script>
+            $(document).ready(function() {
+               //$('[data-toggle="popover"]').popover();
+               
+                var w = $('.get-devis').width();
+                var h = $('.get-devis').height();
+                var pw = $('.get-devis').parent().width();
+                var ph = $('.get-devis').parent().height();
+                var percentT = (((ph-h)/2)*100) / ph;
+                var percentL = (((pw-w)/2)*100) / pw;
+                var processingLoading = false;
+
+                $('.frfu-home-testimonial').hide();
+                $('.frfu-home-testimonial:first').show();
+                $('.frfu-home-testimonial:first').show();
+                $('.carousel').carousel({
+                    interval: 5000
+                });
+                $('.frfu-slider-pass-to').click(function(){
+                    var number = Number($(this).attr('data-slide-to'));
+                    $('.carousel').carousel(number);
+                });
+                $('.frfu-home-testimonial-img').height($('.frfu-home-testimonial-img').parent().height() - 20);
+
+                $('#sidebarCollapse').on('click', function () {
+                    $('#sidebar').toggle();//frfu-close-sidenav
+                });
+                $('#frfu-close-sidenav').on('click', function () {
+                    $('#sidebarCollapse').trigger('click');
+                });
+                //$('#sidebarCollapse').trigger('click');
+               $('.frfu-show-product-details').click(function(e){
+                    e.preventDefault();
+                    var url = $(this).attr('href');
+                    $.ajax({
+                        url: url,
+                        type: 'post',
+                        success: function(response){
+                            $('#productModal').find('.modal-content').children().remove();
+                            $('#productModal').find('.modal-content').append(response);
+                            $('#button-product-modal').trigger('click');
+                        },
+                        error: function(error){
+                            console.log(error);
+                        }
+                    });
+                });
+
+                $('.frfu-wishlist-add-product-sign').click(function(e){
+                e.preventDefault();
+                $('#frfu-myaccount-button').trigger('click');
+            });
+
+            $('body').delegate('.frfu-wishlist-add-product', 'click',function(e){
+                e.preventDefault();
+                var url = $(this).attr('href');
+                var obj = $(this);
+                var urlHref = '/user/wishlist/remove/product/'+$(this).attr('data-id');
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    success: function(res){
+                        if(res.success){
+                            obj.attr('href', urlHref);
+                            obj.removeClass('frfu-wishlist-add-product');
+                            obj.addClass('frfu-wishlist-remove-product');
+                            obj.children().remove();
+                            obj.append('<i class="fas fa-heart text-danger"></i>');
+                            $.notify("Le produit est ajouté de votre liste de préférence", 'success');
+                            console.log(obj);
+                        }
+                    }
+                });
+            });
+
+            $('body').delegate('.frfu-wishlist-remove-product', 'click', function(e){
+                e.preventDefault();
+                var url = $(this).attr('href');
+                var obj = $(this);
+                var urlHref = '/user/wishlist/add/product/'+$(this).attr('data-id');
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    success: function(res){
+                        if(res.success){
+                            obj.attr('href', urlHref);
+                            obj.removeClass('frfu-wishlist-remove-product');
+                            obj.addClass('frfu-wishlist-add-product');
+                            obj.children().remove();
+                            obj.append('<i class="far fa-heart text-danger"></i>');
+                            $.notify("Le produit est enlevé de votre liste de préférence", 'success');
+                            console.log(obj);
+                        }
+                    }
+                });
+            });
+
+            
+           /*$('.get-devis').css({
+               'margin-top' : (percentT)+'%',
+               'margin-left' : (percentL)+'%'
+           });*/
+
+           $('body').delegate('.frfu-product', 'mouseover', function(){
+               console.log('Coucou les gars!!!');
+               $(this).find('.frfu-overlay-product').show();
+           });
+
+           $('body').delegate('.frfu-product', 'mouseout', function(){
+               $(this).find('.frfu-overlay-product').hide();
+           });
+
+           $('.over-home-cat-item').hide();
+            $('.home-cat-img').height($('.home-cat-img').parent().height());
+            $('.over-home-cat-item').height($('.over-home-cat-item').parent().height());
+            $('.home-cat-img').mouseover(function(e){
+                $(this).parent().parent().parent().find('.over-home-cat-item').css({
+                    'position': 'absolute',
+                    'z-index': '15',
+                    'height': $(this).height()
+                });
+                $(this).parent().parent().parent().find('.over-home-cat-item').show();
+            });
+
+            $('.over-home-cat-item').mouseout(function(e){
+                
+                $(this).hide();
+            });
+
+            $('.cat-name').mouseover(function(e){
+                $('.over-home-cat-item').hide();
+            });
+
+            $('body').delegate('.frfu-subcat', 'mouseover', function(){
+                $(this).find('.frfu-subcat-name').removeClass('frfu-subcat-text');
+                $(this).find('.frfu-subcat-name').addClass('frfu-subcat-text');
+            });
+
+            $('body').delegate('.frfu-subcat', 'mouseout', function(){
+                $(this).find('.frfu-subcat-name').removeClass('frfu-subcat-text');
+            });
+
+            $("#frfu-filter-dropgranit").click(function(){
+                $('#frfu-filter-granit-block').toggle();
+            });
+
+            $('.frfu-filter-granit-item').click(function(){
+                $('#frfu-filter-granit option[value='+$(this).attr('data-id')+']').attr('selected', true);
+                console.log($('#frfu-filter-granit').val());
+                $("#frfu-filter").find('select').trigger('change');
+            });
+
+            $("#frfu-filter-dropfixation").click(function(){
+                $('#frfu-filter-fixation-block').toggle();
+            });
+
+            $('.frfu-filter-fixation-item').click(function(){
+                $('#frfu-filter-fixation option[value='+$(this).attr('data-id')+']').attr('selected', true);;
+                console.log($('#frfu-filter-fixation').val());
+                $("#frfu-filter").find('select').trigger('change');
+            });
+
+            $("#frfu-filter-dropgp").click(function(){
+                $('#frfu-filter-gp-block').toggle();
+            });
+
+            $('.frfu-filter-gp-item').click(function(){
+                $('#frfu-gp-fixation option[value='+$(this).attr('data-id')+']').attr('selected', true);
+                
+                $("#frfu-filter").find('select').trigger('change');
+            });
+
+            $('#frfu-filter-sort-desc-icon').click(function(){
+                $('#frfu-filter-sort-desc option[value=DESC]').attr('selected', true);
+                $("#frfu-filter").find('select').trigger('change');
+            });
+
+            $("#frfu-filter").find('select').change(function(){
+                setTimeout(function(){
+                    $("#frfu-filter").trigger('submit');
+                }, 1000);
+            });
+
+            $('#frfu-see-more').click(function(){
+                $(this).hide();
+                $('.frfu-filter-hidden').removeClass('d-none');
+                $('.frfu-filter-hidden').addClass('d-flex');
+            });
+
+            $('#frfu-see-unless').click(function(){
+                $('#frfu-see-more').show()
+                $('.frfu-filter-hidden').removeClass('d-flex');
+                $('.frfu-filter-hidden').addClass('d-none');
+                $(this).hide();
+            });
+
+            $(document).scroll(function(){
+                if($('#frfu-product-list-loading').attr('data-offset')){
+                      $('#frfu-product-list-loading').removeClass('d-none');
+                    if(!processingLoading){
+                        processingLoading = true;
+                        var search = '&offset=';
+                        if(window.location.search === ''){
+                            search = '?offset=';
+                        }
+                        $.ajax({
+                            url: window.location.href+search+$('#frfu-product-list-loading').attr('data-offset'),
+                            type: 'GET',
+                            success: function(data){
+                                
+                                $('#frfu-product-list-row').append(data);
+                                $('#frfu-product-list-loading').attr('data-offset', Number($('#frfu-product-list-loading').attr('data-offset')) + 12);
+                                $('#frfu-product-list-loading').addClass('d-none');
+                                setTimeout(function(){
+                                    processingLoading = false;
+                                }, 1000);
+                            },
+                            error: function(){
+                                setTimeout(function(){
+                                    processingLoading = false;
+                                }, 1000);
+                            }
+                        });
+                    }
+                }
+            });
+
+            $('.next-testimonial').click(function(e){
+                var ts = $('.frfu-home-testimonial');
+                var len = ts.length;
+                var index = 0;
+                for(var i = 0; i < len; i++){
+                    if($(ts[i]).css('display') == 'block' && i != len-1){
+                        index = i+1;
+                    }
+                }
+
+                if(index !== 0){
+                    $('.frfu-home-testimonial').hide();
+                    $($('.frfu-home-testimonial')[index]).show();
+                }else{
+                    
+                }
+            });
+
+            $('.prev-testimonial').click(function(e){
+                var ts = $('.frfu-home-testimonial');
+                var len = ts.length;
+                var index = 0;
+                for(var i = 0; i < len; i++){
+                    if($(ts[i]).css('display') == 'block' && i != 0){
+                        index = i-1;
+                    }
+                }
+
+                
+                    $('.frfu-home-testimonial').hide();
+                    $($('.frfu-home-testimonial')[index]).show();
+                
+            });
+
+            $('#frfu-menu-user-burger-dashboard').click(function(){
+                $('#frfu-menu-user-dashboard').toggleClass('d-none');
+            });
+
+            $('.qty-update').click(function(e){
+                e.preventDefault();
+                var url = $(this).attr('href');
+                var input = $(this).attr('data-target');
+                //console.log(response);
+                var urlArray = url.split('/');
+                var len = urlArray.length;
+                urlArray[len-1] = $(input).val();
+                url = urlArray.join('/');
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    success: function(response){
+                        console.log(response);
+                        $.notify('Quantité mise à jour avec succès', {className: 'bg-success'});
+                        window.location.reload();
+                    },
+                    error: function(error){
+                        console.log(error);
+                        $.notify('Echec de mise à jour de la quantité', {className: 'bg-danger'});
+                    }
+                });
+           });
+
+           $('.order-remove').click(function(e){
+               e.preventDefault();
+                var url = $(this).attr('href');
+                var orderToRemove = $(this).attr('data-target');
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    success: function(response){
+                        console.log(response);
+                        $(orderToRemove).remove();
+                        $.notify('Commande annulée avec succès', {className: 'bg-success'});
+
+                    },
+                    error: function(error){
+                        console.log(error);
+                        $.notify('Echec d\'annulation de commande', {className: 'bg-danger'});
+                        window.location.reload();
+                    }
+                });
+           });
+
+           $('#cart-remove').click(function(e){
+               e.preventDefault();
+                var url = $(this).attr('href');
+                var bouton = $(this);
+                $.ajax({
+                    url: url,
+                    type: 'get',
+                    success: function(response){
+                        console.log(response);
+                        $('.cart-order').remove();
+                        bouton.remove();
+                        $.notify('Le panier a été vidé et toutes les commandes ont été annulées', {className: 'bg-success'});
+                        window.location.reload();
+                    },
+                    error: function(error){
+                        console.log(error);
+                        $.notify('Echec d\'annulation des commandes', {className: 'bg-danger'});
+                    }
+                });
+           });
+
+            });
+        </script>
+        <script type="text/javascript" src="/js/style.js"></script>
+        {#<script id="mcjs">!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/c630fa50bd89160dc9f2914f4/13729f664606dc85351ea1606.js");</script>#}
+        {% block js_user %}{% endblock %}
+        
+        {% block javascripts %}
+
+        
+        {% endblock %}
+    </body>
+</html>

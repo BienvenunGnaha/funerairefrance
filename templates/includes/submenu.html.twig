@@ -1,0 +1,47 @@
+
+{% for item in catMenu %}
+<div id="{{'sub-cat'~item.id}}" class="frfu-submenu" style="z-index: 250;">
+    <div class="container-fluid bg-white">
+        <div class="row d-flex justify-content-center p-3">
+            {% if item.seeAll %}
+                <div class="col-2 border-right">
+                    {% set photo = link_image(item.photo) %}
+                    <a href="{{url('category_product', {'id' : item.id})}}"><div class="d-flex justify-content-center" style="{{'background-image: url("https://funerairefrance.com/'~photo~'"); background-size: 100%; height: 100px; width : 100px;'}}"></div></a>
+                    <div><a class="text-secondary" href="{{url('category_product', {'id' : item.id})}}">{{item.seeAllLabel|upper}}</a></div>
+                </div>
+            {% endif %}
+            {% set cSub = item.subcategories|length %}
+            {% for i, sub in item.subcategories %}
+                <div class="{{i == cSub - 1 ? 'col-2' : 'col-2 border-right' }}">
+                {% set icon = link_image(sub.icon) %}
+                    <a href="{{url('subcat-product', {'id' : sub.id})}}"><div class="d-flex justify-content-center" style="{{'background-image: url("https://funerairefrance.com/'~icon~'"); background-size: 100%; height: 100px; width : 100px;'}}"></div></a>
+                    <div><a class="text-secondary" href="{{url('subcat-product', {'id' : sub.id})}}">{{sub.name|upper}}</a></div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endfor %}
+<div id="sub-cat-bien-choisir" class="frfu-submenu"> 
+    <div class="container-fluid bg-white">
+        <div class="row d-flex justify-content-center">
+            <div class="col-2">
+                <a href="https://votreguide.funerairefrance.com/index.php/comment-faire-son-devis-de-monument-funeraire-ou-cineraire/"><img class="img-fluid" src="/images/pico/comment-faire-son-devis.jpg">
+                <div><a class="text-secondary" href="https://votreguide.funerairefrance.com/index.php/comment-faire-son-devis-de-monument-funeraire-ou-cineraire/">COMMENT FAIRE SON DEVIS DE MONUMENT FUNÉRAIRE</a></div>
+            </div>
+            
+            <div class="col-2">
+                <a href="https://votreguide.funerairefrance.com/index.php/quel-est-le-prix-dune-pierre-funerairefrance/"><img class="img-fluid" src="/images/pico/prix-pierre-tombale.jpg"></a>
+                <div><a class="text-secondary" href="https://votreguide.funerairefrance.com/index.php/quel-est-le-prix-dune-pierre-funerairefrance/">QUEL PRIX POUR UNE PIERRE FuneraireFrance ?</a></div>
+            </div>
+            <div class="col-2">
+                <a href="https://votreguide.funerairefrance.com/index.php/guide-choisir-son-monument-funeraire/"><img class="img-fluid" src="/images/pico/choisirmonument.jpg"></a>
+                <div><a class="text-secondary" href="https://votreguide.funerairefrance.com/index.php/guide-choisir-son-monument-funeraire/">CHOISIR SON MONUMENT FUNÉRAIRE OU CINÉRAIRE</a></div>
+            </div>
+            <div class="col-2">
+                <a href="{{url('download-guide')}}"><img class="img-fluid" src="/images/pico/livre-blanc.jpg"></a>
+                <div><a class="text-secondary" href="{{url('download-guide')}}">TÉLÉCHARGEZ NOTRE GUIDE "TOUT SAVOIR SUR LES OBSÈQUES ET LA MARBRERIE</a></div>
+            </div>
+        </div>
+    </div>
+</div>

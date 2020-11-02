@@ -1,0 +1,443 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bienvenue sur FuneraireFrance{% endblock %}
+
+ 
+{% block body %}
+    <style>
+        /* Make the image fully responsive */
+        .carousel-inner img {
+            width: 100%;
+            height: 100%;
+        }
+
+        
+
+        .carousel {
+            min-height : 250px;
+            max-height : 400px;
+            overflow: hidden;
+        }
+
+        .frfu-list-cat-home{
+            border-bottom: 5px solid rgb(40,167,69);
+        }
+
+        .frfu-list-cat-home-label-block:hover{
+            background-color: rgb(40,167,69);
+        }
+
+       
+    </style>
+    <div class="container-fluid">
+        {% if active.slider %}
+            <div class="row">
+                <div class="col-12">
+                <div id="demo" class="carousel slide" data-ride="carousel">
+
+                        <!-- Indicators -->
+                        <ul class="carousel-indicators">
+                            {% for sliderItem, slider in sliders %}
+                                {% if sliderItem == 0 %}
+                                        <li data-target="{{'#frfu-slider-indicator'~sliderItem}}" data-slide-to="{{sliderItem}}" class="frfu-slider-pass-to active"></li>
+                                    {% else %}
+                                        <li data-target="{{'#frfu-slider-indicator'~sliderItem}}" data-slide-to="{{sliderItem}}" class="frfu-slider-pass-to"></li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            
+                            {#<li data-target="#demo" data-slide-to="2"></li>#}
+                        </ul>
+
+                        <!-- The slideshow -->
+                        <div class="carousel-inner">
+                            {% for sliderItem, slider in sliders %}
+                                {% set photo = link_image(slider.photo) %}
+                                {% if sliderItem == 0 %}
+                                        <div id="{{'frfu-slider-indicator'~sliderItem}}" class="carousel-item active">
+                                            <div class="frfu-slider-caption position-absolute text-white" style="z-index: 100; width: 70%; margin-left: 15%; margin-top: 25px;">
+                                                {% if slider.title %}
+                                                    {% set titleStyle = '' %}
+                                                    {% if slider.titleColor or slider.titleSize %}
+                                                        {% if slider.titleSize %}
+                                                            {% set titleStyle = titleStyle~'font-size : '~slider.titleSize~'rem;' %}
+                                                        {% endif %}
+                                                        {% if slider.titleColor %}
+                                                            {% set titleStyle = titleStyle~'color : '~slider.titleColor~';' %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    <h5 style="{{titleStyle}}">{{ slider.title }}</h5>
+                                                {% endif %}
+                                                {% if slider.text %}
+                                                    {% set titleStyle = '' %}
+                                                    {% if slider.textColor or slider.sizeText %}
+                                                        {% if slider.sizeText %}
+                                                            {% set titleStyle = titleStyle~'font-size : '~slider.sizeText~'rem;' %}
+                                                        {% endif %}
+                                                        {% if slider.textColor %}
+                                                            {% set titleStyle = titleStyle~'color : '~slider.textColor~';' %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    <p style="{{titleStyle}}">{{slider.text}}</p>
+                                                {% endif %}
+                                                {% if slider.button and slider.link %}
+                                                    <div class="row justify-content-center">
+                                                        <a class="btn btn-secondary" href="{{slider.link}}">{{slider.button}}</a>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <img class="d-block w-100" src="{{'/'~photo}}" alt="">
+                                        </div>
+                                    {% else %}
+                                        <div id="{{'frfu-slider-indicator'~sliderItem}}" class="carousel-item">
+                                            <div class="frfu-slider-caption position-absolute" style="z-index: 100; width: 70%; margin-left: 15%; margin-top: 25px;">
+                                                {% if slider.title %}
+                                                    {% set titleStyle = '' %}
+                                                    {% if slider.titleColor or slider.titleSize %}
+                                                        {% if slider.titleSize %}
+                                                            {% set titleStyle = titleStyle~'font-size : '~slider.titleSize~'rem;' %}
+                                                        {% endif %}
+                                                        {% if slider.titleColor %}
+                                                            {% set titleStyle = titleStyle~'color : '~slider.titleColor~'rem;' %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    <h5 style="{{titleStyle}}">{{ slider.title }}</h5>
+                                                {% endif %}
+                                                {% if slider.text %}
+                                                    {% set titleStyle = '' %}
+                                                    {% if slider.textColor or slider.sizeText %}
+                                                        {% if slider.sizeText %}
+                                                            {% set titleStyle = titleStyle~'font-size : '~slider.sizeText~'rem;' %}
+                                                        {% endif %}
+                                                        {% if slider.textColor %}
+                                                            {% set titleStyle = titleStyle~'color : '~slider.textColor~'rem;' %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    <p style="{{titleStyle}}">{{slider.text}}</p>
+                                                {% endif %}
+                                                {% if slider.button and slider.link %}
+                                                    <div class="row justify-content-center">
+                                                        <a class="btn btn-secondary" href="{{slider.link}}">{{slider.button}}</a>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <img class="" src="{{'/'~photo}}" alt="">
+                                        </div>
+                                {% endif %}
+                                
+                            {% endfor %}
+                        </div>
+
+                        <!-- Left and right controls -->
+                        <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                            <span class="carousel-control-prev-icon bg-dark p-2"></span>
+                        </a>
+                        <a class="carousel-control-next" href="#demo" data-slide="next">
+                            <span class="carousel-control-next-icon bg-dark p-2"></span>
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="row">
+            <div style="height: 40px;"></div>
+        </div>
+        
+        <div class="row d-flex justify-content center p-3">{{ home_title.content|raw }}</div>
+
+         <div class="row mr-3 ml-3 mt-2">
+                {% for cat in cats %}
+
+                    {% set img = link_image(cat.photo) %}
+                        <div class="col-sm-6 mb-2" >
+                            <div class="card rounded frfu-list-cat-home"> 
+                            <div class="text-center over-home-cat-item w-100 dark-trans"><a class="btn btn-success mt-5" href="{{url('category_product', {'id': cat.id})}}">Parcourir</a></div>
+                                <div class="card-body" style="height: 250px"> 
+                                    
+                                    <div class="h-75 d-flex justify-content-center">
+                                        <img class="img-fluid home-cat-img" src="{{'/'~img}}">
+                                    </div>
+                                    <h3 class="text-center cat-name"><a href="{{url('category_product', {'id': cat.id})}}" class="text-dark">{{cat.name}}</a></h3>
+                                </div>
+                            </div>
+                        </div>
+                {% endfor %}
+        </div>
+
+        {#<div class="row p-2 bg-light border-bottom border-top mt-3 mb-3">
+            <div class="col-12 ml-auto mr-auto h3 text-center text-danger mt-2 mb-2">
+                Nouveautés
+            </div>
+        </div>
+
+        <div class="row mr-3 ml-3 mt-2">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ml-auto mr-auto">
+                <div class="row">
+                    {% for prod in lastProds %}
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 h-auto border ml-auto mr-auto mt-2 mb-2">
+                            {% set photo = link_image(prod.photo)%}
+                            <div class="h-50 overflow-hidden">
+                               {% if prod.subCatId != null %}
+                                        {% if prod.subCatId.customizable %}
+                                                <a href="{{url('product-customize', {'id' : prod.id})}}"><img class="img-fluid" src="{{asset(photo)}}"></a>
+                                            {% else %}
+                                                <a href="{{url('product-show', {'id' : prod.id})}}"><img class="img-fluid" src="{{asset(photo)}}"></a>
+                                        {% endif %}
+                                    {% else %}
+                                        <a href="{{url('product-show', {'id' : prod.id})}}"><img class="img-fluid" src="{{asset(photo)}}"></a>
+                                {% endif %} 
+                            </div>
+                            <div class="h-50">
+                                {% if prod.subCatId != null %}
+                                        {% if prod.subCatId.customizable %}
+                                                <div class="h-10 w-100 text-center"><a href="{{url('product-customize', {'id' : prod.id})}}">{{prod.name}}</a></div>
+                                            {% else %}
+                                                <div class="h-10 w-100 text-center"><a href="{{ path('product-show', {'id' : prod.id}) }}">{{prod.name}}</a></div>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="h-10 w-100 text-center"><a href="{{ path('product-show', {'id' : prod.id}) }}">{{prod.name}}</a></div>
+                                {% endif %}
+                                <div class="d-flex justify-content-center">
+                                    <div class="text-center frfu-cat-product-see-more mt-2 mb-2 p-2 rounded-circle ml-auto mr-auto bg-secondary" style="height: 40px; width: 40px;">
+                                        <a class="frfu-show-product-details" href="{{url('cat-prod-show', {'id' : prod.id})}}"><i class="fas fa-eye text-danger"></i></a>
+                                    </div>
+                                    {% set is_in = false %}
+                                    {% if app.user %}
+                                        {% if app.user.wishlist %}
+                                            {% set wish_prods = app.user.wishlist.product %}
+                                        
+                                            {% for wish_prod in wish_prods %}
+                                                {% if prod.id == wish_prod.id %}
+                                                    {% set is_in = true %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                        
+                                        
+                                    {% endif %}
+                                    
+                                    {% if app.user %}
+                                        {% if is_in %}
+                                            <div class="text-center frfu-cat-product-see-more mt-2 mb-2 p-2 rounded-circle ml-auto mr-auto bg-secondary" style="height: 40px; width: 40px;">
+                                                <a data-id="{{prod.id}}" class="frfu-wishlist-remove-product" href="{{url('wishlist-rm-product', {'id' : prod.id})}}"><i class="fas fa-heart text-danger"></i></a>
+                                            </div>
+                                        {% else %}
+                                            <div class="text-center frfu-cat-product-see-more mt-2 mb-2 p-2 rounded-circle ml-auto mr-auto bg-secondary" style="height: 40px; width: 40px;">
+                                                <a data-id="{{prod.id}}" class="frfu-wishlist-add-product" href="{{url('wishlist-add-product', {'id' : prod.id})}}"><i class="far fa-heart text-danger"></i></a>
+                                            </div>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="text-center frfu-cat-product-see-more mt-2 mb-2 p-2 rounded-circle ml-auto mr-auto bg-secondary" style="height: 40px; width: 40px;">
+                                            <a data-id="{{prod.id}}" class="frfu-wishlist-add-product-sign" href="{{url('wishlist-add-product', {'id' : prod.id})}}"><i class="far fa-heart text-danger"></i></a>
+                                        </div>
+                                    {% endif %}
+                                </div>                                
+                                {% set ini_price = prod.cprice %}
+                              {% if app.user %}
+                                        {% if app.user.type %}
+
+                                            {% if app.user.type.id == 2 %}
+                                                {% set ini_price = prod.pricepro %}
+                                            {% endif %}
+
+                                        {% endif %}
+                                
+                              {% endif %}
+                                <div class="h-10 w-100 text-center">{{ini_price}}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+        </div>#}
+
+        <div class="row d-flex justify-content-center p-3">{{ talk_about_us.content|raw }}</div>
+        <div class="row d-flex justify-content-center p-3"><div>{{ talk_about_us_image.content|raw }}</div></div>
+
+        <div class="row pt-3 pb-3 pr-1 pl-1 bg-light border-top border-bottom">
+        
+            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5"><div><img src="/images/pico/picto-10ans.png"></div><div class="align-middle">Payer en 24 fois</div></div>
+            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5"><div><img src="/images/pico/picto-24x.png"></div><div>Garantie décennale</div></div>
+            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5"><div><img src="/images/pico/picto-conseil.png"></div><div>Pose dans toute la France</div></div>
+            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5"><div><img src="/images/pico/picto-devis.png"></div><div>Nos conseillers vous accompagnent</div></div>
+            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5"><div><img src="/images/pico/picto-france.png"></div><div>Votre devis en 4 étapes</div></div>
+            <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5"><div><img src="/images/pico/picto-pose.png"></div><div>Fabrication et granit Français</div></div>
+        
+        </div>
+
+        <div class="row pt-3 pb-3 pr-1 pl-1 d-flex justify-content-center">
+            <div class="col-12 text-center font-list">Comment ça marche ?</div>
+            <div class="col-11 border-bottom border-warning mb-3"></div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 d-flex justify-content-center">
+                <div class="row d-flex justify-content-center">
+                    <div id="etape-1" class="p-2 border border-warning m-1 col-lg-2 col-md-2 col-sm-5 col-xs-10 etape-container">
+                        <div class="d-flex justify-content-center w-100 h-75">
+                            <img class="img-fluid" src="/images/pico/img-granit.png">
+                        </div>
+                        <div class="d-flex justify-content-center w-100">
+                            <p class="text-center">Choisissez votre monument et granit</p>
+                        </div>
+                    </div>
+                    <div id="etape-2" class="p-2 border border-warning m-1 col-lg-2 col-md-2 col-sm-5 col-xs-10 etape-container">
+                        <div class="d-flex justify-content-center w-100 h-75">
+                            <img class="img-fluid" src="/images/pico/img-texte-perso.png">
+                        </div>
+                        <div class="d-flex justify-content-center w-100">
+                            <p class="text-center">Personnalisez la gravure et le texte</p>
+                        </div>
+                    </div>
+                    <div id="etape-3" class="p-2 border border-warning m-1 col-lg-2 col-md-2 col-sm-5 col-xs-10 etape-container">
+                        <div class="d-flex justify-content-center w-100 h-75">
+                            <img class="img-fluid" src="/images/pico/img-devis.png">
+                        </div>
+                        <div class="d-flex justify-content-center w-100">
+                            <p class="text-center">Obtenez votre devis immédiatement</p>
+                        </div>
+                    </div>
+
+                    <div id="etape-4" class="p-2 border border-warning m-1 col-lg-2 col-md-2 col-sm-5 col-xs-10 etape-container">
+                        <div class="d-flex justify-content-center w-100 h-75">
+                            <img class="img-fluid" src="/images/pico/img-etape-conseil.png">
+                        </div>
+                        <div class="d-flex justify-content-center w-100">
+                            <p class="text-center">Validez votre projet avec un conseiller</p>
+                        </div>
+                    </div>
+
+                    <div  id="etape-5" class="p-2 border border-warning m-1 col-lg-2 col-md-2 col-sm-5 col-xs-10 etape-container">
+                        <div class="d-flex justify-content-center w-100 h-75">
+                            <img class="img-fluid" src="/images/pico/img-suivi.png">
+                        </div>
+                        <div class="d-flex justify-content-center w-100">
+                            <p class="text-center">Suivez la fabrication et la pose</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-10 mt-5">
+               {{etape_desc.content|raw}}
+            </div>
+
+            <div class="col-11 border-bottom border-warning"></div>
+
+            <div class="col-11 mt-3 d-flex justify-content-center">
+               <div class="row d-flex justify-content-center">
+                    <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12 border" style="height: 300px">
+                        <div class="col-12 p-2 d-flex justify-content-center border-bottom">
+                            <div class="w-75 d-flex justify-content-start">
+                                TÉMOIGNAGES CLIENTS
+                            </div>
+                            <div class="w-25 d-flex justify-content-end">
+                                <div class="p-1 border mr-1 prev-testimonial"><i class="fas fa-angle-left"></i></div><div class="ml-1 p-1 border next-testimonial"><i class="fas fa-angle-right"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 p-1">
+                            <div class="row">
+                                 {% for testimonial in testimonials %}
+                                    {% set photo = link_image(testimonial.photo) %}
+                                    <div class="col-12 frfu-home-testimonial">
+                                        <div class="row">
+                                            <div class="col-7">
+                                                <div class="w-100">{{testimonial.name}}</div>
+                                                <div class="p-1 bg-light mb-1 w-100"><i class="fas fa-map-marker-alt"></i><span class="ml-2">{{testimonial.location}}</span></div>
+                                                <div class="p-1 bg-light mb-1 w-100"><i class="fas fa-moon"></i><span class="ml-2">{{testimonial.cimetiere}}</span></div>
+                                                <div class="p-2 overflow-auto bg-light w-100" style="max-height: 100px;"><p>{{testimonial.message}}</p></div>
+                                            </div>
+                                            <div class="col-5">
+                                                <div class="row h-75 overflow-hidden">
+                                                    <img class="img-fluid frfu-home-testimonial-img" src="{{'/'~photo}}">
+                                                </div>
+                                                <div class="row h-25 d-flex justify-content-end">
+                                                    <div class="text-muted">{{testimonial.createdAt|date('d/m/Y')}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                 {% endfor %}
+                                 
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 d-flex justify-content-center" style="height: 300px">
+                            <img class="img-fluid" src="/images/pico/livraison-pose.png">
+                    </div>
+               </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-12 d-flex justify-content-center mt-3 mb-5">
+                <a href="{{url('testimonial')}}" class="text-center text-dark text-underline">VOIR TOUTES LES TEMOIGNAGES</a>
+            </div>
+        </div>
+
+        <div class="row d-flex p-3 bg-light border-top">
+        
+        <div class="col-lg-6 col-md-6 col-sm-12">{{ yt_desc.content|raw }}</div>
+        <div class="col-lg-6 col-md-6 col-sm-12">{{ yt.content|raw }}</div>
+        <div class="col-12">{{ yt_desc2.content|raw }}</div>
+        
+        </div>
+       {#{% if prod_length > 0 %}
+            <div class="row mt-2 d-flex justify-content-center">
+                <div class="">
+                {% if off == 0 %}
+                    <a class="btn btn-lg btn-outline-danger mr-1 disabled" href="{{url('home')~'?offset='~off~'&limit='~limit}}" role="button" aria-disabled="true"><i class="fas fa-chevron-left"></i></a>
+                    {% else %}
+                    <a class="btn btn-lg btn-outline-danger mr-1" href="{{url('home')~'?offset='~off~'&limit='~limit}}"><i class="fas fa-chevron-left"></i></a>
+                {% endif %}
+                    <a class="btn btn-lg btn-outline-danger ml-1" href="{{url('home')~'?offset='~offset~'&limit='~limit}}"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+        {% endif %}#} 
+        
+
+    </div>
+    
+    
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function(){
+            
+           //console.log($('.frfu-home-testimonial-img')); 
+            $('.over-home-cat-item').hide();
+            $('.home-cat-img').height($('.home-cat-img').parent().height());
+            $('.over-home-cat-item').height($('.over-home-cat-item').parent().height());
+            $('.home-cat-img').mouseover(function(e){
+                $(this).parent().parent().parent().find('.over-home-cat-item').css({
+                    'position': 'absolute',
+                    'z-index': '15',
+                    'height': $(this).height()
+                });
+                $(this).parent().parent().parent().find('.over-home-cat-item').show();
+            });
+
+            $('.over-home-cat-item').mouseout(function(e){
+                
+                $(this).hide();
+            });
+
+            $('.cat-name').mouseover(function(e){
+                $('.over-home-cat-item').hide();
+            });
+            
+           
+
+            function marginTop(){
+                var slHeight = $($('.carousel')[0]).height();
+                var slIndiqHeight = $($('.carousel-indicators')[0]).height();
+                $('.frfu-slider-caption').css({
+                    'margin-top' : slHeight-15-slIndiqHeight-$('.frfu-slider-caption').height()+'px'
+                });
+            }
+            marginTop();
+        });
+    </script>
+{% endblock %}

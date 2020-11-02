@@ -1,0 +1,475 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{cat_product.name}} | FuneraireFrance{% endblock %}
+
+{% block body %}
+
+    <style>
+        .get-devis{
+            position: relative; 
+            margin-left: 22%;
+            margin-top: 25%; 
+        }
+        .get-devis:hover{
+            background-color: skyblue;
+            color: white;
+        }
+
+        .frfu-subcat-hover:hover{
+            border: {{'3px solid'~cat_product.color}};
+            
+        }
+
+        .frfu-subcat-text{
+            color: {{cat_product.color}};
+        }
+
+        .frfu-subcat-bg{
+            background-color: {{cat_product.color}};
+        }
+
+        .frfu-subcat-bg-hover:hover{
+            background-color: {{cat_product.color}};
+        }
+
+        .frfu-subcat-border{
+            border: {{'1.5px solid'~cat_product.color}};  
+                 
+        }
+
+        .frfu-subcat-border-radius{
+            border: {{'0.7px '~cat_product.color}};  
+                 
+        }
+
+        .frfu-subcat-border-top{
+            border-top: {{'0.7px solid'~cat_product.color}};  
+                 
+        }
+
+        .frfu-subcat-border-bottom{
+            border-bottom: {{'0.7px solid'~cat_product.color}};  
+                 
+        }
+
+        .text-underline{
+            text-decoration: underline !important;
+        }
+    </style>
+    <div class="container-fluid">
+    <div class="h6 mt-3"> <a href="/">Acceuil</a><span>{{' / Produits'}}</span> </div>
+        <div class="row">
+            <div class="col-12 p-3">
+                <h2 class="frfu-subcat-text">{{cat_product.name}}</h2>
+            </div>
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>{{cat_product.description|raw}}</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <iframe width="500" height="250" src="{{getConfig('yt_embed').value}}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+
+            
+            {% if cat_product.displayedSubcatDesc == false %}
+                <form id="frfu-filter" class="col-12 p-2 frfu-subcat-border-top" action="" method="GET">
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <select class="form-control" name="subCatId">
+                                    <option value="">Catégorie</option>
+                                    {% for sub in cat_product.subcategories %}
+                                        <option value="{{sub.id}}" {{(params.subCatId is defined and params.subCatId == sub.id) ? 'selected' : ''}}>{{sub.name~'('~cat_item_number(cat_product.id, 'subCatId', sub.id)|length~')'}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="budget">
+                                    <option value="">Budget</option>
+                                    <option value="1" {{(params.budget is defined and params.budget == '1') ? 'selected' : ''}}>Moins de 1000 €</option>
+                                    <option value="2" {{(params.budget is defined and params.budget == '2') ? 'selected' : ''}}>1000 - 2000 €</option>
+                                    <option value="3" {{(params.budget is defined and params.budget == '3') ? 'selected' : ''}}>20000 - 3000 €</option>
+                                    <option value="4" {{(params.budget is defined and params.budget == '4') ? 'selected' : ''}}>3000 - 4000 €</option>
+                                    <option value="5" {{(params.budget is defined and params.budget == '5') ? 'selected' : ''}}>Plus de 5000 €</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <span id="frfu-filter-dropgranit" class="p-2 border form-control">Granite <i class="fas fa-caret-down float-right"></i></span>
+                                
+
+                                <div id="frfu-filter-granit-block" class="position-absolute z-index-100" style="display: none;">
+                                    
+                                    {% for granit in cat_product.granits %}
+                                        
+                                            <img class="frfu-filter-granit-item" src="{{'/'~link_image(granit.photo)}}" style="height: 40px;" data-id="{{granit.id}}">
+                                        
+                                    {% endfor %}
+                                </div>
+                                <select id="frfu-filter-granit" class="form-control d-none" name="granits">
+                                    <option value="">Granite</option>
+                                    {% for granit in cat_product.granits %}
+                                        <option value="{{granit.id}}" {{(params.granits is defined and params.granits == granit.id) ? 'selected' : ''}}><span>{{granit.name}}</span></option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <span id="frfu-filter-dropfixation" class="p-2 border form-control">Fixation <i class="fas fa-caret-down float-right"></i></span>
+                                
+
+                                <div id="frfu-filter-fixation-block" class="position-absolute z-index-100" style="display: none;">
+                                    
+                                    {% for fixation in load_option_by_entity('App\\Entity\\Fixation') %}
+                                            <img class="frfu-filter-fixation-item" src="{{'/'~link_image(fixation.photo)}}" style="height: 40px;" data-id="{{fixation.id}}">
+                                    {% endfor %}
+                                </div>
+                                <select id="frfu-filter-fixation" class="form-control d-none" name="fixxation">
+                                    <option value="">Fixation</option>
+                                    {% for fixation in load_option_by_entity('App\\Entity\\Fixation') %}
+                                        <option value="{{fixation.id}}" {{(params.fixxation is defined and params.fixxation == fixation.id) ? 'selected' : ''}}><span>{{fixation.name}}</span></option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                        </div>
+                    {% if cat_product.isPlaque and cat_product.isUrne %}
+                        
+
+                        <div class="d-none mb-3 frfu-filter-hidden row" style="display: none;">
+                            <div class="col-md-3">
+                                <span id="frfu-filter-dropgp" class="p-2 border">Granite(Plaque) <i class="fas fa-caret-down"></i></span>
+                                
+
+                                <div id="frfu-filter-gp-block" class="position-absolute z-index-100" style="display: none;">
+                                    
+                                    {% for gp in load_option_by_entity('App\\Entity\\GranitPlaque') %}
+                                            <img class="frfu-filter-gp-item" src="{{'/'~link_image(gp.photo)}}" style="height: 40px;" data-id="{{gp.id}}">
+                                    {% endfor %}
+                                </div>
+                                <select id="frfu-gp-fixation" class="form-control d-none" name="granitPlaque">
+                                    <option value="">GranitePlaque</option>
+                                    {% for gp in load_option_by_entity('App\\Entity\\GranitPlaque') %}
+                                        <option value="{{gp.id}}" {{(params.granitPlaque is defined and params.granitPlaque == gp.id) ? 'selected' : ''}}><span>{{gp.name}}</span></option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="themePlaque">
+                                    <option value="">Théme plaque</option>
+                                    {% for th in load_option_by_entity('App\\Entity\\ThemePlaque') %}
+                                        <option value="{{th.id}}" {{(params.themePlaque is defined and params.themePlaque == th.id) ? 'selected' : ''}}>{{th.name~'('~cat_item_number(cat_product.id, 'themePlaque', th.id)|length~')'}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <select class="form-control" name="numberTextCustomize">
+                                    <option value="">Nombre d'emplacement de texte</option>
+                                    {% for i in 0..5 %}
+                                        <option value="{{i}}" {{(params.numberTextCustomize is defined and params.numberTextCustomize == i) ? 'selected' : ''}}>{{i~' ('~cat_item_number(cat_product.id, 'numberTextCustomize', i)|length~')'}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <select class="form-control" name="colorProduct">
+                                    <option value="">Couleur</option>
+                                    {% for color in load_option_by_entity('App\\Entity\\ColorProduct') %}
+                                        <option value="{{color.id}}" {{(params.colorProduct is defined and params.colorProduct == color.id) ? 'selected' : ''}}>{{color.name~' ('~cat_item_number(cat_product.id, 'colorProduct', color.id)|length~')'}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <select class="form-control" name="UrneMotif">
+                                    <option>Motif Urne</option>
+                                    {% for motif in load_option_by_entity('App\\Entity\\MotifUrne') %}
+                                        <option value="{{motif.id}}" {{(params.UrneMotif is defined and params.UrneMotif == motif.id) ? 'selected' : ''}}>{{motif.name~' ('~cat_item_number(cat_product.id, 'UrneMotif', motif.id)|length~')'}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        
+
+                        
+                            <div class="mr-2 d-inline-block">
+                                <select class="form-control" name="typeUrne">
+                                    <option>Type Urne</option>
+                                    {% for typeUrne in load_option_by_entity('App\\Entity\\TypeUrne') %}
+                                        <option value="{{typeUrne.id}}" {{(params.typeUrne is defined and params.typeUrne == typeUrne.id) ? 'selected' : ''}}>{{typeUrne.name~' ('~cat_item_number(cat_product.id, 'typeUrne', typeUrne.id)|length~')'}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                    
+
+                            <div class="col-md-3">
+                                <select class="form-control" name="eligible">
+                                    <option>Urne Eligible à</option>
+                                    {% for eligible in load_option_by_entity('App\\Entity\\Eligible') %}
+                                        <option value="{{eligible.id}}" {{(params.eligible is defined and params.eligible == eligible.id) ? 'selected' : ''}}>{{eligible.name~' ('~cat_item_number(cat_product.id, 'eligible', eligible.id)|length~')'}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                    {% elseif cat_product.isPlaque %}
+                        <div class="d-none justify-content-center row frfu-filter-hidden">
+                            <div class="col-md-3">
+                                <span id="frfu-filter-dropgp" class="p-2 border form-control">Granite(Plaque) <i class="fas fa-caret-down float-right"></i></span>
+                                
+
+                                <div id="frfu-filter-gp-block" class="position-absolute z-index-100" style="display: none;">
+                                    
+                                    {% for gp in load_option_by_entity('App\\Entity\\GranitPlaque') %}
+                                            <img class="frfu-filter-gp-item" src="{{'/'~link_image(gp.photo)}}" style="height: 40px;" data-id="{{gp.id}}">
+                                    {% endfor %}
+                                </div>
+                                <select id="frfu-gp-fixation" class="form-control d-none" name="granitPlaque">
+                                    <option value="">Granite</option>
+                                    {% for gp in load_option_by_entity('App\\Entity\\GranitPlaque') %}
+                                        <option value="{{gp.id}}" {{(params.granitPlaque is defined and params.granitPlaque == gp.id) ? 'selected' : ''}}><span>{{gp.name}}</span></option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="themePlaque">
+                                    <option value="">Théme plaque</option>
+                                    {% for th in load_option_by_entity('App\\Entity\\ThemePlaque') %}
+                                        <option value="{{th.id}}" {{(params.themePlaque is defined and params.themePlaque == th.id) ? 'selected' : ''}}>{{th.name~'('~cat_item_number(cat_product.id, 'themePlaque', th.id)|length~')'}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-control" name="numberTextCustomize">
+                                    <option value="">Nombre d'emplacement de texte</option>
+                                    {% for i in 0..5 %}
+                                        <option value="{{i}}" {{(params.numberTextCustomize is defined and params.numberTextCustomize == i) ? 'selected' : ''}}>{{i~' ('~cat_item_number(cat_product.id, 'numberTextCustomize', i)|length~')'}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <select class="form-control" name="colorProduct">
+                                    <option value="">Couleur</option>
+                                    {% for color in load_option_by_entity('App\\Entity\\ColorProduct') %}
+                                        <option value="{{color.id}}" {{(params.colorProduct is defined and params.colorProduct == color.id) ? 'selected' : ''}}>{{color.name~' ('~cat_item_number(cat_product.id, 'colorProduct', color.id)|length~')'}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    {% elseif cat_product.isUrne %}
+                        <div class="d-none row frfu-filter-hidden">
+                            <div class="col-md-3">
+                                <select class="form-control" name="colorProduct">
+                                    <option value="">Couleur</option>
+                                    {% for color in load_option_by_entity('App\\Entity\\ColorProduct') %}
+                                        <option value="{{color.id}}" {{(params.colorProduct is defined and params.colorProduct == color.id) ? 'selected' : ''}}>{{color.name~' ('~cat_item_number(cat_product.id, 'colorProduct', color.id)|length~')'}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <select class="form-control" name="UrneMotif">
+                                    <option value="">Motif Urne</option>
+                                    {% for motif in load_option_by_entity('App\\Entity\\MotifUrne') %}
+                                        <option value="{{motif.id}}" {{(params.UrneMotif is defined and params.UrneMotif == motif.id) ? 'selected' : ''}}>{{motif.name~' ('~cat_item_number(cat_product.id, 'UrneMotif', motif.id)|length~')'}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        
+
+                            <div class="col-md-3">
+                                <select class="form-control" name="typeUrne">
+                                    <option value="">Type Urne</option>
+                                    {% for typeUrne in load_option_by_entity('App\\Entity\\TypeUrne') %}
+                                        <option value="{{typeUrne.id}}" {{(params.typeUrne is defined and params.typeUrne == typeUrne.id) ? 'selected' : ''}}>{{typeUrne.name~' ('~cat_item_number(cat_product.id, 'typeUrne', typeUrne.id)|length~')'}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <select class="form-control" name="eligible">
+                                    <option value="">Urne Eligible à</option>
+                                    {% for eligible in load_option_by_entity('App\\Entity\\Eligible') %}
+                                        <option value="{{eligible.id}}" {{(params.themePlaque is defined and params.themePlaque == eligible.id) ? 'selected' : ''}}>{{eligible.name~' ('~cat_item_number(cat_product.id, 'eligible', eligible.id)|length~')'}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <span id="frfu-see-unless" class="text-decoration-underline text-sencondary d-none frfu-filter-hidden">Moins de filtres</span>
+                    <span id="frfu-see-more" class="text-decoration-underline text-sencondary">Plus de filtres</span>
+                    
+
+                    <div class="d-flex justify-content-end">
+                        <div class="mr-2">
+                            <span>Trier par</span>
+                            <select class="" name="sortBy">
+                                <option value="">Trier par</option>
+                                <option value="name" {{(sortBy.sortBy is defined and sortBy.sortBy == 'name') ? 'selected' : ''}}>Nom du produit</option>
+                                <option value="price" {{(sortBy.sortBy  is defined and (sortBy.sortBy == 'cprice' or sortBy.sortBy == 'pricepro')) ? 'selected' : ''}}>Prix du produit</option>
+                            </select>
+                        </div>
+                        <span id="frfu-filter-sort-desc-icon" class="align-self-end"><i class="fas fa-sort-amount-up"></i></span>
+                        <div class="mr-2 d-none">
+                            <span>Trier par</span>
+                            <select id="frfu-filter-sort-desc" class="form-control" name="order">
+                                <option value="">Trier par</option>
+                                <option value="ASC" {{(sortBy.order is defined and sortBy.order == 'ASC') ? selected : ''}}></option>
+                                <option value="DESC"{{(sortBy.order is defined and sortBy.order and sortBy.order == 'DESC') ? selected : ''}}></option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            {% endif %}
+
+            {% if cat_product.displayedSubcatDesc %}
+                <div class="row mr-3 ml-3 mt-2 pt-3 frfu-subcat-border-top">
+                    {% for cat in cat_product.subcategories %}
+                        {% set img = link_image(cat.icon) %}
+                        <div class="col-sm-4 mb-2" >
+                            <div class="{{'card rounded frfu-subcat frfu-subcat-hover  frfu-list-cat-home frfu-text-menu-'~cat_product.id}}"> 
+                            <div class="text-center over-home-cat-item w-100 dark-trans"><a class="btn btn-success mt-5" href="{{url('subcat-product', {'id': cat.id})}}">Parcourir</a></div>
+                                <div class="card-body" style="height: 250px"> 
+                                    
+                                    <div class="h-75 d-flex justify-content-center">
+                                        <img class="img-fluid home-cat-img" src="{{'/'~img}}">
+                                    </div>
+                                    
+                                    <h3 class="text-center h5 cat-name"><a href="{{url('subcat-product', {'id': cat.id})}}" class="">{{cat.name}}</a></h3>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div id="frfu-product-list-row" class="row border-top">
+                    {% include 'includes/products.html.twig' with {'products': cat_products} %}
+                </div>
+                <div id="frfu-product-list-loading" class="row justify-content-center m-2 d-none" data-offset="13">
+                    <img class="img-fluid" src="/images/pico/loading.gif">
+                </img>
+            </div>
+            {% endif %}
+        </div>
+    {% if cat_product.displayedAvis %} 
+    
+        <div class="row pt-3 pb-3 pr-1 pl-1 d-flex justify-content-center">
+
+        <div class="col-12 mt-3 d-flex justify-content-center" style="border-top: 4px solid dimgray"><img class="img-fluid" src="/images/pico/separateur-centre.png" style="margin-top: -4px;"></div>
+
+        <div class="col-11 mt-3 d-flex justify-content-center">
+            <div class="row d-flex justify-content-center">
+                <div class="col-12" style="height: 300px">
+                    <div class="col-12 p-2 d-flex justify-content-center border-bottom">
+                        <div class="w-75 d-flex justify-content-start">
+                            AVIS CLIENTS
+                        </div>
+                    </div>
+
+                    <div class="col-12 p-1">
+                        <div class="row">
+                                <div class="col-1 prev-testimonial"><i class="fas fa-angle-left display-4 mt-4"></i></div>
+                                {% for testimonial in testimonials %}
+                                {% set photo = link_image(testimonial.photo) %}
+                                <div class="col-10 frfu-home-testimonial">
+                                    <div class="row">
+                                        <div class="col-7">
+                                            <div class="w-100">{{testimonial.name}}</div>
+                                            <div class="p-2 bg-light w-100" ><p>{{testimonial.message}}</p></div>
+                                        </div>
+                                        <div class="col-5">
+                                            <div class="row h-75 overflow-hidden">
+                                                <img class="img-fluid frfu-home-testimonial-img" src="{{'/'~photo}}">
+                                            </div>
+                                            <div class="row h-25 d-flex justify-content-end">
+                                                <div class="text-muted">{{testimonial.createdAt|date('d/m/Y')}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                <div class="col-1 next-testimonial"><i class="fas fa-angle-right display-4 mt-4"></i></div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 text-center">Comment ça marche ?</div>
+        <div class="col-11 border-bottom border-warning mb-3"></div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 d-flex justify-content-center">
+            <div class="row d-flex justify-content-center">
+                <div id="etape-1" class="p-2 border border-warning m-1 col-lg-2 col-md-2 col-sm-5 col-xs-10 etape-container">
+                    <div class="d-flex justify-content-center w-100 h-75">
+                        <img class="img-fluid" src="/images/pico/img-granit.png">
+                    </div>
+                    <div class="d-flex justify-content-center w-100">
+                        <p class="text-center">Choisissez votre monument et granit</p>
+                    </div>
+                </div>
+                <div id="etape-2" class="p-2 border border-warning m-1 col-lg-2 col-md-2 col-sm-5 col-xs-10 etape-container">
+                    <div class="d-flex justify-content-center w-100 h-75">
+                        <img class="img-fluid" src="/images/pico/img-texte-perso.png">
+                    </div>
+                    <div class="d-flex justify-content-center w-100">
+                        <p class="text-center">Personnalisez la gravure et le texte</p>
+                    </div>
+                </div>
+                <div id="etape-3" class="p-2 border border-warning m-1 col-lg-2 col-md-2 col-sm-5 col-xs-10 etape-container">
+                    <div class="d-flex justify-content-center w-100 h-75">
+                        <img class="img-fluid" src="/images/pico/img-devis.png">
+                    </div>
+                    <div class="d-flex justify-content-center w-100">
+                        <p class="text-center">Obtenez votre devis immédiatement</p>
+                    </div>
+                </div>
+
+                <div id="etape-4" class="p-2 border border-warning m-1 col-lg-2 col-md-2 col-sm-5 col-xs-10 etape-container">
+                    <div class="d-flex justify-content-center w-100 h-75">
+                        <img class="img-fluid" src="/images/pico/img-etape-conseil.png">
+                    </div>
+                    <div class="d-flex justify-content-center w-100">
+                        <p class="text-center">Validez votre projet avec un conseiller</p>
+                    </div>
+                </div>
+
+                <div  id="etape-5" class="p-2 border border-warning m-1 col-lg-2 col-md-2 col-sm-5 col-xs-10 etape-container">
+                    <div class="d-flex justify-content-center w-100 h-75">
+                        <img class="img-fluid" src="/images/pico/img-suivi.png">
+                    </div>
+                    <div class="d-flex justify-content-center w-100">
+                        <p class="text-center">Suivez la fabrication et la pose</p>
+                    </div>
+                </div>
+                
+                <div class="col-11 mt-5 text-secondary">
+                    {{etape_desc.content|raw}}
+                </div>
+                <div class="col-11 border-bottom border-warning mt-2"></div>
+            </div>
+        </div>
+    {% endif %}
+    {% if cat_product.page %}
+    <div class="row justify-content-center">
+        <div class="col-11 p-2">
+            <div class="text-secondary">{{cat_product.page.content|raw}}</div>
+        </div>
+    </div>
+    {% endif %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function(){
+            
+
+             
+        });
+    </script>
+{% endblock %}

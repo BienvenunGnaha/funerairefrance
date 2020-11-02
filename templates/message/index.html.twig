@@ -1,0 +1,140 @@
+{% extends 'user.html.twig' %}
+
+{% block title %}Messagerie | FuneraireFrance{% endblock %}
+
+
+{% block user_block %}
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            
+            <div class="col-lg-8 col-md-8 ml-auto mr-auto bg-light p-2" style="max-height: 400px;">
+                <div id="frfu-inbox-message" class="row h-75 p-2 bg-white overflow-auto">
+                {% for msg in messages %}
+                    <div class="{{(msg.sender.id == app.user.id) ? 'col-12 p-2 d-flex justify-content-end' : 'col-12 p-2 d-flex justify-content-start'}}">
+                        <div class="{{(msg.sender.id == app.user.id) ? 'h-auto p-1' : 'h-auto p-1'}}" style="max-width: 60%">
+                            <div class="{{(msg.sender.id == app.user.id) ? 'bg-primary rounded text-white w-auto p-2' : 'bg-light p-2 rounded text-secondary w-auto'}}">
+                                {% if msg.photo %}
+                                <img class="img-fluid" src="{{'/'~link_image(msg.photo)}}">
+                                {% endif %}
+                                <div>
+                                    <p>{{msg.content}}</p>
+                                    {% if msg.link and msg.labelLink %}
+                                    <p>
+                                    <a class="d-block btn btn-secondary h-auto" href="{{'/'~link_image(msg.link)}}">{{msg.labelLink}}</a>
+                                    </p>
+                                    {% endif %}
+                                    {% if msg.devis %}
+                                    <p>
+                                    <a class="d-block btn btn-secondary h-auto" href="{{url('devis-view', {'id' : msg.devis.id})}}">Payer</a>
+                                    </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+                <div class="row" method="POST" enctype="multipart/form-data">
+                    <form id="message_form" class="col-12" action="{{url('message-send')}}" method="POST" enctype="multipart/form-data">
+                        <div class="row">
+                            {{form_widget(form._token)}}
+                            <div class="col-1">
+                                <span id="frfu-message-choose-picture" class="text-primary m-2"><i class="far fa-file-image"></i></span>
+                            </div>
+                            <div class="col-8">
+                                {{form_widget(form.content, {attr: {'class' : 'form-control col-10 d-flex', 'rows': '1'}})}}
+                                {{form_widget(form.photo, {attr: {'class' : 'form-control d-none'}})}}
+                                {{form_widget(form.sender, {attr: {'class' : 'form-control d-none'}})}}
+                                {{form_widget(form.receiver, {attr: {'class' : 'form-control d-none'}})}}
+                            </div>
+                            <div class="col-1">
+                                <span id="frfu-message-send" class="text-danger m-2 w-100"><i class="fas fa-paper-plane"></i></span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {#<div class="row">
+            <div class="col-12 p-2 mt-2">
+                <span class="ml-auto mr-auto h3 col-12 text-center">INFORMATIONS COMPLETES</span>
+            </div>
+            <div class="col-12 p-2 bg-light">
+               
+            </div>
+        </div>#}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function(){
+
+            var processing = false;
+            var currentReceiver = Number({{app.user.id}});
+            var currentOffset = 10;
+
+            $('#frfu-message-choose-picture').click(function(){
+                $('#message_photo').trigger('click');
+            });
+
+            $('#frfu-message-send').click(function(){
+                $('#message_form').trigger('submit');
+            });
+
+            $('#message_form').submit(function(e){
+                e.preventDefault();
+                var form = new FormData($("#message_form")[0]);
+                /*var photo = $('#message_photo')[0].files[0];
+                var content = $('#message_content').val();
+                var sender = $('#message_sender').val();
+                var token = $('#message__token').val();
+                form.append('message[photo]', photo); 
+                form.append('message[content]', content); 
+                form.append('message[_token]', token); 
+                form.append('message[sender]', sender);*/
+                
+                $.ajax({
+                    url: "{{url('message-send')}}",
+                    type: 'POST',
+                    data: form,
+                    enctype: 'multipart/form-data',
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    success: function(res){
+                        console.log(res);
+                        $('#frfu-inbox-message').append(res);
+                    },
+                    error: function(error){
+                        console.log(error);
+                    }
+                });
+            });
+
+            $('#frfu-inbox-message').scroll(function(){
+                var offset = currentOffset === 0 ? 0 : currentOffset;
+                
+                var first = true;
+                if(!processing){
+                    processing = true;
+                    $.ajax({
+                        url: '/user/message/previous/'+currentReceiver+'?offset='+offset,
+                        type: 'get',
+                        success: function(response){
+                            currentOffset = offset+10;
+                            $('#frfu-inbox-message').prepend(response);
+                            $('#frfu-current-offset').val(currentOffset);
+                            processing = false;
+                        },
+                        error: function(){
+                            var offset = currentOffset === 0 ? 0 : currentOffset;
+                            processing = false;
+                        }
+                    });
+                } 
+                
+            });
+        });
+    </script>
+{% endblock %}

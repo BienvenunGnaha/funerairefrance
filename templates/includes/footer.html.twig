@@ -1,0 +1,144 @@
+<!-- Footer -->
+<footer class="page-footer font-small bg-white pt-4 border-top w-100">
+
+  <!-- Footer Links -->
+  <div class="container-fluid text-center text-md-left">
+
+    <!-- Grid row -->
+    <div class="row">
+
+      <!-- Grid column -->
+      <div class="col-md-2 mt-md-0 mt-3">
+
+        <!-- Content -->
+        <h5 class="text-uppercase">Funeraire France</h5>
+
+        <img src="/images/pico/logo.jpeg" class="img-fluid">
+
+        <p>Funeraire France, du sur mesure au juste prix</p>
+
+      </div>
+      <!-- Grid column -->
+
+      <hr class="clearfix w-100 d-md-none pb-3">
+
+      <!-- Grid column -->
+      <div class="col-md-2 mb-md-0 mb-3">
+
+        <!-- Links -->
+        <h5 class="text-uppercase">NOS PRODUITS</h5>
+
+        <ul class="list-unstyled">
+
+         {% for i,cat in catMenu %}
+            {% if i < 5 %}
+                <li>
+                    <a class="text-dark" href="{{url('category_product', {'id': cat.id})}}">{{cat.name}}</a>
+                </li>
+            {% endif %}
+            
+         {% endfor %}
+          
+        </ul>
+
+      </div>
+      <!-- Grid column -->
+
+      <!-- Grid column -->
+      <div class="col-md-2 mb-md-0 mb-3">
+
+        <!-- Links -->
+        <h5 class="text-uppercase">INFORMATIONS</h5>
+
+        <ul class="list-unstyled">
+          <li>
+            <a class="text-dark" href="{{url('contact')}}">Contact Presse</a>
+          </li>
+            {% set crr = getPage(all_pages, 'crr') %}
+            {% if crr %}
+                <li>
+                    <a class="text-dark" href="{{url('page', {'slug' : crr.slug})}}">{{crr.name}}</a>
+                </li>
+            {% endif %}
+
+            <li>
+                <a class="text-dark" href="{{url('faq')}}">FAQ</a>
+            </li>
+
+            {% set join_us = getPage(all_pages, 'join_us') %}
+            {% if join_us %}
+            <li>
+                <a class="text-dark" href="{{url('page', {'slug' : join_us.slug})}}">Rejoignez nous</a>
+            </li>
+            {% endif %}
+        </ul>
+
+      </div>
+      <!-- Grid column -->
+
+      <!-- Grid column -->
+      <div class="col-md-3 mb-md-0 mb-3">
+
+        <!-- Links -->
+        <h5 class="text-uppercase">A PROPOS</h5>
+
+        <ul class="list-unstyled">
+          
+            {% set about_us = getPage(all_pages, 'about_us') %}
+            {% set  au_html = about_us ? '<li><a class="text-dark" href="'~url('page', {'slug' : about_us.slug})~'">'~about_us.name~'</a></li>' : null %}
+            {{ about_us ? au_html|raw : null}}
+            
+            {% set cgv = getPage(all_pages, 'cgv') %}
+            {% set  cgv_html = cgv ? '<li><a class="text-dark" href="'~url('page', {'slug' : cgv.slug})~'">'~cgv.name~'</a></li>' : null %}
+            {{ cgv ? cgv_html|raw : null}}
+            
+            {% set mention_legale = getPage(all_pages, 'mention_legale') %}
+            {% set  mention_html = mention_legale ? '<li><a class="text-dark" href="'~url('page', {'slug' : mention_legale.slug})~'">'~mention_legale.name~'</a></li>' : null %}
+            {{ mention_legale ? mention_html|raw : null}}
+
+            <li>
+                <img class="img-fluid" src="/images/pico/visa.jpg">
+            </li>
+        </ul>
+
+      </div>
+
+      <div class="col-md-3 mb-md-0 mb-3">
+        <form class="border" action="{{url('newsletter')}}" method="POST">
+        <div class="form-row align-items-center p-2">
+            <div class="col-auto mb-2">
+                <p class="h4 ml-auto mr-auto"> Inscrivez-vous à notre newsletter</p>
+                <span class="h6 text-center">Soyez au parfum des nouveautés et des nouvelles offres de Funeraire France</span>
+            </div>
+            <div class="col-auto ml-auto mr-auto">
+            <label class="sr-only" for="inlineFormInput">Nom Complet</label>
+            <input type="text" class="form-control mb-2" id="inlineFormInput" name="newsletter_name" placeholder="Votre nom ici">
+            </div>
+            <div class="col-auto ml-auto mr-auto">
+            <label class="sr-only" for="inlineFormInputGroup">Email</label>
+            <div class="input-group mb-2">
+                <input type="email" class="form-control" id="inlineFormInputGroup" name="newsletter_email" placeholder="Entrer votre adresse email">
+            </div>
+            </div>
+            <div class="col-auto ml-auto mr-auto">
+            <button type="submit" class="btn btn-dark mb-2">Je m'abonne</button>
+            </div>
+        </div>
+        </form>
+      </div>
+      <!-- Grid column -->
+
+    </div>
+    <!-- Grid row -->
+
+  </div>
+  <!-- Footer Links -->
+
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3 bg-light border-top">© {{ "now"|date("Y") }} Copyright
+    <a class="text-dark" href="https://funerairefrance.com/"> FUNERAIRE FRANCE | TOUS DROITS RESERVES</a>
+  </div>
+  <!-- Copyright -->
+
+</footer>
+<!-- Footer -->

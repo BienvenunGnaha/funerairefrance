@@ -1,0 +1,46 @@
+{% extends 'user.html.twig' %}
+
+{% block title %}Devis | FuneraireFrance{% endblock %}
+
+{% block user_block %}
+    <div class="row p-2">
+        <div class="col-md-4">
+            <img class="img-fluid" src="{{'/'~link_image(rating.product.photo)}}">
+        </div>
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-12">
+                    <h4 class="text-secondary">{{rating.product.name}}</h4>
+                </div>
+                <div class="col-md-6">
+                    <span class="text-secondary">Note moyenne des clients :</span>
+                </div>
+                <div class="col-md-6">
+                    {% for i in 1..5 %}
+                        {% if prodLevel >= i %}
+                            <span class="text-warning frfu-rating-star"><i class="fas fa-star"></i></span>
+                        {% else %}
+                            <span class="text-warning frfu-rating-star"><i class="far fa-star"></i></span>
+                        {% endif %}
+                    {% endfor %}
+                    <br>
+                    <span class="text-secondary">{{ratingsNumber}} Avis</span><a class="ml-3 text-underline text-secondary" href="{{url('product-show', {id: rating.product.id})~'#post-rating-block'}}">Ajoutez votre commentaire</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 p-2">
+            <span class="d-block h-5">Votre avis</span>
+            {% for i in 1..5 %}
+                {% if rating.level >= i %}
+                    <span class="text-warning frfu-rating-star"><i class="fas fa-star"></i></span>
+                {% else %}
+                    <span class="text-warning frfu-rating-star"><i class="far fa-star"></i></span>
+                {% endif %}
+            {% endfor %}
+            <br>
+            <span class="h6 d-block mt-2 mb-2">{{rating.title}}</span>
+            <span class="text-secondary d-block mb-2">{{rating.message}}</span>
+            <span class="text-secondary d-block mb-2">Soumis le {{rating.createdAt|format_datetime('long', 'none', locale='fr')}}</span>
+        </div>
+    </div>
+{% endblock %}

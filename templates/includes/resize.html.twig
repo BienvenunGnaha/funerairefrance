@@ -1,0 +1,75 @@
+<script>
+//var first = true
+$(window).resize(function() {
+  console.log($(this).scrollTop());
+    var contentTop = $('#frfu-page-content').position().top;
+    
+
+  if($(this).width() <= 1025){
+      $('.steps .step').removeClass('d-none');
+      $('.steps .step').addClass('d-none');
+      $('.steps .active').removeClass('d-none');
+      $('.steps .active').css({'width' : '100%'});
+  }else{
+      $('.steps .step').removeClass('d-none');
+      $('.steps .active').removeClass('d-none');
+      $('.steps .active').removeClass('w-100');
+      $('.steps .active').css({'width' : ''});
+      if(!$('#frfu-previous-step').hasClass('d-none')){
+          $('#frfu-previous-step').addClass('d-none');
+      }
+
+      if(!$('#frfu-next-step').hasClass('d-none')){
+          $('#frfu-next-step').addClass('d-none');
+      }
+      
+  }
+});
+
+$(window).scroll(function(){
+    if($(this).width() <= 965){
+        if($(this).scrollTop() > 40){
+            $('.mobile-header').position().top = 0;
+            if(!$('.mobile-header').hasClass("position-fixed")){
+                $('.mobile-header').addClass("position-fixed");
+            }
+        }else{
+            if($('.mobile-header').hasClass("position-fixed")){
+                $('.mobile-header').removeClass("position-fixed");
+            }
+        }
+    }else{
+        var top = $('.frfu-menu-top').position().top;//frfu-page-content
+        var topContent = $('#frfu-page-content').position().top;
+        var diff = $('#desktop-header-menu-wrap').height() - $('#desktop-header-second-row').height(); 
+        if($(this).scrollTop() > diff){
+            //$('#desktop-header-first-row').hide();
+            //$('.frfu-menu-top').position().top = 0;
+
+            if(!$('#desktop-header-menu-wrap').hasClass("position-fixed")){
+                $('#desktop-header-menu-wrap').addClass("position-fixed");
+            }
+            if(!$('#frfu-page-flash').find('#frfu-pre-page-content').length){
+                $('#frfu-page-flash').prepend('<div id="frfu-pre-page-content" style="height: 320px; width: 100%;"></div>');
+            }
+            $('#desktop-header-first-row').hide();
+            
+            
+        }else{
+            //
+            //$($('.frfu-menu-top')[0]).position().top = top;
+            //$('#frfu-page-content').position().top = topContent;
+            if($('#desktop-header-menu-wrap').hasClass("position-fixed")){
+                $('#desktop-header-menu-wrap').removeClass("position-fixed");
+            }
+
+            $('#desktop-header-first-row').show();
+            $('#frfu-page-flash').find('#frfu-pre-page-content').remove();
+            //$('#frfu-page-content').position().top = contentTop; 
+            
+        }
+    }
+});
+
+$(window).trigger('resize');
+</script>

@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{blog.title}}{% endblock %}
+
+{% block body %}
+    <div class="container-fluid bg-light">
+        <div class="row">
+            <div class="col-12 m-3">
+                <span><a href="/">Accueil</a> / </span><span><a href="{{url('blog')}}">Blog</a> / </span><span><a>{{blog.title}}</a></span>
+            </div>
+            <div class="col-lg-9 ml-auto mr-auto bg-white">
+                {% if blog %}
+                    <div class="overflow-hidden">
+                        <img class="img-fluid" src="{{'/'~link_image(blog.photo)}}">
+                    </div>
+
+                    <div class="h3">
+                        <h2 class="h6">{{blog.title}}</h2>
+                    </div>
+
+                    <div>
+                        {{blog.content|raw}}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-lg-3 ml-auto mr-auto bg-white">
+                <div class="h4">
+                    Articles Récents
+                </div>
+                {% for blog in blogs %}
+                <div class="h6">
+                    <h2 class="h6"><a href="{{url('blog-show', {'title' : blog.title})}}">{{blog.title}}</a></h2>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

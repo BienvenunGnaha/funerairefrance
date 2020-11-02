@@ -1,0 +1,327 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tout savoir sur les obsèques et la marbrerie funéraire{% endblock %}
+
+ 
+{% block body %}
+    <style>
+        
+        .bg-beige{
+            background-color: rgb(168,151,105);
+        }
+
+        .bg-violet{
+            background-color: rgb(160,0,87);
+        }
+
+        .violet-before:before{
+            content: url('/images/pico/polygone-violet.png');
+            position: absolute;
+            margin-left: -32px;
+            margin-top: -3px;
+        }
+
+        .violet-before:after{
+            content: '3';
+            position: absolute;
+            margin-left: -20px;
+            margin-top: -39%;
+            color: white;
+            font-weight: bold;
+            font-family: 'Helvetica Neue Lt',Helvetica,Arial,sans-serif;
+        }
+
+        .bg-bluegreen{
+            background-color: rgb(70,170,163);
+        }
+
+        .bluegreen-before:before{
+            content: url('/images/pico/polygone-bleu-vert.png');
+            position: absolute;
+            margin-left: -32px;
+            margin-top: -3px;
+        }
+
+        .bluegreen-before:after{
+            content: '4';
+            position: absolute;
+            margin-left: -20px;
+            margin-top: -46%;
+            color: white;
+            font-weight: bold;
+            font-family: 'Helvetica Neue Lt',Helvetica,Arial,sans-serif;
+        }
+
+
+        .bg-bluesky{
+            background-color: rgb(139,173,220);
+        }
+
+        .bluesky-before:before{
+            content: url('/images/pico/polygone-bleu-clair.png');
+            position: absolute;
+            margin-left: -32px;
+            margin-top: -3px;
+        }
+
+        .bluesky-before:after{
+            content: '5';
+            position: absolute;
+            margin-left: -20px;
+            margin-top: -39%;
+            color: white;
+            font-weight: bold;
+            font-family: 'Helvetica Neue Lt',Helvetica,Arial,sans-serif;
+        }
+
+        .bg-green{
+            background-color: rgb(108,155,86);
+        }
+
+        .green-before:before{
+            content: url('/images/pico/polygone-vert-2.png');
+            position: absolute;
+            margin-left: -32px;
+            margin-top: -3px;
+        }
+
+        .green-before:after{
+            content: '6';
+            position: absolute;
+            margin-left: -20px;
+            margin-top: -49%;
+            color: white;
+            font-weight: bold;
+            font-family: 'Helvetica Neue Lt',Helvetica,Arial,sans-serif;
+        }
+
+        .beige-before:before{
+            content: url('/images/pico/polygone-beige.png');
+            position: absolute;
+            margin-left: -32px;
+            margin-top: -3px;
+        }
+
+        .beige-before:after{
+            content: '1';
+            position: absolute;
+            margin-left: -20px;
+            margin-top: -47%;
+            color: white;
+            font-weight: bold;
+            font-family: 'Helvetica Neue Lt',Helvetica,Arial,sans-serif;
+        }
+
+        .beige2-before:before{
+            content: url('/images/pico/polygone-beige.png');
+            position: absolute;
+            margin-left: -32px;
+            margin-top: -3px;
+        }
+
+        .beige2-before:after{
+            content: '2';
+            position: absolute;
+            margin-left: -20px;
+            margin-top: -49%;
+            color: white;
+            font-weight: bold;
+            font-family: 'Helvetica Neue Lt',Helvetica,Arial,sans-serif;
+        }
+
+        /*.bg-violet{
+            background-color: rgb(168,151,105);
+        }*/
+    </style>
+    <div class="container-fluid">
+        
+        <div class="row">
+            <div class="col-12">
+                <span> <a href="/"> Acceuil </a> / </span><span> Guide </span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <span class="text-center display-4"> {{'Tout savoir sur les obsèques et la marbrerie funéraire'|upper}} </span>
+            </div>
+        </div>
+
+        <div class="row mt-2 mb-2">
+            <div class="col-12">
+                <span class="text-center text-secondary"> Les obsèques et la marbrerie funéraire sont deux sujets complexes, objets de bien des interrogations auxquelles il est difficile de répondre seul. Notre guide a été écrit par nos spécialistes funéraires. Ils répondent à toutes vos questions et vous donnent toutes les solutions pour faire face à l'imprévu. Il est composé de 6 parties qui vous conseilleront dans l'organisation des obsèques, les aides financières dont vous pouvez bénéficier ou encore dans le choix d'un monument funéraire ou cinéraire. </span>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div id="livreblanc-img" class="col-lg-5 ml-auto mr-auto p-2 border" style="max-height : 800px; overflow: hidden;">
+                <div class="position-absolute"  style="margin-top: 120%; margin-left: 85%;">
+                    <div id="prev-img" class="p-1 border mr-1 d-inline-block"><i class="fas fa-angle-left"></i></div><div id="next-img" class="ml-1 p-1 border d-inline-block"><i class="fas fa-angle-right"></i></div>
+                </div>
+                <img class="img-fluid" src="/images/pico/Livreblanc-1.jpg">
+                <img class="img-fluid" src="/images/pico/Livreblanc-3.jpg">
+                <img class="img-fluid" src="/images/pico/Livreblanc-4.jpg">
+                <img class="img-fluid" src="/images/pico/Livreblanc-5.jpg">
+                <img class="img-fluid" src="/images/pico/Livreblanc-10.jpg">
+                
+            </div>
+            <div class="col-lg-5 ml-auto mr-auto p-2">
+                <form class="row" action="{{url('download-guide')}}" method="POST">
+                    {{form_widget(form._token)}}
+                    <div class="form-group col-12">
+                        {{form_label(form.firstName, 'Prénoms')}}
+                        {{form_widget(form.firstName, {attr: {'class' : 'form-control'}})}}
+                    </div>
+                    <div class="form-group col-12">
+                        {{form_label(form.name, 'Nom')}}
+                        {{form_widget(form.name, {attr: {'class' : 'form-control'}})}}
+                    </div>
+                    <div class="form-group col-12">
+                        {{form_label(form.email, 'Email')}}
+                        {{form_widget(form.email, {attr: {'class' : 'form-control'}})}}
+                    </div>
+                    <div class="form-group col-12">
+                        {{form_label(form.book, 'Quel sujet vous intéresse ?')}}
+                        {{form_widget(form.book, {attr: {'class' : 'form-control'}})}}
+                    </div>
+                    <div class="col-12">
+                        {{form_widget(form.wishContact, {attr: {'class' : 'form-control'}})}} <span>Je souhaite être recontacté(e) par un conseiller en monument funéraire ou cinéraire ?</span>
+                    </div>
+                    <div class="form-group col-12">
+                        <input type="submit" class="btn btn-outline-secondary"  value="Télécharger gratuitement"> 
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="row mt-2 mb-2">
+            <div class="col-12 text-center">
+                <span class="text-center display-4 text-warning w-100" style="font-size: 1.5rem;">6 THÉMATIQUES COMPLÈTES ET 6 FICHES PRATIQUES</span>
+            </div>
+
+            <div class="col-12">
+                <div class="row justify-content-center mt-3">
+                    <div class="col-md-3 col-sm-4 ml-auto mr-auto h-100 beige-before">
+                        <div class="row border">
+                            <div class="col-12 text-center p-1 bg-beige text-white font-weight-bold h-6">L'organisation d'obsèques</div>
+                            <div class="col-12 text-center p-2">
+                                <ul class="font-list">
+                                    <li class="pb-2">Les principales démarches avant, pendant et après</li>
+                                    <li class="pb-2">Les différents contrats obsèques</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-4 ml-auto mr-auto h-100 beige2-before">
+                        <div class="row border">
+                            <div class="col-12 text-center p-1 bg-beige text-white font-weight-bold h-6">Les frais d'obsèques</div>
+                            <div class="col-12 text-center p-2">
+                                <ul class="font-list">
+                                    <li class="pb-2">Prestation des pompes funèbres</li>
+                                    <li class="pb-2">Aides aux frais d'obsèques</li>
+                                    <li class="pb-2">Quand régler les frais ?</li> 
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-4 ml-auto mr-auto h-100 violet-before">
+                        <div class="row border">
+                            <div class="col-12 text-center p-1 bg-violet text-white font-weight-bold h-6">Les urnes funéraires</div>
+                            <div class="col-12 text-center p-2">
+                                <ul class="font-list">
+                                    <li class="pb-2">Législation</li>
+                                    <li class="pb-2">Quelle urne choisir ?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center mt-5">
+                    <div class="col-md-3 col-sm-4 ml-auto mr-auto h-100 bluegreen-before">
+                        <div class="row border">
+                            <div class="col-12 text-center p-1 bg-bluegreen text-white font-weight-bold h-6">Les monuments funéraires</div>
+                            <div class="col-12 text-center p-2">
+                                <ul class="font-list">
+                                    <li class="pb-2">Comment choisir son monument funéraire ?</li>
+                                    <li class="pb-2">Personnaliser son monument</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-4 ml-auto mr-auto h-100 bluesky-before">
+                        <div class="row border">
+                            <div class="col-12 text-center p-1 bg-bluesky text-white font-weight-bold h-6">Les monuments funéraires</div>
+                            <div class="col-12 text-center p-2">
+                                <ul class="font-list">
+                                    <li class="pb-2">Comment choisir ?</li>
+                                    <li class="pb-2">Personnaliser son monument</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-4 ml-auto mr-auto h-100 green-before">
+                        <div class="row border">
+                            <div class="col-12 text-center p-1 bg-green text-white font-weight-bold h-6">La pose de monuments</div>
+                            <div class="col-12 text-center p-2">
+                                <ul class="font-list">
+                                    <li class="pb-2">Qui pose un monument ?</li>
+                                    <li class="pb-2">Démarches administratives</li>
+                                    <li class="pb-2">Les étapes de la pose</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function(){
+            $('#livreblanc-img img').hide();
+            $('#livreblanc-img img:first').show();
+            
+          
+            
+            $('#next-img').click(function(e){
+                var ts = $('#livreblanc-img img');
+                var len = ts.length;
+                var index = 0;
+                for(var i = 0; i < len; i++){
+                    if($(ts[i]).css('display') != 'none' && i != len-1){
+                        index = i+1;
+                    }
+                }
+
+                if(index !== 0){
+                    $(ts[index-1]).fadeOut();
+                    $(ts[index]).fadeIn();
+                }else{
+                    
+                }
+            });
+
+            $('#prev-img').click(function(e){
+                var ts = $('#livreblanc-img img');
+                var len = ts.length;
+                var index = 0;
+                for(var i = 0; i < len; i++){
+                    if($(ts[i]).css('display') != 'none' && i != 0){
+                        index = i-1;
+                    }
+                }
+                $(ts[index+1]).fadeOut();
+                $(ts[index]).fadeIn();
+            });
+        });
+    </script>
+{% endblock %}

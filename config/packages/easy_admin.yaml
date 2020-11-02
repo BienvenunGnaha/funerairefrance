@@ -1,0 +1,826 @@
+ #easy_admin:
+    #entities:
+        # List the entity class name you want to manage
+        #- App\Entity\Product
+        #- App\Entity\Category
+        #- App\Entity\User
+        #- App\Entity\Blog
+
+
+easy_admin:
+    site_name: 'FuneraireFrance'
+    entities:
+        Category:
+            class: App\Entity\Category
+            label: 'Catégories'
+            new:
+                fields:
+                    - { property: 'name', label: 'Nom de la catégorie' }
+                    - { property: 'displayOrder', label: 'Afficher en' }
+                    - { property: 'createdAt', label: 'Date de création' }
+                    - { property: 'updatedAt', label: 'Mise à jour le' }
+                    - { property: 'isDisplayedInMenu', label: 'Afficher dans le menu' }
+                    - { property: 'isPlaque', label: 'Activer le mode de recherche pour les plaques funéraire' }
+                    - { property: 'isUrne', label: 'Activer le mode de recherche pour les urnes funéraire' }
+                    - { property: 'seeAll', label: "Activer l'affichage du sous menu de tous les sous ensemble" }
+                    - { property: 'displayedAvis', label: "Afficher les avis et mode d'emploi" }
+                    - { property: 'seeAllLabel', label: 'Label pour affichage du sous menu' }
+                    - { property: 'color', type: 'color', label: 'Couleur' }
+                    - { property: 'displayedSubcatDesc', label: 'Afficher les souscatégories et la description' }
+                    - { property: 'description', type: 'text_editor' }
+                    - { property: 'photo', type: 'file_upload', label: 'Photo' }
+                    - { property: 'icon', type: 'file_upload', label: 'Icone' }
+                    - { property: 'page', label: 'Page' }
+                    - { property: 'subcategories', label: 'Sous Catégories' }
+
+            edit:
+                fields:
+                    - { property: 'name', label: 'Nom de la catégorie' }
+                    - { property: 'displayOrder', label: 'Afficher en' }
+                    - { property: 'createdAt', label: 'Date de création' }
+                    - { property: 'updatedAt', label: 'Mise à jour le' }
+                    - { property: 'isDisplayedInMenu', label: 'Afficher dans le menu' }
+                    - { property: 'isPlaque', label: 'Activer le mode de recherche pour les plaques funéraire' }
+                    - { property: 'isUrne', label: 'Activer le mode de recherche pour les urnes funéraire' }
+                    - { property: 'displayedAvis', label: "Afficher les avis et mode d'emploi" }
+                    - { property: 'seeAll', label: "Activer l'affichage du sous menu de tous les sous ensemble" }
+                    - { property: 'seeAllLabel', label: 'Label pour affichage du sous menu' }
+                    - { property: 'color', type: 'color', label: 'Couleur' }
+                    - { property: 'displayedSubcatDesc', label: 'Afficher les souscatégories et la description' }
+                    - { property: 'description', type: 'text_editor' }
+                    - { property: 'photo', type: 'file_upload', label: 'Photo' }
+                    - { property: 'icon', type: 'file_upload', label: 'Icone' }
+                    - { property: 'page', label: 'Page' }
+                    - { property: 'subcategories', label: 'Sous Catégories' }
+
+            list:
+                fields:
+                    - { property: 'id', label: 'ID' }
+                    - { property: 'name', label: 'Nom' }
+                    - { property: 'displayOrder', label: 'Afficher en' }
+                    - { property: 'isDisplayedInMenu', label: 'Afficher dans le menu' }
+                    - { property: 'isPlaque', label: 'Activer le filtre pour les plaques funéraire' }
+                    - { property: 'isUrne', label: 'Activer le filtre pour les urnes funéraire' }
+                    - { property: 'displayedAvis', label: "Afficher les avis et mode d'emploi" }
+                    - { property: 'displayedSubcatDesc', label: 'Afficher les souscatégories et la description' }
+                actions:
+                    - { name: 'show' }
+
+        Subcategory:
+            class: App\Entity\Subcategory
+            label: 'Sous catégories'
+            new:
+                fields:
+                    - { property: 'name', label: 'Nom de la catégorie' }
+                    - { property: 'displayOrder', label: 'Afficher en' }
+                    - { property: 'createdAt', label: 'Date de création' }
+                    - { property: 'updatedAt', label: 'Mise à jour le' }
+                    - { property: 'isDisplayedInMenu', label: 'Afficher dans le menu' }
+                    - { property: 'customizable', label: 'Activer la personalisation' }
+                    - { property: 'needPhotoStep', label: "Activer l'etape de photo et photogravure" }
+                    - { property: 'customizableBeforeOrder', label: 'Personnalisation avant achat' }
+                    - { property: 'isText1', label: 'Activer la personnalisation avec un champs texte' }
+                    - { property: 'isText2', label: 'Activer la personalisation avec deux champs texte' }
+                    - { property: 'labelCustomStep', label: 'Label pour Etape Personnalisée' }
+                    - { property: 'desscription', type: 'text_editor' }
+                    - { property: 'photo', type: 'file_upload', label: 'Photo' }
+                    - { property: 'icon', type: 'file_upload', label: 'Icone' }
+                    - { property: 'catId', label: 'Sous Catégories' }
+                    - { property: 'page', label: 'Page' }
+ 
+            edit:
+                fields:
+                    - { property: 'name', label: 'Nom de la catégorie' }
+                    - { property: 'displayOrder', label: 'Afficher en' }
+                    - { property: 'createdAt', label: 'Date de création' }
+                    - { property: 'updatedAt', label: 'Mise à jour le' }
+                    - { property: 'isDisplayedInMenu', label: 'Afficher dans le menu' }
+                    - { property: 'customizable', label: 'Activer la personalisation' }
+                    - { property: 'needPhotoStep', label: "Activer l'etape de photo et photogravure" }
+                    - { property: 'customizableBeforeOrder', label: 'Personnalisation avant achat' }
+                    - { property: 'isText1', label: 'Activer la personnalisation avec un champs texte'}
+                    - { property: 'isText2', label: 'Activer la personalisation avec deux champs texte'}
+                    - { property: 'labelCustomStep', lael: 'Label pour Etape Personnalisée' }
+                    - { property: 'desscription', type: 'text_editor' }
+                    - { property: 'photo', type: 'file_upload', label: 'Photo' }
+                    - { property: 'icon', type: 'file_upload', label: 'Icone' }
+                    - { property: 'catId', label: 'Catégories' }
+                    - { property: 'page', label: 'Page' }
+
+            list:
+                fields:
+                    - { property: 'id', label: 'ID' }
+                    - { property: 'name', label: 'Nom de la catégorie' }
+                    - { property: 'displayOrder', label: 'Afficher en' }
+                    - { property: 'isDisplayedInMenu', label: 'Afficher dans le menu' }
+                    - { property: 'customizable', label: 'Activer la personalisation sans achat direct' }
+                    - { property: 'customizableBeforeOrder', label: 'Personnalisation avant achat' }
+                    - { property: 'needSteleFixation', label: 'Personnalisation avec Stele ou Fixation facultative' }
+                    - { property: 'needPhotoStep', label: "Activer l'etape de photo et photogravure" }
+                    - { property: 'catId', label: 'Catégories' }
+
+                actions:
+                    - { name: 'show' }
+
+        User:
+            class: App\Entity\User
+            new:
+                fields:
+                    - { property: 'email', type: 'email'}
+                    - { property: 'password', type: 'password', label: 'Mot de passe' }
+                    - { property: 'phone', type: 'text', label: 'Nméro de téléphone' }
+                    - { property: 'address', label: 'Adresse' }
+                    - { property: 'birthday', label: 'Date de naissance' }
+                    - { property: 'address2', label: 'Adresse 2' }
+                    - { property: 'name', label: 'Nom' }
+                    - { property: 'firstName', label: 'Prénoms' }
+                    - { property: 'country', label: 'Pays' }
+                    - { property: 'createdAt', label: 'Creé le' }
+                    - { property: 'updatedAt', label: 'Mettre à jour le' }
+                    - { property: 'stripeCustomer', label: 'Stripe Customer' }
+                    - { property: 'paypalCustomer', label: 'PayPal Customer' }
+                    - { property: 'addresses'}
+                    - { property: 'isVerified', label: 'Compte activé?' }
+                    - { property: 'orders', label: 'Commandes' }
+                    - { property: 'paymentMethods', label: 'Moyen de paiement' }
+ 
+            edit:
+                fields:
+                    - { property: 'email', type: 'email'}
+                    - { property: 'password', type: 'password', label: 'Mot de passe' ,  type_options: { required: false } }
+                    - { property: 'phone', type: 'text', label: 'Nméro de téléphone' }
+                    - { property: 'address', label: 'Adresse' }
+                    - { property: 'birthday', label: 'Date de naissance' }
+                    - { property: 'address2', label: 'Adresse 2' }
+                    - { property: 'name', label: 'Nom' }
+                    - { property: 'firstName', label: 'Prénoms' }
+                    - { property: 'country', label: 'Pays' }
+                    - { property: 'createdAt', label: 'Creé le' }
+                    - { property: 'updatedAt', label: 'Mettre à jour le' }
+                    - { property: 'stripeCustomer', label: 'Stripe Customer' }
+                    - { property: 'paypalCustomer', label: 'PayPal Customer' }
+                    - { property: 'addresses'}
+                    - { property: 'isVerified', label: 'Compte activé?' }
+                    - { property: 'orders', label: 'Commandes' }
+                    - { property: 'paymentMethods', label: 'Moyen de paiement' }
+
+            list:
+                actions:
+                    - { name: 'show' }
+
+        Product:
+            class: App\Entity\Product
+            label: 'Les produits'
+            new:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom du produit'}
+                    - { property: 'photo', type: 'file_upload',label: 'Photo'}
+                    - { property: 'catId', label: 'Catégories', type_options: { required: true }}
+                    - { property: 'subCatId', label: 'Sous Catégories', type_options: { required: true } }
+                    - { property: 'page', label: 'Description Détaillée'}
+                    - { property: 'status'}
+                    - { property: 'components', label: 'Composants'}
+                    - { property: 'needContact', label: 'Demander au client un contact conseiller'}
+                    - { property: 'color', type: 'text', label: 'Les Couleur disponible'}
+                    - { property: 'size', type: 'text', label: 'Les tailles du produits'}
+                    - { property: 'isPriceOff', label: 'Activer la promo sur produit'}
+                    - { property: 'pprice', type: 'number', label: 'Pourcentage de réduction'}
+                    - { property: 'stock', label: 'Stock' }
+                    - { property: 'sale', label: 'Déja vendu' }
+                    - { property: 'cprice', type: 'number', label: 'Prix du produit'}
+                    - { property: 'pricepro', type: 'number', label: 'Prix du produit(Pour compte professionnel)'}
+                    - { property: 'shCost', type: 'number', label: 'Prix de la livraison'}
+                    - { property: 'shTime', type: 'number', label: 'Temps de livraison estimé(en jours)'}
+                    - { property: 'tva', label: 'TVA'}
+                    - { property: 'nbreColis', label: 'Nombre de colis' }
+                    - { property: 'guaranted', label: 'Garantie' }
+                    - { property: 'fixation', label: 'Fixation' }
+                    - { property: 'reference', label: 'Référence du produit' }
+                    - { property: 'matiere', label: 'Matière' }
+                    - { property: 'contenance', label: 'Contenance' }
+                    - { property: 'motifUrne', label: "Motif de l'urne" }
+                    - { property: 'eligibleUrne', label: 'Urne éligible à' }
+                    - { property: 'typeGranit', label: 'Type de granit' }
+                    - { property: 'ratings', label: 'Description du produit pour le SEO' }
+                    - { property: 'granits', label : 'Granites'}
+                    - { property: 'granitTailored', label: 'Granites sur mesure'}
+                    - { property: 'description', type: 'text_editor' }
+                    - { property: 'view', label: 'Nombre de vues'}
+                    - { property: 'allowSeo', label: 'Activer le SEO'}
+                    - { property: 'title', label: "Titre pour l'onglet du navigateur et le SEO"}
+                    - { property: 'metakeys', label: 'Mot-clés pour le Seo'}
+                    - { property: 'metadesc', label: 'Description du produit pour le SEO' }
+                    - { property: 'granitPlaque', label: 'Granit Plaque' }
+                    - { property: 'eligible', label: 'EligibleUrne' }
+                    - { property: 'numberTextCustomize', label: 'Nombre de Texte personalisé' }
+                    - { property: 'fixxation', label: 'Fixation' }
+                    - { property: 'formPlaque', label: 'Forme de la plaque' }
+                    - { property: 'UrneMotif', label: 'Motif Urne' }
+                    - { property: 'colorProduct', label: 'Couleur du produit' }
+                    - { property: 'typeUrne', label: 'Type Urne' }
+                    - { property: 'themePlaque', label: 'Theme Plaque' }
+
+
+            edit:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom du produit'}
+                    - { property: 'photo', type: 'file_upload',label: 'Photo', type_options: { required: false }}
+                    - { property: 'catId', label: 'Catégories', type_options: { required: true }}
+                    - { property: 'subCatId', label: 'Sous Catégories', type_options: { required: true } }
+                    - { property: 'page', label: 'Description Détaillée'}
+                    - { property: 'status'}
+                    - { property: 'components', label: 'Composants'}
+                    - { property: 'needContact', label: 'Demander au client un contact conseiller'}
+                    - { property: 'color', type: 'text', label: 'Les Couleur disponible'}
+                    - { property: 'size', type: 'text', label: 'Les tailles du produits'}
+                    - { property: 'isPriceOff', label: 'Activer la promo sur produit'}
+                    - { property: 'pprice', type: 'number', label: 'Pourcentage de réduction'}
+                    - { property: 'cprice', type: 'number', label : 'Prix du produit'}
+                    - { property: 'pricepro', type: 'number', label: 'Prix du produit(Pour compte professionnel)'}
+                    - { property: 'shCost', type: 'number', label: 'Prix de la livraison'}
+                    - { property: 'shTime', type: 'number', label: 'Temps de livraison estimé(en jours)'}
+                    - { property: 'stock', label: 'Stock' }
+                    - { property: 'sale', label: 'Déja vendu' }
+                    - { property: 'tva', label: 'TVA'}
+                    - { property: 'nbreColis', label: 'Nombre de colis' }
+                    - { property: 'guaranted', label: 'Garantie' }
+                    - { property: 'fixation', label: 'Fixation' }
+                    - { property: 'reference', label: 'Référence du produit' }
+                    - { property: 'matiere', label: 'Matière' }
+                    - { property: 'contenance', label: 'Contenance' }
+                    - { property: 'motifUrne', label: "Motif de l'urne" }
+                    - { property: 'eligibleUrne', label: 'Urne éligible à' }
+                    - { property: 'typeGranit', label: 'Type de granit' }
+                    - { property: 'granits', label : 'Granites'}
+                    - { property: 'granitTailored', label: 'Granites sur mesure'}
+                    - { property: 'description', type: 'text_editor' }
+                    - { property: 'view', label: 'Nombre de vues'}
+                    - { property: 'allowSeo', label: 'Activer le SEO'}
+                    - { property: 'title', label: "Titre pour l'onglet du navigateur et le SEO"}
+                    - { property: 'metakeys', label: 'Mot-clés pour le Seo'}
+                    - { property: 'metadesc', label: 'Description du produit pour les moteurs de recherche' }
+                    - { property: 'granitPlaque', label: 'Granit Plaque' }
+                    - { property: 'eligible', label: 'EligibleUrne' }
+                    - { property: 'numberTextCustomize', label: 'Nombre de Texte personalisé' }
+                    - { property: 'fixxation', label: 'Fixation' }
+                    - { property: 'formPlaque', label: 'Forme de la plaque' }
+                    - { property: 'UrneMotif', label: 'Motif Urne' }
+                    - { property: 'colorProduct', label: 'Couleur du produit' }
+                    - { property: 'typeUrne', label: 'Type Urne' }
+                    - { property: 'themePlaque', label: 'Theme Plaque' }
+
+            list:
+                actions:
+                    - { name: 'show' }
+
+        Component:
+            class: App\Entity\Component
+            label: 'Composants'
+            form:
+                fields:
+                    - {property: 'name', label: 'Nom du composant'}
+            list:
+                actions:
+                    - { name: 'show' }
+
+        Order:
+            class: App\Entity\Order
+            label: 'Commandes'
+
+            list:
+                actions:
+                    - { name: 'show' }
+
+        Cart:
+            class: App\Entity\Cart
+            label: 'Paniers'
+
+            list:
+                actions:
+                    - { name: 'show' }
+                    - { name: 'voir_la_commande', type: 'route' }
+                    - { name: 'Telecharger_les_images', type: 'route'}
+            
+        Address:
+            class: App\Entity\Address
+            label: 'Adresses'
+
+
+        Granit:
+            class: App\Entity\Granit
+            label: 'Granites'
+            form:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom du produit'}
+                    - { property: 'photo', type: 'file_upload',label: 'Photo'}
+                    - { property: 'price', label: 'Prix'}
+                    - { property: 'isGravure', label: 'Pour Photogravure?'}
+                    - { property: 'pricepro', type: 'number', label: 'Prix du produit(Pour compte professionnel)'}
+                    - { property: 'tva', label: 'TVA'}
+                    - { property: 'granits', label: 'Catégories' }
+                    - { property: 'subcats', label: 'Sous Catégories' }
+                    - { property: 'steles', label: 'Stèles'}
+                    - { property: 'product', label: 'Produits'}
+
+            list:
+                actions:
+                    - { name: 'show' }
+
+            edit:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom du produit'}
+                    - { property: 'photo', type: 'file_upload',label: 'Photo', type_options: { required: false }}
+                    - { property: 'price', label: 'Prix'}
+                    - { property: 'pricepro', type: 'number', label: 'Prix du produit(Pour compte professionnel)'}
+                    - { property: 'tva', label: 'TVA'}
+                    - { property: 'subcats', label: 'Sous Catégories'}
+                    - { property: 'steles', label: 'Stèles'}
+                    - { property: 'product', label: 'Produits'}
+
+        Stele:
+            class: App\Entity\Stele
+            label: 'Stèles'
+            new:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom du produit'}
+                    - { property: 'photo', type: 'file_upload',label: 'Photo'}
+                    - { property: 'price', label: 'Prix'}
+                    - { property: 'pricepro', type: 'number', label: 'Prix du produit(Pour compte professionnel)'}
+                    - { property: 'tva', label: 'TVA'}
+                    - { property: 'granit', label: 'Granite' }
+
+            list:
+                actions:
+                    - { name: 'show' }
+
+
+            edit:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom du produit'}
+                    - { property: 'photo', type: 'file_upload',label: 'Photo', type_options: { required: false }}
+                    - { property: 'price', label: 'Prix'}
+                    - { property: 'pricepro', type: 'number', label: 'Prix du produit(Pour compte professionnel)'}
+                    - { property: 'tva', label: 'TVA'}
+                    - { property: 'granit', label: 'Granite' }
+
+        Motif:
+            class: App\Entity\Motif
+            label: 'Motifs'
+            form:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom du motif'}
+                    - { property: 'photo', type: 'file_upload',label: 'Photo', type_options: {multiple: true}}
+                    - { property: 'price', label: 'Prix'}
+                    - { property: 'createdAt', label: 'Créé le' }
+
+            list:
+                actions:
+                    - { name: 'show' }
+
+        Text:
+            class: App\Entity\Text
+            label: 'Textes'
+            form:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom'}
+                    - { property: 'font_family', label: 'Police'}
+
+            list:
+                actions:
+                    - { name: 'show' }
+
+        TextOrder:
+            class: App\Entity\TextOrder
+            label: 'Textes Plaque funéraire et autres'
+
+            list:
+                actions:
+                    - { name: 'show' }
+
+        Color:
+            class: App\Entity\Color
+            label: 'Motifs'
+            form:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom de la couleur'}
+                    - { property: 'value', label: 'Valeur(en anglais)'}
+            
+            list:
+                actions:
+                    - { name: 'show' }
+                    
+ 
+        Blog:
+            class: App\Entity\Blog
+            label: 'Blogs'
+            form:
+                fields:
+                    # ...
+                    - { property: 'title', label: 'Titre'}
+                    - { property: 'photo', type: 'file_upload', label: 'Image mise en avant'}
+                    - { property: 'photoAlt', label: "Description de l'image"}
+                    - { property: 'content', label: 'Contenu'}
+
+            list:
+                actions:
+                    - { name: 'show' }
+
+        Devis:
+            class: App\Entity\Devis
+            label: 'Devis'
+            edit:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom'}
+                    - { property: 'colis', label: 'Numéro du colis'}
+                    - { property: 'firstName', label: 'Prénoms'}
+                    - { property: 'email', label: "Email"}
+                    - { property: 'phone', label: 'Numéro de téléphone'}
+                    - { property: 'productId', label: 'Produit'}
+                    - { property: 'download', label: 'Téléchargement'}
+                    - { property: 'user', label: "Utilisateur"}
+                    - { property: 'pm', label: 'PM'}
+                    - { property: 'plan', label: "Plan d'abonnement"}
+                    - { property: 'subscription', label: 'ID subscription plan'}
+                    - { property: 'paymentMethod', label: "Methode de paiment"}
+                    - { property: 'cycle', label: 'Cycle de paiement'}
+                    - { property: 'isEnabled'}
+                    - { property: 'status'}
+                    - { property: 'firstFeePayed', label: "30% du montant payé"}
+                    - { property: 'secondFeePayed', label: "70% du montant payé"}
+                    - { property: 'otherFees', label: 'Frais supplémentaires'}
+                    - { property: 'discount', label: 'Réduction en %', type_options: { attr : {min: 0, max : 90} }}
+                    - { property: 'cycleTotal', label: "Cycle Total"}
+                    - { property: 'nextPaymentAt', label: 'Date du prochain paiement'}
+
+
+            list:
+                actions:
+                    - { name: 'show' }
+                    - { name: 'voir_le_devis', type: 'route' }
+                    
+
+        Config:
+            class: App\Entity\Config
+            label: 'Configurations'
+
+        Faq:
+            class: App\Entity\Faq
+            label: 'FAQ'
+
+        Horaire:
+            class: App\Entity\Horaire
+            label: 'Horaires'
+
+        Sepulture:
+            class: App\Entity\Sepulture
+            label: 'Sépultures'
+
+        EmailTemplate:
+            class: App\Entity\EmailTemplate
+            label: "Modèles d'emailing"
+            form:
+                fields:
+                    - { property: 'name', label: 'Nom'}
+                    - { property: 'slug', label: 'Slug'}
+                    - { property: 'content', label: 'Contenu'}
+
+        Page:
+            class: App\Entity\Page
+            label: 'Pages'
+            form:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom'}
+                    - { property: 'title', label: 'Titre de la page'}
+                    - { property: 'slug', label: 'Slug'}
+                    - { property: 'content', label: 'Contenu', type_options: { required: false }}
+                    - { property: 'displayOrder', label: "Ordre d'affichage"}
+
+        Slider:
+            class: App\Entity\Slider
+            label: 'Sliders'
+            new:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom du slider'}
+                    - { property: 'photo', type: 'file_upload',label: 'Photo'}
+                    - { property: 'title', label: 'Titre'}
+                    - { property: 'text', label: 'Texte'}
+                    - { property: 'Link', label: 'Lien' }
+                    - { property: 'button', label: 'Bouton'}
+                    - { property: 'titleColor', type: 'color', label: 'Les Couleurs du texte'}
+                    - { property: 'titleSize', type: 'text', label: 'Les tailles du produits'}
+                    - { property: 'textColor', type: 'color', label: 'Les Couleurs du texte'}
+                    - { property: 'sizeText', type: 'text', label: 'Les tailles du produits'}
+                    - { property: 'status', label: "Activer l'affichage"}
+
+            edit:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom du produit'}
+                    - { property: 'photo', type: 'file_upload',label: 'Photo', type_options: { required: false }}
+                    - { property: 'title', label: 'Titre'}
+                    - { property: 'text', label: 'Texte'}
+                    - { property: 'Link', label: 'Lien' }
+                    - { property: 'button', label: 'Bouton'}
+                    - { property: 'titleColor', type: 'color', label: 'Les Couleurs du texte'}
+                    - { property: 'titleSize', type: 'text', label: 'Les tailles du produits'}
+                    - { property: 'textColor', type: 'color', label: 'Les Couleurs du texte'}
+                    - { property: 'sizeText', type: 'text', label: 'Les tailles du produits'}
+                    - { property: 'status', label: "Activer l'affichage"}
+
+        Gallery:
+            class: App\Entity\Gallery
+            label: 'Galerie des produits'
+            new:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom'}
+                    - { property: 'photo', type: 'file_upload',label: 'Photo'}
+                    - { property: 'price', label: 'Prix'}
+                    - { property: 'pricepro', label: 'Prix Utilisateur Pro'}
+                    - { property: 'product', label: 'Produit'}
+                    - { property: 'granit', label: 'Granite'}
+                    - { property: 'productTailored', label: 'Produit(Pour granite sur mesure)'}
+                    - { property: 'productThreeDay', label: 'Produit(Pour granite disponible en 72h)'}
+                    - { property: 'fixation', label: 'Fixation' }
+                    - { property: 'stele', label: 'Stele' }
+                    - { property: 'metaData', label: 'MetaData' }
+
+            edit:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom '}
+                    - { property: 'photo', type: 'file_upload',label: 'Photo', type_options: { required: false }}
+                    - { property: 'price', label: 'Prix'}
+                    - { property: 'pricepro', label: 'Prix Utilisateur Pro'}
+                    - { property: 'product', label: 'Produit'}
+                    - { property: 'granit', label: 'Granite'}
+                    - { property: 'productTailored', label: 'Produit(Pour granite sur mesure)'}
+                    - { property: 'productThreeDay', label: 'Produit(Pour granite disponible en 72h)'}
+                    - { property: 'fixation', label: 'Fixation' }
+                    - { property: 'stele', label: 'Stele' }
+                    - { property: 'metaData', label: 'MetaData' }
+            list:
+                actions:
+                    - { name: 'show' }
+                    - { name: 'admin_gallery_duplicate', type: 'route' }
+
+        Testimonial:
+            class: App\Entity\Testimonial
+            label: 'Témoignages'
+            form:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom du client'}
+                    - { property: 'photo', type: 'file_upload',label: 'Photo'}
+                    - { property: 'location', label: 'Adresse de la cimetière'}
+                    - { property: 'cimetiere', label: 'Nom de la cimetière' }
+                    - { property: 'message', label: 'Message'}
+                    - { property: 'createdAt', label: 'Creé le' }
+                    - { property: 'updatedAt', label: 'Mettre à jour le' }
+
+        Campaign:
+            class: App\Entity\Campaign
+            label: 'Campagnes'
+            form:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom de la campagne'}
+                    - { property: 'template', label: "Modèle d'email", type_options: { required: true }}
+                    - { property: 'type', label: 'Type de content(valeurs possibles : regular, plaintext, absplit, rss, ou variate)'}
+                    - { property: 'subject', label: 'Objet' }
+                    - { property: 'replyTo', label: 'Adresse expéditeur' }
+                    - { property: 'fromName', label: 'Nom Expéditeur'}
+
+            list:
+                actions:
+                    - { name: 'campaign_send', type: 'route' }
+
+        Rating:
+            class: App\Entity\Rating
+            label: 'Rating'
+
+        Message:
+            class: App\Entity\Message
+            label: 'Messages'
+
+        Status:
+            class: App\Entity\Status
+            label: 'Status'
+
+        BookPdf:
+            class: App\Entity\BookPdf
+            label: 'Guides PDF'
+            form:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom'}
+                    - { property: 'file', type: 'file_upload', label: "Importer le fichier", type_options: { required: true }}
+
+        Guide:
+            class: App\Entity\Guide
+            label: 'Téléchargement des guides'
+        
+        ColorProduct:
+            class: App\Entity\ColorProduct
+            label: ''
+
+        MotifUrne:
+            class: App\Entity\MotifUrne
+            label: ''
+
+        TypeUrne:
+            class: App\Entity\TypeUrne
+            label: ''
+
+        FormPlaque:
+            class: App\Entity\FormPlaque
+            label: 'Téléchargement des guides'
+
+        Eligible:
+            class: App\Entity\Eligible
+            label: 'Urne éligible'
+
+        Fixation:
+            class: App\Entity\Fixation
+            label: 'Fixation'
+            new:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom'}
+                    #- { property: 'photo', type: 'file_upload', label: "Importer une photo", type_options: { required: true }}
+                    - { property: 'icon', type: 'file_upload', label: "Importer icone", type_options: { required: false }}
+            edit:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom'}
+                    #- { property: 'photo', type: 'file_upload', label: "Importer une photo", type_options: { required: false }}
+                    - { property: 'icon', type: 'file_upload', label: "Importer icone", type_options: { required: false }}
+
+        GranitPlaque:
+            class: App\Entity\GranitPlaque
+            label: 'Granite Plaque'
+            new:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom'}
+                    - { property: 'photo', type: 'file_upload', label: "Importer le fichier", type_options: { required: true }}
+            
+            edit:
+                fields:
+                    # ...
+                    - { property: 'name', label: 'Nom'}
+                    - { property: 'photo', type: 'file_upload', label: "Importer le fichier", type_options: { required: false }}
+
+        ThemePlaque:
+            class: App\Entity\ThemePlaque
+            label: 'Téléchargement des guides'
+
+        Active:
+            class: App\Entity\Active
+            label: 'Active'
+            form:
+
+        Cadre:
+            class: App\Entity\Cadre
+            label: 'Cadre'
+            form:
+                fields:
+                    - { property: 'name', label: 'Nom'}
+                    - { property: 'photo', type: 'file_upload', label: "Importer une photo"}
+                    - { property: 'price', label: 'Prix'}
+                    - { property: 'pricepro', label: 'Prix Utilisateur Pro'}
+                    - { property: 'height', label: 'hauteur'}
+                    - { property: 'width', label: 'Largeur'}
+                    - { property: 'isCircle', label: "c'est ronde"}
+                    - { property: 'ovale', label: 'Courbure'}
+                    - { property: 'isGravure', label: "C'est une gravure" }
+
+        MotifGallery:
+            class: App\Entity\MotifGallery
+            label: 'Motif Gallery'
+            new:
+                fields:
+                    # ... 
+                    - { property: 'name', label: 'Nom'}
+                    - { property: 'photo', type: 'file_upload', label: "Importer une photo"}
+                    - { property: 'metaData', label: "MetaData"}
+                    - { property: 'motif', label: "Motif"}
+                    - { property: 'price', label: 'Prix'}
+                    - { property: 'pricepro', label: 'Prix Utilisateur Pro'}
+
+            edit:
+                fields:
+                    # ... type_options: { required: false }
+                    - { property: 'name', label: 'Nom'}
+                    - { property: 'photo', type: 'file_upload', label: "Importer une photo", type_options: { required: false }}
+                    - { property: 'metaData', label: "MetaData"}
+                    - { property: 'motif', label: "Motif"}
+                    - { property: 'price', label: 'Prix'}
+                    - { property: 'pricepro', label: 'Prix Utilisateur Pro'}
+
+        MoreInfo:
+            class: App\Entity\MoreInfo
+            label: 'Informations Complémentaire Devis'
+            list:
+                actions:
+                    - { name: 'show' }
+
+    design:
+        form_theme:
+            - '@EasyAdmin/form/bootstrap_4.html.twig'
+        assets:
+            js:
+
+                - '/tinymce/tinymce.min.js'
+                - '/js/editor.js'
+                #- '/js/jquery.min.js'
+                #- '/js/semantic.min.js'
+                - '/js/gallery.js'
+                - '/js/motif-gallery.js'
+                - '/js/stele-gallery.js'
+                # ...
+
+        menu:
+            - 
+                label: 'Gestion des utilisateurs'
+                children:
+                    - { entity: 'User', label: 'Tous les utilisateurs' }
+                    - { entity: User, label: 'Entreprise', params: {dql_filter: "entity.type = '2'"}}
+                    - { entity: User, label: 'Particulier', params: {dql_filter: "entity.type = '1'"}}    
+            - 
+                label: 'Gestion des categories' 
+                children:
+                    - { entity: 'Category', label: 'Catégories' }
+                    - { entity: 'Subcategory', label: 'Sous catégories' }
+            - { entity: 'Component', label: 'Composants' }
+            - 
+                label: Gestion des produits
+                children:
+                    - { entity: 'Product', label: 'Produits' }
+                    - { entity: 'Granit', label: 'Granites' }
+                    - { entity: 'ColorProduct', label: "Couleur des produits" }
+                    - { entity: 'Eligible', label: "Eligible" }
+                    - { entity: 'Motif', label: "Motifs" }
+                    - { entity: 'MotifGallery', label: "Galerie motif" }
+                    - { entity: 'MotifUrne', label: "Motif de l'urne" }
+                    - { entity: 'TypeUrne', label: "Type de l'urne" }
+                    - { entity: 'GranitPlaque', label: "Granite(Plaques)" }
+                    - { entity: 'FormPlaque', label: "Forme des plaque" }
+                    - { entity: 'ThemePlaque', label: "Thème des plaques" }
+                    - { entity: 'Fixation', label: 'Fixation' }
+                    - { entity: 'Cadre', label: 'Cadre'}
+                    - { entity: 'TextOrder', label: 'Textes à visser'}
+                    
+            - { entity: 'Gallery', label: 'Galerie produits' }
+            - { entity: 'Address', label: 'Adresses' }
+            - { entity: 'Order', label: 'Commandes' }
+            - { entity: 'Cart', label: 'Paniers', icon: 'shopping' } 
+            - { entity: 'Devis', label: 'Devis' }
+            - { entity: 'MoreInfo', label: 'Informations Complémentaire Devis' }
+            - { entity: 'Config', label: 'Configuration' }
+            - 
+                label: 'Emailing'
+                children:
+                    - { entity: 'EmailTemplate', label: "Modèle d'email" }
+                    - { entity: 'Campaign', label: "Campagnes" }
+
+            - 
+                label: 'Avis'
+                children:
+                    - { entity: 'Rating', label: "Tous les avis" }
+                    - { entity: 'Rating', label: "Avis Vérifiés", params: {dql_filter: "entity.status = 1"}}
+                    - { entity: 'Rating', label: "En attente de vérification", params: {dql_filter: "entity.status = 0"}}
+
+            - { entity: 'Blog', label: 'Blogs' }
+            - { entity: 'Page', label: 'Pages' }
+            - 
+                label: 'Messagerie'
+                children:
+                    - { entity: 'Message', label: "Tous les messages" }
+                    - { label: "Discussions", route: 'message-admin' }
+            - 
+                label: 'Activer slider'
+                children:
+                    #- { entity: 'Status', label: 'Status' }
+                - { entity: 'Slider', label: "Bannière" }
+                - { entity: 'Active', label: "Activation" }
+            - 
+                label: 'Téléchargement des guides'
+                children:
+                    - { entity: 'BookPdf', label: "Guide PDF" }
+                    - { entity: 'Guide', label: "Téléchargements" }
+            - { entity: 'Testimonial', label: "Témoignages" }
+            
+

@@ -1,0 +1,205 @@
+{% extends '@!EasyAdmin/default/layout.html.twig' %}
+
+{% block title %}Hello UserDadhboardController!{% endblock %}
+
+{% set firstReceiver = null %}
+{% block main %}
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <div class="col-3"  style="max-height : 450px;">
+                <div class="row p-2 bg-white overflow-auto">
+                
+                {% for i, lm in lms %}
+                    {% if i == 0 %}
+                        {% set firstReceiver = lm.user.id %}
+                    {% endif %}
+                    <div class="col-12 p-2 frfu-user-chat" data-id="{{lm.user.id}}">
+                        <div class="row">
+                            <div class="col-3 p-2">
+                                <div class="">
+                                    {% if lm.user.photo %}
+                                        <img class="img-fluid" src="{{'/'~link_image(lm.user.photo)}}">
+                                    {% else %}
+                                        <img class="img-fluid" src="/images/pico/profile-icon-28.png">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-9 p-2">
+                                <div class="p-1">
+                                    <span>{{lm.user.firstName~' '~lm.user.name}}</span>
+                                </div>
+                                <div class="p-1">
+                                    <span>{{lm.message.content|striptags|easyadmin_truncate(25)|raw}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {#<div class="{{(msg.sender.id == app.user.id) ? 'col-12 p-2 d-flex justify-content-end' : 'col-12 p-2 d-flex justify-content-start'}}">
+                        <div class="{{(msg.sender.id == app.user.id) ? 'col-6 p-2' : 'col-6 p-2'}}">
+                            <div class="{{(msg.sender.id == app.user.id) ? 'bg-primary rounded text-white h-100 w-auto' : 'bg-light rounded text-secondary  h-100 w-auto'}}">
+                                {% if msg.photo %}
+                                <img class="img-fluid" src="{{'/'~link_image(msg.photo)}}">
+                                {% endif %}
+                                <p class="d-flex justify-content-end">
+                                    <span>{{msg.content}}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>#}
+                {% endfor %}
+                </div>
+            </div>
+            
+            <div class="col-8 p-2" style="max-height : 450px;">
+                
+                <div id="frfu-inbox-message" class="row h-75 p-2 overflow-auto">
+                {% for i, msg in messages %}
+                    
+                    <div class="{{(msg.sender.id == app.user.id) ? 'col-12 p-2 d-flex justify-content-end' : 'col-12 p-2 d-flex justify-content-start'}}">
+                        <div class="{{(msg.sender.id == app.user.id) ? 'col-6 p-2' : 'col-6 p-2'}}">
+                            <div class="{{(msg.sender.id == app.user.id) ? 'bg-primary rounded text-white h-100 w-auto' : 'bg-light rounded  h-100 w-auto'}}">
+                                {% if msg.photo %}
+                                <img class="img-fluid" src="{{'/'~link_image(msg.photo)}}">
+                                {% endif %}
+                                <p class="{{(msg.sender.id == app.user.id) ? 'd-flex justify-content-end' : 'd-flex justify-content-start'}}">
+                                    <span>{{msg.content}}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+                <div class="row" method="POST" enctype="multipart/form-data">
+                    <form id="message_form" class="col-12" action="{{url('message-admin-send')}}" method="POST" enctype="multipart/form-data">
+                        <div class="row">
+                            {{form_widget(form._token)}}
+                            <div class="col-1">
+                                <span id="frfu-message-choose-picture" class="text-primary m-2"><i class="far fa-file-image"></i></span>
+                            </div>
+                            <div class="col-8">
+                                {{form_widget(form.content, {attr: {'class' : 'form-control col-10 d-flex', 'rows': '1'}})}}
+                                {{form_widget(form.photo, {attr: {'class' : 'form-control d-none'}})}}
+                                {{form_widget(form.sender, {attr: {'class' : 'form-control d-none'}})}}
+                                {{form_widget(form.receiver, {attr: {'class' : 'form-control d-none'}})}}
+                            </div>
+                            <div class="col-1">
+                                <span id="frfu-message-send" class="text-danger m-2 w-100"><i class="fas fa-paper-plane"></i></span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <input id="frfu-current-receiver" type="hidden" value="{{firstReceiver}}">
+        <input id="frfu-current-offset" type="hidden" value="{{firstReceiver ? '10' : '0'}}">
+        {#<div class="row">
+            <div class="col-12 p-2 mt-2">
+                <span class="ml-auto mr-auto h3 col-12 text-center">INFORMATIONS COMPLETES</span>
+            </div>
+            <div class="col-12 p-2 bg-light">
+               
+            </div>
+        </div>#}
+    </div>
+{% endblock %}
+
+{% block body_javascript %}
+    <script>
+        $(function(){
+
+            var processing = false;
+            var currentReceiver = Number({{firstReceiver}});
+            var currentOffset = Number({{firstReceiver ? '10' : '0'}});
+
+            console.log(currentReceiver);
+            console.log(currentOffset);
+
+            $('#frfu-message-choose-picture').click(function(){
+                $('#message_photo').trigger('click');
+            });
+
+            $('#frfu-message-send').click(function(){
+                $('#message_form').trigger('submit');
+            });
+
+            $('#message_form').submit(function(e){
+                e.preventDefault();
+                var form = new FormData($("#message_form")[0]);
+                /*var photo = $('#message_photo')[0].files[0];
+                var content = $('#message_content').val();
+                var sender = $('#message_sender').val();
+                var token = $('#message__token').val();
+                form.append('message[photo]', photo); 
+                form.append('message[content]', content); 
+                form.append('message[_token]', token); 
+                form.append('message[sender]', sender);*/
+                
+                $.ajax({
+                    url: "{{url('message-admin-send')}}",
+                    type: 'POST',
+                    data: form,
+                    enctype: 'multipart/form-data',
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    success: function(res){
+                        console.log(res);
+                    },
+                    error: function(error){
+                        console.log(error);
+                    }
+                });
+            });
+
+            $('body').delegate('.frfu-user-chat', 'click', function(){
+                var id = $(this).attr('data-id');
+                currentReceiver = Number(id);
+                $('#message_receiver').val(id);
+                currentOffset = 10 
+                //frfu-current-receiver
+                processing = true;
+                $.ajax({
+                    url: '/admin/message/receiver/'+id,
+                    type: 'get',
+                    success: function(response){
+                        $('#frfu-inbox-message').children().remove();
+                        $('#frfu-inbox-message').append(response);
+                        currentOffset = 10; 
+                        processing = false;
+                    },
+                    error: function(){
+                        currentOffset = 0; 
+                        processing = false;
+                    }
+                });
+            });
+
+            $('#frfu-inbox-message').scroll(function(){
+                var offset = currentOffset === 0 ? 0 : currentOffset;
+                
+                var first = true;
+                if(!processing){
+                    processing = true;
+                    $.ajax({
+                        url: '/admin/message/receiver/'+currentReceiver+'?offset='+offset,
+                        type: 'get',
+                        success: function(response){
+                            currentOffset = offset+10;
+                            $('#frfu-inbox-message').prepend(response);
+                            $('#frfu-current-offset').val(currentOffset);
+                            processing = false;
+                        },
+                        error: function(){
+                            var offset = currentOffset === 0 ? 0 : currentOffset;
+                            processing = true;
+                            $('.frfu-user-chat[data-id='+$('#message_receiver').val()+']').trigger('click');
+                            processing = false;
+                        }
+                    });
+                } 
+                
+            });
+        });
+    </script>
+{% endblock %}
+

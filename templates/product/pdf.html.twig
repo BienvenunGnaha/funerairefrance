@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        {% include "includes/style-pdf.html.twig" %}
+    </head>
+    <body class="container">
+        <header class="row">
+            <div class="col-5">
+                <img style="width: auto; height: 80px;" src="https://funerairefrance.com/images/pico/logo.jpeg">
+            </div>
+            <div class="col-7 float-right">
+                <span class="h5">Devis Articles personnalisés | Funeraire France</span>
+            </div>
+        </header>
+        <section class="row mt-3">
+            <div class="col-12 p-2 bg-secondary mt-3">
+                <span class="text-white">Devis # {{ deviss.id }}</span>
+                <span class="text-white">Date : {{ "now"|date("m/d/Y") }}</span>
+                <span class="text-white float-right">Votre conseiller</span>
+            </div>
+        </section>
+        <section class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Informations client</th>
+                        <th scope="col">Informations suplémentaires</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row" >{{deviss.firstName~' '~deviss.name}}</th>
+                        <td>Nom de la cimetière : </td>
+                    </tr>
+                    <tr>
+                        <th scope="row" >Email : {{deviss.email}}</th>
+                        <td>Code postal : </td>
+                    </tr>
+                    <tr>
+                        <th scope="row" >Tel : {{deviss.phone}}</th>
+                        <td>Ville : </td>
+                    </tr>
+                    <tr>
+                        <th scope="row" ></th>
+                        <td>Emplacement de la sépulture : </td>
+                    </tr>
+                    <tr>
+                        <th scope="row" ></th>
+                        <td>Type de la sépulture : </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="row mt-2">
+            <div class="col-12 p-2 bg-light mt-3">
+                <span class="h5 ">Informations complémentaires</span>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col-12 p-2 bg-light">
+                <div class="row" style="height: 60px;">
+                    
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="row">
+            
+            
+            <div class="col-12 mt-3 mb-3">
+                <div class="row">
+                    <table class="table table-striped">
+                        {% set isPro = false %}
+                        {% set tax_label = ' Prix(TTC) ' %}
+                        {% if app.user %}
+                            {% if app.user.type and app.user.type.id == 2 %}
+                                {% set isPro = true %}
+                                {% set tax_label = ' Prix(HT) ' %}
+                            {% endif %}
+                        {% endif %}
+
+                        <thead>
+                            <tr>
+                                <th scope="col">Produits( {{deviss.productId.name}} )</th>
+                                <th scope="col">Réference</th>
+                                <th scope="col">Prix unitaire {{isPro ? '(HT)' : '(TTC)'}}</th>
+                                <th scope="col">Quantité</th>
+                                <th scope="col">Sous total {{isPro ? '(HT)' : '(TTC)'}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {% for details in devis.details %}
+                                <tr>
+                                    <th scope="row" >{{details.label}}</th>
+                                    <td>{{deviss.productId.reference}}</td>
+                                    <td>{{details.price~' € '}}</td>
+                                    <td>1</td>
+                                    <td>{{details.price~' € '}}</td>
+                                </tr>
+                            {% endfor %}
+                            {% if deviss.otherFees != null and deviss.discount != null %}
+                                <tr>
+                                    <th scope="row" >Frais suplémentaires(Livraison, installation, etc....)</th>
+                                    <td>Autres frais</td>
+                                    <td>{{deviss.otherFees~' € '}}</td>
+                                    <td>1</td>
+                                    <td>{{deviss.otherFees~' € '}}</td>
+                                </tr>
+
+                                {% if deviss.discount > 0 %}
+                                    <tr>
+                                        <th scope="row" >Réduction( {{deviss.discount~'%'}} )</th>
+                                        <td>Remise sur prix</td>
+                                        <td>{{devis.discount~' € '}}</td>
+                                        <td>1</td>
+                                        <td>{{devis.discount~' € '}}</td>
+                                        
+                                    </tr>
+                                {% endif %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row mt-2">
+                    {% if isPro %}
+                        <div>
+                            <span>Total (HT): </span><span>{{devis.totalHT~' €'}}</span>
+                        </div>
+                        <div>
+                            <span>Total (TTC): </span><span>{{devis.total~' €'}}</span>
+                        </div>
+                        {% else %}
+                            <div>
+                                <span>Total (TTC): </span><span>{{devis.total~' €'}}</span>
+                            </div>
+                    {% endif %}
+                </div>
+                <div class="row mt-2 mb-2">
+                    <img src="{{svg}}"/>
+            
+                    {% for img in images %}
+                        <img src="{{img}}">
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        <footer class="row">
+            <p class="text-secondary">Les informations collectées sont nécessaires à la société France-Tombale pour traiter votre demande.
+Elles sont enregistrées dans notre fichier clients et peuvent donner lieu à l’exercice du droit d’accès et de rectification auprès de notre service clientèle.
+En aucun cas, vos données ne sont utilisées ou communiquées à des sociétés partenaires de France-Tombale, à des fins de prospection commerciale.
+Le présent document est établi selon les tarifs en vigueur à sa date d’établissement et restent valables 45 jours.</p>
+        </footer>
+              
+    </body>
+</html>
+
+

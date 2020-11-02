@@ -1,0 +1,66 @@
+a{
+    text-decoration: none !important;
+}
+
+.frfu-submenu{
+
+    padding-top: 10px !important;
+    padding-right: 10px !important;
+    padding-left: 10px !important;
+    width: 100%;
+    min-height: 130px;
+    position: absolute;
+    z-index: 30;
+    display: none;
+}
+
+.frfu-submenu div.container-fluid{
+    border-radius: 5px;
+    -webkit-box-shadow: 5px 7px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 5px 7px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 5px 7px 5px 0px rgba(0,0,0,0.75);
+}
+
+nav.nav a{
+    height: 100%;
+    color: black;
+}
+
+nav.nav{
+    color: black;
+    background: linear-gradient(135deg, rgba(226,226,226,1) 0%, rgba(219,219,219,1) 50%, rgba(209,209,209,1) 51%, rgba(254,254,254,1) 100%);
+}
+
+
+.widget-top{
+    background-color: rgb(220,204,175);
+}
+
+.widget-top-info{
+
+}
+
+@media screen and (max-width: 965px){
+    .desktop-header{
+        display: none;
+    }
+
+    .mobile-header{
+        display: block;
+    }
+}
+
+@media screen and (min-width: 966px){
+    .desktop-header{
+        display: block;
+    }
+
+    .mobile-header{
+        display: none;
+    }
+
+    nav.nav a{
+        display: block;
+        border-bottom: 5px blue;
+    }
+}

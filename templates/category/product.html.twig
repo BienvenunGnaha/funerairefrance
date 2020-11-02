@@ -1,0 +1,28 @@
+<div class="container">
+    <div class="row">
+        <div class="col-lg-10 col-md-12 ml-auto mr-auto d-flex justify-content-center p-2">
+            <img class="img-fluid" src="{{'/'~link_image(prod.photo)}}">
+        </div>
+        <div class="col-11 ml-auto mr-auto">
+            <div class="row">
+                <div class="col-12 m-3 d-flex justify-content-center">
+                    {% set ini_price = prod.cprice %}
+                    {% if app.user %}
+                        {% if app.user.type %}
+                            {% if app.user.type.id == 2 %}
+                                {% set ini_price = prod.pricepro %}
+                            {% endif %}
+                        {% endif %}       
+                    {% endif %}
+                    <span class="h2">{{ini_price~' €'}}</span>
+                </div>
+                <div class="col-12 mt-3 mb-3 h3">
+                    Description de l'article
+                </div>
+                <div class="col-12 p-2">
+                    {{prod.description|raw}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

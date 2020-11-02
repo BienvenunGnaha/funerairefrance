@@ -1,0 +1,1241 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{prod.name}} , {{prod.catId.name}} | Personnalisation de produit{% endblock %}
+
+{% block stylesheets %}
+        <style>
+            .stepwizard-step p {
+                margin-top: 0px;
+                color:#666;
+            }
+            .stepwizard-row {
+                display: table-row;
+            }
+            .stepwizard {
+                display: table;
+                width: 100%;
+                position: relative;
+            }
+            .stepwizard-step button[disabled] {
+                /*opacity: 1 !important;
+                filter: alpha(opacity=100) !important;*/
+            }
+            .stepwizard .btn.disabled, .stepwizard .btn[disabled], .stepwizard fieldset[disabled] .btn {
+                opacity:1 !important;
+                color:#bbb;
+            }
+            .stepwizard-row:before {
+                top: 14px;
+                bottom: 0;
+                position: absolute;
+                content:" ";
+                width: 100%;
+                height: 1px;
+                background-color: #ccc;
+                z-index: 0;
+            }
+            .stepwizard-step {
+                display: table-cell;
+                text-align: center;
+                position: relative;
+            }
+            .btn-circle {
+                width: 30px;
+                height: 30px;
+                text-align: center;
+                padding: 6px 0;
+                font-size: 12px;
+                line-height: 1.428571429;
+                border-radius: 15px;
+            }
+
+            .border-choice{
+                border: 2px solid black !important;
+            }
+
+        </style>  
+{% endblock %}
+
+{% block body %}
+
+<div class="container-fluid">
+  <div class="row">
+        <div class="col-12 p-2 ">
+            <div class="h6 mt-3 mb-3 text-secondary"> <a class="text-secondary" href="/">Acceuil</a><a href="{{prod.catId ? url("category_product", {"id" : prod.catId.id}) : '' }}" class="text-secondary">{{prod.catId ? ' / '~prod.catId.name|capitalize : ''}}</a> <a href="{{prod.subCatId ? url('subcat-product', {'id' : prod.subCatId.id}) : '' }}" class="text-secondary">{{prod.subCatId ? ' / '~prod.subCatId.name|capitalize : ''}}</a> <a>{{prod ? ' / '~prod.name|capitalize : ''}}</a> </div> 
+        </div>
+        <div class="col-12 ui steps">
+                <div class="active step" data-target="#step-1">
+                    <span class="btn btn-success btn-circle">1</span>
+                    <div class="content">
+                    <div class="h6">Choix du granit</div>
+                    </div>
+                </div>
+                <div class="step disabled" data-target="#step-2">
+                   <span class="btn btn-default btn-circle disabled">2</span>
+                    <div class="content">
+                    <div class="h6">Motif de la stèle</div>
+                    </div>
+                </div>
+                <div class="step disabled" data-target="#step-3">
+                    <span class="btn btn-default btn-circle disabled">3</span>
+                    <div class="content">
+                    <div class="h6">Texte à graver</div>
+                    </div>
+                </div>
+                <div class="step disabled" data-target="#step-4">
+                    <span class="btn btn-default btn-circle disabled">4</span>
+                    <div class="content">
+                    <div class="h6">Recevoir mon devis</div>
+                    </div>
+                </div>
+                <div class="step disabled" data-target="#step-5">
+                    <span class="btn btn-default btn-circle disabled">5</span>
+                    <div class="content">
+                    <div class="h6">Mon conseiller</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row justify-content-start">
+        <div id="frfu-previous-step" class="m-3 d-none">
+            <span class="text-secondary text-underline">Etape Précédente</span>
+        </div>
+        <div div id="frfu-next-step" class="m-3 d-none">
+            <span class="text-secondary text-underline">Etape Suivante</span>
+        </div>
+  </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        {% set ini_price = prod.cprice %}
+        {% set preload = [] %}
+        {% if app.user %}
+        {% if app.user.type %}
+            {% if app.user.type.id == 2 %}
+                {% set ini_price = prod.pricepro %}
+            {% endif %}
+        {% endif %}
+        {% endif %}
+        <div class="col-12">
+                <div class="row">
+                    <div id="frfu-resume-and-canvas" class="col-6 border-right"> 
+                        <div id="canvas-block" class="d-none">
+                            <canvas data-url="{{'/'~link_image(prod.photo)}}" id="frfu-content-canvas" class="upper-canvas canvas" width="500" height="500" style="position: absolute; width: 500px; height: 500px; left: 0px; top: 0px; user-select: none; cursor: default;"></canvas>
+                        </div>
+                        <div id="canvas-granite-block">
+                            <canvas data-url="{{'/'~link_image(prod.photo)}}" id="frfu-content-granite-canvas" width="500" height="500" class="upper-canvas canvas" style="position: absolute; width: 500px; height: 500px; left: 0px; top: 0px; user-select: none; cursor: default;"></canvas>
+                        </div> 
+                        
+                        <div  class="p-2">
+                            <div>
+                                <span class="mr-2">Total : </span><span class="frfu-custom-total-price" class="ml-2">{{ini_price}}</span><span>€</span>
+                            </div>
+                            <div class="frfu-pl-custom-details">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 setup-content" id="step-1">
+                        <div class="row justify-content-center m-2">
+                            <div id="granit-msg" class="text-danger p-3 border border-danger d-none">Veuillez choisir un granite</div><br>
+                        </div>
+                        <div class="row">
+                            {% for gallery in prod.galleries %}
+                                {% set photo_granit = link_image(gallery.granit.photo) %}
+                                {% set preload = preload|merge([photo_granit, '/'~link_image(gallery.photo)]) %}
+                                <div class="col-4 border">
+                                    {% set ini_gprice = gallery.price %}
+                                    {% if app.user %}
+                                        {% if app.user.type %}
+                                            {% if app.user.type.id == 2 %}
+                                                {% set ini_gprice = gallery.pricepro %}
+                                            {% endif %}
+
+                                        {% endif %}
+                                    {% endif %}
+                                    <img class="col-12 img-granit" src="{{"/"~photo_granit}}" data-id="{{gallery.granit.id}}" data-gallery-id="{{gallery.id}}" data-price="{{ini_gprice}}" data-label="Granite" data-url="{{'/'~link_image(gallery.photo)}}">
+                                    <div class="w-100 d-flex justify-content-center"><span></span>{{gallery.granit.name}}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="row w-100 p-2">
+                            
+                            <div class="ml-auto mr-auto">
+                            <button type="button" class="btn action-primary next-step" data-msg="#granit-msg" data-id="#granit_choose" data-next="#step-2"><span class="text-bold">Suivant <i class="fas fa-arrow-right"></i></span></button>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <div class="col-6 setup-content" id="step-2">
+                        <div class="row justify-content-center m-2">
+                            <div id="stele-msg" class="text-danger p-3 border border-danger d-none">Veuillez choisir un motif de la sèle</div><br>
+                        </div>
+                        <div class="row">
+                            {% for granit in prod.galleries %}
+
+                                {% set steles = decode_meta(granit.metaData) %}
+
+                                
+                                {% for stele in steles %}
+                                    {% if stele.id is not defined %}
+                                        {% set photo_stele = stele.file %}
+                                        {% set preload = preload|merge([photo_stele]) %}
+                                        {% set ini_sprice = stele.price %}
+                                        {% if app.user %}
+                                            {% if app.user.type %}
+                                                {% if app.user.type.id == 2 %}
+                                                    {% set ini_sprice = stele.pricepro %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+                                        <div class="col-4 border">
+                                            <img class="col-12 img-stele" src="{{photo_stele}}" data-id="{{granit.id}}" data-id-granit="{{granit.granit.id}}" data-price="{{ini_sprice}}" data-label="Granite">
+                                            <div class="w-100 d-flex justify-content-center"><span></span>{{stele.name}}</div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                        <div class="row w-100 p-2">
+                            <div class="ml-auto mr-auto">
+                            <button type="button" class="btn action-primary next-step" data-msg="#stele-msg" data-id="#stele_choose" data-next="#step-3"><span class="text-bold">Suivant <i class="fas fa-arrow-right"></i></span></button>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <div class="col-6 setup-content" id="step-3">
+                        <div class="col-12 text-center mb-2">
+                            Choississez la typographie du texte à graver
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-11">
+                                <div class="row border rounded bg-light">
+                                    {% for text in texts %}
+                                        <div class="col-6 p-2 text-center frfu-custom-font-family" style="{{text.fontFamily}}" style="height: 70px;">
+                                            {{text.name}}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div> 
+                        </div>
+
+                        <div class="col-12 text-center mt-2 mb-2">
+                            Choississez la couleur  du texte à graver
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-11">
+                                <div class="row border rounded bg-light">
+                                    {% for color in colors %}
+                                        <div class="col-6 p-2  d-flex justify-content-center" style="height: 70px;">
+                                            {% if color.value == 'black' %} 
+                                                <span class="text-white w-100 text-center frfu-custom-color" style="{{'background-color: '~color.value~';'}}">{{color.name}}</span>
+                                                {% else %}
+                                                <span class="text-dark w-100 text-center frfu-custom-color" style="{{'background-color: '~color.value~';'}}">{{color.name}}</span>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div> 
+                        </div>
+
+                        {#<div class="row mt-2">
+
+                            <select id="frfu-select-field-motif" class="col-12" name="frfu-select-field-motif">
+                                <option class="">Selectionner un motif</option>
+                                {% for motif in motifs %}
+                                <option value="{{motif.id}}" data-id="{{'#motif-selected-'~motif.id}}">{{motif.name}}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="col-12 d-flex justify-content-center mt-2">
+                                {% for motif in motifs %}
+                                  <div class="row motif-selected" id="{{'motif-selected-'~motif.id}}">
+                                    {% for photo in motif.photo %}
+                                        {% set photo = link_image(photo) %}
+                                        <div class="col-3 border">
+                                            <img class="col-12 motif-image" src="{{"/"~photo}}" data-price="{{motif.price}}">
+                                        </div>
+                                    {% endfor %}
+                                  </div> 
+                                {% endfor %}
+                            </div>  
+                        </div>
+
+                        <div class="row mt-2 mb-2">
+                            <div class="col-12">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroupFileAddon01"><i class="fas fa-file-upload"></i></span>
+                                    </div>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="frfu-upload-custom-img" name="custom-img" accept=".png, .jpg, .jpeg" data-upload-url="{{url('product-upload-custom-img')}}"
+                                        data-price="{{getConfig('custom_motif_img').value}}" aria-describedby="inputGroupFileAddon01">
+                                        <label class="custom-file-label" for="inputGroupFile01">Importer un motif personnalisé</label>
+                                    </div>
+                                </div>
+                                <img id="frfu-custom-img" class="ml-auto mr-auto" src="" height="100">
+                            </div>
+                        </div>#}
+
+                        <div class="row m-2 border rounded">
+                            <div id="frfu-add-remove-custom-text" class="col-12">
+                                
+                            </div>
+                            <div class="col-12 d-flex justify-content-start">
+                                <input id="frfu-current-number-custom-text-field" type="hidden" value="0">
+                                <span id="frfu-add-custom-text-element" class="text-underline"><i class="fas fa-plus"></i>Ajouter un texte supplémentaire</span>
+                            </div>  
+                        </div>
+
+
+                        <div class="row w-100 p-2 d-flex justify-content-center">
+                            {#<div id="granit-msg" class="text-danger d-none">Veuillez choisir un granite</div>#}
+                            <div>
+                            <button type="button" class="btn action-primary next-step" data-msg="#granit-msg" data-id="#stele_choose_text" data-next="#step-4"><span class="text-bold">Suivant <i class="fas fa-arrow-right"></i></span></button>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <div class="col-6 setup-content" id="step-4">
+
+                        <div class="row h6">
+                        Recevoir mon devis
+                        </div>
+                        <div class="row">
+                            <div class="col-11 ml-auto mr-auto p-2">
+                                <div class="row">
+                                    <div class="col-7  d-flex justify-content-start">
+                                        Informations de contact
+                                    </div>
+                                    <div class="col-5 d-flex justify-content-end text-warning">
+                                        * Informations obligatoires
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-11 ml-auto mr-auto border bg-light p-2">
+                                <div class="row">
+                                    <div class="col-12">
+                                        RECEVEZ IMMÉDIATEMENT ET GRATUITEMENT VOTRE DEVIS PAR EMAIL
+                                    </div>
+                                    <div class="col-12">
+                                        Nous vous envoyons immédiatement un devis qui reprend toutes les options sélectionnées et qui vous indique un prix transparent et détaillé du monument et de la pose. Vous recevrez aussi les photos de votre monument personnalisé.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-11 ml-auto mr-auto">
+                                <form id="devis-form" action="{{url('product-customize', {'id' : prod.id})}}" method="POST">
+                                    <div class="form-row">
+                                    {{ form_widget(formDevis._token, {'attr': {'class': 'form-control'}}) }}
+                                        <div class="form-group col-md-6">
+                                            {{ form_label(formDevis.firstName, 'Prénoms') }}
+                                            {{ form_widget(formDevis.firstName, {'attr': {'class': 'form-control', 'type': 'text', 'id' : 'devis_firstName'}}) }}
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            {{ form_label(formDevis.name, 'Nom') }}
+                                            {{ form_widget(formDevis.name, {'attr': {'class': 'form-control', 'type': 'text', 'id' : 'devis_name'}}) }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                    {{ form_label(formDevis.email, 'Adresse email') }}
+                                    {{ form_widget(formDevis.email, {'attr': {'class': 'form-control', 'type': 'email', 'id' : 'devis_email'}}) }}
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            {{ form_label(formDevis.phone, 'Numero de Téléphone') }}
+                                            {{ form_widget(formDevis.phone, {'attr': {'class': 'form-control', 'type': 'phone', 'id' : 'devis_phone'}}) }}
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="granit_choose" name="devis[granit]">
+                                    <input type="hidden" id="devis_total" name="devis[total]">
+                                    <input type="hidden" id="devis_svg" name="devis[svg]">
+                                    <input type="hidden" id="devis_photo" name="devis[photo]">
+                                    
+                                    <input type="hidden" id="devis_priceText" name="devis[priceText]" type="number" value="0">
+                                    <input type="hidden" id="devis_priceImage" name="devis[priceImage]" type="number" value="0">
+                                    <textarea class="d-none" id="devis_metaData" name="devis[metaData]">{}</textarea>
+                                    <input type="hidden" id="devis_productId" name="devis[productId]" value="{{prod.id}}">
+                                    {{ form_widget(formDevis.user, {'attr': {'class': 'form-control d-none'}}) }}
+                                    {{ form_widget(formDevis.gallery, {'attr': {'class': 'form-control d-none'}}) }}
+                                    <span id="frfu-submit-devis" class="btn btn-dark">Envoyer</span>
+                                </form>
+                                    <input type="hidden" id="stele_choose" name="devisstele">
+                                <button id="pass-step-5" type="button" class="btn action-primary next-step d-none" data-id="#stele_choose_text" data-next="#step-5"><span class="text-bold">Suivant <i class="fas fa-arrow-right"></i></span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        
+        <div class="col-12 setup-content" id="step-5">
+                <div class="row">
+                    <div class="col-lg-5 col-md-5 col-sm-12 border-right">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <img class="img-fluid" src="/images/pico/jean_dumoulin.png">
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-12 mb-2">
+                                        <span class="h3 text-secondary">Jean</span>
+                                    </div>
+                                    <div class="col-12">
+                                        <ul class="list-unstyled">
+                                            <li><i class="fas fa-check text-success"></i><span class="text-secondary">14 ans d’expérience</span></li>
+                                            <li><i class="fas fa-check text-success"></i><span class="text-secondary">1500 demandes traitées</span></li>
+                                            <li><i class="fas fa-check text-success"></i><span class="text-secondary">98% de clients satisfaits</span></li>
+                                            <li><i class="fas fa-check text-success"></i><span class="text-secondary">Compréhensif et à l’écoute</span></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <span class="h3 text-secondary">Quel est le rôle du conseiller ?</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <img class="img-fluid" src="/images/pico/conseiller_verification.png">
+                                <div class=""><p>Vérifie tous les éléments techniques</p></div>
+                            </div>
+                            <div class="col-md-6">
+                                <img class="img-fluid" src="/images/pico/conseiller_supervision.png">
+                                <div class=""><p>Supervise la fabrication et la pose du monument</p></div>
+                            </div>
+                            <div class="col-md-6">
+                                <img class="img-fluid" src="/images/pico/conseiller_reponse.png">
+                                <div class=""><p>Répond à toutes vos questions</p></div>
+                            </div>
+                            <div class="col-md-6">
+                                <img class="img-fluid" src="/images/pico/conseiller_accompagnement.png">
+                                <div class=""><p>Vous accompagne tout au long du projet</p></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-7 col-md-7 col-sm-12">
+                       <div class="row">
+                            <div class="col-12">
+                                Informations supplémentaires
+                            </div>
+                        </div>
+
+                        <form class="row" action="{{url('product-more-info')}}" method="POST" enctype="multipart/form-data">
+                            {{ form_widget(formMoreInfo._token, {'attr': {'class': 'form-control'}}) }}
+                            <div class="col-11 ml-auto mr-auto">
+                                <div class="col-12">Quand souhaitez-vous être rappelé ?</div>
+                                <div class="col-lg-6 col-md-12 col-sm-12 d-flex">
+                                    <div class="form-group">
+                                        <input class="form-control" type="date" id="more_info_callAt" name="more_info[callAt]">
+                                    </div>
+                                    <div class="p-2"><i class="far fa-calendar-alt"></i></div>
+                                    <div class="form-group">
+                                        {{ form_widget(formMoreInfo.horaire, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-12 col-sm-12">
+                                    Votre conseiller vous rappelle à l’heure choisie pour discuter de votre projet.
+                                </div>
+                            </div>
+
+                            <div class="col-11 border bg-light ml-auto mr-auto">
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                        {{ form_label(formMoreInfo.zip, 'Code Postal') }}
+                                        {{ form_widget(formMoreInfo.zip, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        {{ form_label(formMoreInfo.city, 'Ville') }}
+                                        {{ form_widget(formMoreInfo.city, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        {{ form_label(formMoreInfo.nameCimetiere, 'Nom de la cimetière') }}
+                                        {{ form_widget(formMoreInfo.nameCimetiere, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        {{ form_label(formMoreInfo.sepulture, 'Type de sépulture') }}
+                                        {{ form_widget(formMoreInfo.sepulture, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        {{ form_label(formMoreInfo.emplacement, 'Emplacement de la sépulture') }}
+                                        {{ form_widget(formMoreInfo.emplacement, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                    <div class="col-12">
+                                        {{ form_label(formMoreInfo.concession, 'Numéro de la concession') }}
+                                        {{ form_widget(formMoreInfo.concession, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-12 border-right">
+                                        {{ form_label(formMoreInfo.acteConcession, 'Importer votre acte de concession') }}
+                                        {{ form_widget(formMoreInfo.acteConcession, {'attr': {'class': 'form-control'}}) }}
+                                        <div class="text-muted">Extensions autorisées : pdf, doc, docx, jpg, jpeg ,png</div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        {{ form_label(formMoreInfo.photoConcession, 'Importer des photos de la concession') }}
+                                        {{ form_widget(formMoreInfo.photoConcession, {'attr': {'class': 'form-control', 'mutiple': 'multiple'}}) }}
+                                        <div class="text-muted">Extensions autorisées : jpg, jpeg ,png</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-11 border bg-light ml-auto mr-auto mt-3 mb-3">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    {{ form_label(formMoreInfo.more, 'Indiquez ici vos questions ou commentaires :') }}
+                                    {{ form_widget(formMoreInfo.more, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                            </div>
+                            {{ form_widget(formMoreInfo.devis, {'attr': {'class': 'form-control d-none'}}) }}
+                            <div class="col-12 ml-auto mr-auto">
+                                <button type="submit" class="btn action-primary"> Soumettre </button>
+                            </div>
+                        </form> 
+                    </div>
+                </div>
+        </div>
+         
+         <input type="hidden" id="stele_choose_text" name="stele_choose_text" value="no-text">
+         <input type="hidden" id="stele_choose_image" name="stele_choose_text" value="no-text">
+        </div>
+       </div>
+    </div>
+
+</div>
+<div id="frfu-preload-all-img" class="d-none" data-preload="{{preload|json_encode()}}"></div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {% include 'includes/resize.html.twig' %}
+    <script>
+        $(document).ready(function () {
+           
+
+            var navListItems = $('div.steps .step'),
+                allWells = $('.setup-content'),
+                currentStep = 1;
+                canvas = new fabric.Canvas('frfu-content-canvas'),
+                canvas_granite = new fabric.Canvas('frfu-content-granite-canvas'),
+                applyButton = $('.frfu-add-custom-text-button'),
+                addCustomTextElement = $('#frfu-add-custom-text-element'),
+                toCustomize = $('.frfu-photo-product-to-customize'),
+                img_granit = $('.img-granit'),
+                img_stele = $('.img-stele'),
+                allNextBtn = $('.next-step')
+                metaData = {
+                    img : {
+
+                    },
+                    text : {
+
+                    }
+                };
+                var processing = false;
+
+            allWells.hide();
+
+            function switchStepElement(){
+                if($(window).width() <= 1025){
+                    if(currentStep > 1){
+                        if($('#frfu-previous-step').hasClass('d-none')){
+                            $('#frfu-previous-step').removeClass('d-none');
+                        }
+
+                        if($('#frfu-next-step').hasClass('d-none')){
+                            $('#frfu-next-step').removeClass('d-none');
+                        }
+                        
+                    }
+                }
+            }
+
+
+            function buildInsertMetaData(){
+                //var json = JSON.stringify(canvas);
+                var objs = canvas._objects;
+                var lenObjs = objs.length;
+                var metaData = canvas.toObject();
+                for(var i = 0; i < lenObjs; i++){
+                    var obj = objs[i];
+                    metaData.objects[i].dataprice = obj.dataprice;
+                    metaData.objects[i].frfuNameObject = obj.frfuNameObject;
+                    metaData.objects[i].frfuLabelObject = obj.frfuLabelObject;
+                    metaData.objects[i].uniqId = obj.uniqId;
+                }
+                var json = JSON.stringify(metaData);
+                //console.log(json);
+                $('#devis_metaData').val(json);
+            }
+
+            function priceAndItems(){
+                var objects = canvas._objects;
+                var total = 0;
+                var total_text = 0;
+                var items = [];
+                var len_objects = objects.length;
+                //items.push({label: canvas.backgroundImage.frfuLabelObject, price: canvas.backgroundImage.dataprice})
+                for(var i =0; i < len_objects; i++){
+                    var object = objects[i];
+                    if(object.dataprice){
+                        total = total + Number(object.dataprice);
+                        total_text = total_text + Number(object.dataprice);
+                        items.push({label: object.frfuLabelObject, price: object.dataprice})
+                    }else{
+                        items.push({label: object.frfuLabelObject, price: 0})
+                    } 
+                }
+                
+                total = total + Number($($('.img-granit[data-id='+$('#granit_choose').val()+']')[0]).attr('data-price'));
+                
+                $('.frfu-custom-total-price').text(total);
+                $('#devis_total').val(total);
+                $('#devis_priceText').val(total_text);
+                $('.frfu-pl-custom-details').find('.frfu-pl-custom-details-item').remove();
+                var lenItems = items.length;
+                $('.frfu-pl-custom-details').append('<div class="frfu-pl-custom-details-item">\
+                        <span class="mr-2">Granite</span><span> .............. </span><span class="" class="ml-2">'+$($('.img-granit[data-id='+$('#granit_choose').val()+']')[0]).attr('data-price')+'</span><span>€</span>\
+                    </div>');
+                
+                for(var j =0; j < lenItems; j++){
+                     
+                     var obj = items[j];
+                    $('.frfu-pl-custom-details').append('<div class="frfu-pl-custom-details-item">\
+                        <span class="mr-2">'+obj.label+'</span><span> .............. </span><span class="" class="ml-2">'+obj.price+'</span><span>€</span>\
+                    </div>\
+                    ');
+                }
+            }
+
+            function uniqKey(){
+                var random = Math.floor(Math.random() * 1000000); 
+                var time = new Date().getTime();  
+                return String(random)+String(time);
+            }
+            
+            function elmentExists(uniqId){
+                var i = 0;
+                var item = null;
+                var found = false;
+                objs = canvas._objects;
+                objs.forEach(obj => {
+                    if(obj.uniqId == uniqId){
+                        item = i;
+                        found =true;
+
+                    }
+                    i++;
+                });
+
+                if(found){
+                    return item;
+                }else{
+                    return false;
+                }
+                
+            }
+
+            $('.motif-selected').hide();
+            $('#frfu-custom-img').hide();
+            //canvas.backgroundColor = 'whitesmoke';
+           var bgImg = new Image();
+            bgImg.src = $('#frfu-content-canvas').attr('data-url');
+            var coef = canvas.width/bgImg.width;
+            canvas.setBackgroundImage(bgImg.src, canvas.renderAll.bind(canvas), {
+            // should the image be resized to fit the container?
+                width: bgImg.width*coef,
+                height: bgImg.height*coef
+            });
+
+            canvas_granite.setBackgroundImage(bgImg.src, canvas_granite.renderAll.bind(canvas_granite), {
+            // should the image be resized to fit the container?
+                width: bgImg.width*coef,
+                height: bgImg.height*coef
+            });
+            /**/
+           // $('#background-image-canvas').remove();
+
+            $('.frfu-custom-font-family').mouseover(function(){
+                if(!$(this).hasClass('border-choice')){
+                    $(this).addClass('border-choice');
+                }
+            });
+
+             $('.frfu-custom-font-family').mouseout(function(){
+                if($(this).hasClass('border-choice')){
+                    $(this).removeClass('border-choice');
+                }
+            });//
+
+             $('.frfu-custom-color').mouseover(function(){
+                if(!$(this).hasClass('border-choice')){
+                    $(this).addClass('border-choice');
+                }
+            });
+
+             $('.frfu-custom-color').mouseout(function(){
+                if($(this).hasClass('border-choice')){
+                    $(this).removeClass('border-choice');
+                }
+            });
+
+            $('.motif-image').click(function(){
+                
+                var price = Number($(this).attr('data-price'));
+                var cprice = price + Number($('#frfu-custom-price-images').text());
+                var price_total = Number($($('.frfu-custom-total-price')[0]).text()) + price;
+                var pugImg = new Image();
+                pugImg.onload = function (img) {    
+                    var pug = new fabric.Image(pugImg, {
+                        angle: 45,
+                        width: 500,
+                        height: 500,
+                        left: 50,
+                        top: 70,
+                        scaleX: .25,
+                        scaleY: .25,
+                        dataprice: price,
+                    });
+                    canvas.add(pug);
+                    $('#frfu-custom-price-images').text(cprice);
+                    $('#devis_priceImage').val(cprice);
+                    $('.frfu-custom-total-price').text(price_total); 
+                    $('#devis_total').val(price_total);
+                };
+                pugImg.src = $(this).attr('src');
+                $('.motif-image').parent().removeClass('border-choice');
+                $(this).parent().addClass('border-choice');
+            });
+
+            $('#frfu-select-field-motif').change(function(){
+                var value = $(this).val();
+                var id = '#motif-selected-'+value;
+                console.log(id);
+                $('.motif-selected').hide();
+                $(id).show();
+            });
+
+            $('.frfu-custom-font-family').click(function(){
+                canvas.getActiveObject().set("fontFamily", $(this).css('font-family'));
+                canvas.requestRenderAll();
+            });
+
+            $('.frfu-custom-color').click(function(){
+                canvas.getActiveObject().setColor($(this).css('background-color'));
+                canvas.requestRenderAll();
+                console.log('Hello les gars');
+            });
+
+            //canvas.css({'height' : toCustomize.height()+'px', 'width' : toCustomize.height()+'px'})
+            navListItems.click(function (e) {
+                e.preventDefault();
+
+                var t = $(this).attr('data-target'),
+                    target = $(t),
+                    item = $(this);
+
+                if(currentStep === 1){
+                    if(!$('#frfu-previous-step').hasClass('d-none')){
+                        $('#frfu-previous-step').addClass('d-none');
+                    }
+                }
+
+                
+                    
+                if (!item.hasClass('disabled')) {
+                    navListItems.removeClass('btn-success').addClass('btn-default');
+                    item.addClass('btn-success');
+                    allWells.hide();
+                    target.show();
+                    target.find('input:eq(0)').focus();
+
+                    if(t == '#step-1'){
+                        if($('#canvas-granite-block').hasClass('d-none')){
+                            $('#canvas-granite-block').removeClass('d-none');
+                        }
+
+                        if(!$('#canvas-block').hasClass('d-none')){
+                            $('#canvas-block').addClass('d-none');
+                        }
+
+                        if($('#frfu-resume-and-canvas').hasClass('d-none')){
+                            $('#frfu-resume-and-canvas').removeClass('d-none');
+                        }
+                    }
+                    else if(t != '#step-1' && t != '#step-5'){
+                        if($('#canvas-block').hasClass('d-none')){
+                            $('#canvas-block').removeClass('d-none');
+                        }
+
+                        if(!$('#canvas-granite-block').hasClass('d-none')){
+                            $('#canvas-granite-block').addClass('d-none');
+                        }
+
+                        if($('#frfu-resume-and-canvas').hasClass('d-none')){
+                            $('#frfu-resume-and-canvas').removeClass('d-none');
+                        }
+                    }
+                    else if(t == '#step-5'){
+
+                        if(!$('#frfu-resume-and-canvas').hasClass('d-none')){
+                            $('#frfu-resume-and-canvas').addClass('d-none');
+                        }
+                    }
+                }
+            });
+
+           
+            addCustomTextElement.click(function(e){
+                
+                var uniqId = uniqKey();
+                var idApplyButton = uniqId;
+                var toAppend = '<div id="text-custom-'+idApplyButton+'" class="row p-2 bg-light m-2" style="both: clear; border-radius: 15px;"><div class="form-group col-6"><input class="form-control-sm col-6" id="text_'+idApplyButton+'"><span data-id="'+idApplyButton+'" class="btn btn-dark frfu-add-custom-text-button" data-price="{{getConfig('cost_by_letter').value}}">Appliquer</span></div><div class="col-6"><div class="row"><div class="col-4 d-flex justify-content-center"><div class="h-100 text-center"><i data-id="'+idApplyButton+'" class="fas fa-arrow-left frfu-custom-text-position-left"></i></div><div><i data-id="'+idApplyButton+'" class="fas fa-arrow-up d-block frfu-custom-text-position-up"></i><i data-id="'+idApplyButton+'" class="fas fa-arrow-down d-block frfu-custom-text-position-down"></i></div><div class="h-100 text-center"><i data-id="'+idApplyButton+'" class="fas fa-arrow-right frfu-custom-text-position-right"></i></div></div><div class="col-4 d-flex justify-content-center"><span data-id="'+idApplyButton+'" class="mr-2 col-6 frfu-custom-text-size-plus">A <i class="fas fa-plus"></i></span><span data-id="'+idApplyButton+'" class="ml-2 frfu-custom-text-size-minus">A <i class="fas fa-minus"></i></span></div><div class="col-4 d-flex justify-content-center p-2"><span data-id="'+idApplyButton+'" class="btn btn-outline-danger frfu-remove-custom-text-button"><i class="fas fa-trash"></i></span></div></div></div></div>';
+
+                $('#frfu-add-remove-custom-text').append(toAppend);
+            });
+
+            img_granit.click(function(){
+                var id = $(this).attr('data-id');
+                var price = $(this).attr('data-price');
+                var label = $(this).attr('data-label');
+                var url_img = $(this).attr('data-url');
+                var selStele = 'img[data-id-granit="'+id+'"]';
+                $('#granit_choose').val(id);
+                $('#devis_gallery option[value='+$(this).attr('data-gallery-id')+']').attr('selected', true);
+                $('.img-stele').parent().hide();
+                img_granit.parent().removeClass('border-choice');
+                $(this).parent().addClass('border-choice');
+                $(selStele).parent().show();
+                //$('#frfu-photo-product-to-customize img').attr('src', url_img);
+                //bgImg.src = url_img;
+                /*canvas.setBackgroundImage(bgImg.src, canvas.renderAll.bind(canvas), {
+                // should the image be resized to fit the container?
+                    
+                });*/
+
+                var img = new Image();
+                img.src = url_img;
+                canvas.setBackgroundImage(img.src, canvas.renderAll.bind(canvas), {
+                scaleX: canvas.width / img.width,
+                scaleY: canvas.height / img.height
+                });
+
+                canvas_granite.setBackgroundImage(img.src, canvas_granite.renderAll.bind(canvas_granite), {
+                scaleX: canvas_granite.width / img.width,
+                scaleY: canvas_granite.height / img.height
+                });
+                console.log(canvas);
+                /*var f_img = new fabric.Image(img);
+                canvas.setBackgroundImage(f_img);
+                canvas.renderAll();
+                canvas_granite.setBackgroundImage(f_img);
+                canvas_granite.renderAll();*/
+                priceAndItems();
+               
+                
+
+                
+            });
+
+            img_stele.click(function(){
+                var id = $(this).attr('data-id');
+                var price = $(this).attr('data-price');
+                var selStele = 'img[data-id-granit="'+id+'"]';
+                var url = $(this).attr('src');
+                $('#stele_choose').val(id);
+                //bgImg.src = $(this).attr('src');
+                img_stele.parent().removeClass('border-choice');
+                $(this).parent().addClass('border-choice');
+                $('#frfu-custom-price-stele').text(price);
+                
+                //$('#frfu-photo-product-to-customize-stele img').attr('src', $(this).attr('src'));
+                /*canvas.setBackgroundImage($(this).attr('src'), canvas.renderAll.bind(canvas), {
+                // should the image be resized to fit the container?
+                }).scale(0.5);*/
+
+                fabric.Image.fromURL(url, function(img) {
+                    var center = canvas.getCenter();
+
+                    var oImg = img.set({
+                        top: 0,
+                        left: 0,
+                        dataprice: price,
+                        frfuLabelObject: 'Stèle',
+                        frfuNameObject: 'stele',
+                        
+                    }).scale(0.9);
+
+                    objs = canvas._objects;
+                    lengthObjs = objs.length;
+                    var i = 0;
+                    var index = null;
+                    var found = false;
+                    objs.forEach(obj => {
+                        if(obj.frfuNameObject == 'stele'){
+                            index = i;
+                            found = true;
+                        }
+                        i++;
+                    });
+
+                    if(found){
+                        
+                        canvas._objects[index].dataprice = price;
+                        canvas._objects[index]._element.src = url;
+                        canvas.renderAll();
+                    }else{
+                        canvas.add(oImg);
+                        canvas.renderAll();
+                    }
+                    console.log(canvas);
+                    priceAndItems();
+                }, {
+                    selectable: false
+                });
+            });
+
+            $('#frfu-previous-step').click(function(){
+                console.log('caught !!!'); 
+                if(currentStep !== 1){
+                    currentStep = currentStep - 1;
+                }
+                
+                console.log(currentStep);
+                $('div.step[data-target="#step-'+currentStep+'"]').trigger('click');
+                $('div.step').removeClass('active');
+                $('div.step[data-target="#step-'+currentStep+'"]').addClass('active');
+                $(window).trigger('resize');
+            });
+
+            $('#frfu-next-step').click(function(){
+                if(!$('div.step[data-target="#step-'+currentStep+1+'"]').hasClass('disabled') && currentStep < 7){
+                    currentStep = currentStep + 1;
+                    console.log(currentStep); 
+                    $('div.step[data-target="#step-'+currentStep+'"]').trigger('click');
+                    $('div.step').removeClass('active');
+                    $('div.step[data-target="#step-'+currentStep+'"]').addClass('active');
+                    $(window).trigger('resize');
+                    if(currentStep > 1 && $('#frfu-previous-step').hasClass('d-none')){
+                        $('#frfu-previous-step').removeClass('d-none');
+                    }
+                }
+                
+            });
+            
+            allNextBtn.click(function () {
+                var idInputToVerify = $(this).attr('data-id'),
+                    next_step = 'div[data-target="'+$(this).attr('data-next')+'"]';
+                {% set need = prod.subCatId.needSteleFixation == 1 ? 1 : 0 %}
+                var need = {{need}};
+                var input = $(idInputToVerify).val();
+                
+                if(input || need === 1){
+                   $('#granit-msg').hide();
+                   $(next_step).find('.btn').attr('class', 'btn btn-success btn-circle');
+                   $('.steps .step').removeClass('active');
+                   $(next_step).addClass('active');
+                   $(next_step).removeClass('disabled');
+                   $(next_step).trigger('click');
+                   if(!$($(this).attr('data-msg')).hasClass('d-none')){
+                       $($(this).attr('data-msg')).addClass('d-none');
+                   }
+                   currentStep = Number($(this).attr('data-next').split('-')[1]);
+                   switchStepElement();
+                   
+                }else{
+                    $($(this).attr('data-msg')).removeClass('d-none');
+                    
+                }
+
+                $(window).trigger('resize');
+            });
+             
+             function apply(){
+                var id = $(this).attr('id');
+                var input = $(this).parent().find('input');
+                 
+             }
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-add-custom-text-button', 'click', function(){
+                var id = $(this).attr('data-id');
+                var input = $('#text_'+id);
+                var val = input.val();
+                var txt_price = Number($(this).attr('data-price')) * val.length;
+                var elExist = elmentExists(id);
+                console.log(elExist);
+                if(elExist !== false ){
+                    var obj = canvas._objects[elExist];
+                    obj.text = val;
+                    obj.dataprice = txt_price;
+                    canvas._objects[elExist] = obj;
+                    canvas.requestRenderAll();
+                    priceAndItems();
+                }
+                else{
+                    var text = new fabric.Textbox(val, {
+                        width:250,
+                        cursorColor :"blue",
+                        top:10,
+                        left:10,
+                        editable: false,
+                        uniqId: id,
+                        dataprice: txt_price,
+                        frfuLabelObject: 'Texte Personnalise',
+                        frfuNameObject: 'text-custom'
+                    });
+                    canvas.add(text);
+                    canvas.requestRenderAll();
+                    priceAndItems();
+                }
+            });
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-remove-custom-text-button', 'click', function(){
+                var id = $(this).attr('data-id');
+                var elExist = elmentExists(id);
+                console.log(elExist);
+                if(elExist !== false ){
+                    var obj = canvas._objects[elExist];
+                    canvas.remove(obj);
+                    canvas.requestRenderAll();
+                    $('#text-custom-'+id).remove();
+                    priceAndItems();
+                }
+            })
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-custom-text-size-plus', 'mousedown', function(){
+                    var id = $(this).attr('data-id');
+                    var elExist = elmentExists(id);
+                    console.log(elExist);
+                    if(elExist !== false ){
+                        var obj = canvas._objects[elExist];
+                        obj.set('fontSize', obj.get('fontSize')+1);
+                        canvas._objects[elExist] = obj;
+                        canvas.requestRenderAll();
+                    }
+            });
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-custom-text-size-minus', 'mousedown', function(){
+                    var id = $(this).attr('data-id');
+                    var elExist = elmentExists(id);
+                    console.log(elExist);
+                    if(elExist !== false ){
+                        var obj = canvas._objects[elExist];
+                        obj.set('fontSize', obj.get('fontSize')-1);
+                        canvas._objects[elExist] = obj;
+                        canvas.requestRenderAll();
+                        priceAndItems();
+                    }
+            });
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-custom-text-position-up', 'mousedown', function(){
+                    var id = $(this).attr('data-id');
+                    var elExist = elmentExists(id);
+                    console.log(elExist);
+                    if(elExist !== false ){
+                        var obj = canvas._objects[elExist];
+                        obj.set('top', obj.get('top')-1);
+                        canvas._objects[elExist] = obj;
+                        canvas.requestRenderAll();
+                    }
+            });
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-custom-text-position-down', 'mousedown', function(){
+                var id = $(this).attr('data-id');
+                    var elExist = elmentExists(id);
+                    console.log(elExist);
+                    if(elExist !== false ){
+                        var obj = canvas._objects[elExist];
+                        obj.set('top', obj.get('top')+1);
+                        canvas._objects[elExist] = obj;
+                        canvas.requestRenderAll();
+                    }
+            });
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-custom-text-position-left', 'mousedown', function(){
+                    var id = $(this).attr('data-id');
+                    var elExist = elmentExists(id);
+                    console.log(elExist);
+                    if(elExist !== false ){
+                        var obj = canvas._objects[elExist];
+                        obj.set('left', obj.get('left')-1);
+                        canvas._objects[elExist] = obj;
+                        canvas.requestRenderAll();
+                    }
+            });
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-custom-text-position-right', 'mousedown', function(){
+                    var id = $(this).attr('data-id');
+                    var elExist = elmentExists(id);
+                    console.log(elExist);
+                    if(elExist !== false ){
+                        var obj = canvas._objects[elExist];
+                        obj.set('left', obj.get('left')+1);
+                        canvas._objects[elExist] = obj;
+                        canvas.requestRenderAll();
+                    }
+            });
+
+            /*canvas.on('text:changed', function(e) {
+
+                var objs = this._objects;
+                var txt = '';
+                objs.forEach(obj => {
+
+                        if(obj.text){
+                            txt += obj.text;
+                        }
+                });
+
+                var len = txt.length;
+                var txt_price = Number($('#frfu-custom-price-text').text());
+                var price = len * Number($('#frfu-add-remove-custom-text').find('.frfu-add-custom-text-button').attr('data-price'));
+                var price_total = (Number($($('.frfu-custom-total-price')[0]).text()) - txt_price) + price;
+
+                $('#frfu-custom-price-text').text(price);
+                $('#devis_priceText').val(price);
+                $('.frfu-custom-total-price').text(price_total);
+                $('#devis_total').val(price_total);
+            });*/
+
+            /*$('#frfu-upload-custom-img').change(function(){
+                var fd = new FormData(); 
+                var files = $(this)[0].files[0];
+                console.log($(this));
+                fd.append('custom-img', files); 
+                var price = Number($(this).attr('data-price'));
+                $.ajax({ 
+                    url: $(this).attr('data-upload-url'), 
+                    type: 'post', 
+                    data: fd, 
+                    contentType: false, 
+                    processData: false, 
+                    success: function(response){ 
+                        
+                        var cprice = price + Number($('#frfu-custom-price-images').text());
+                        var price_total = Number($($('.frfu-custom-total-price')[0]).text()) + price;
+                        console.log(price);
+                        console.log(cprice);
+                        console.log(price_total);
+                        var pugImg = new Image();
+                        pugImg.onload = function (img) {    
+                            var pug = new fabric.Image(pugImg, {
+                                angle: 45,
+                                width: img.width/4,
+                                height: img.height/4,
+                                left: 50,
+                                top: 70,
+                                scaleX: .25,
+                                scaleY: .25,
+                                dataprice: price
+                            });
+                            canvas.add(pug);
+
+                            $('#frfu-custom-price-images').text(cprice);
+                            $('#devis_priceImage').val(cprice);
+                            $('.frfu-custom-total-price').text(price_total);
+                            $('#devis_total').val(price_total);
+                            $('#frfu-custom-img').attr('src', '/'+response.location);
+                            $('#frfu-custom-img').show(); 
+                        };
+                        pugImg.src = '/'+response.location;
+                    },
+                    error: function(err){ 
+                        console.log(err);
+                    },
+                }); 
+            });*/
+
+
+            $('#frfu-submit-devis').click(function(){
+                var json = JSON.stringify(canvas);
+                var objs = canvas._objects;
+                var lenObjs = objs.length;
+                var metaData = canvas.toObject();
+                for(var i = 0; i < lenObjs; i++){
+                    var obj = objs[i];
+                    metaData.objects[i].dataprice = obj.dataprice;
+                    if(obj.text){
+                        metaData.objects[i].uniqId = obj.uniqId;
+                    }
+                    
+                    metaData.objects[i].frfuLabelObject = obj.frfuLabelObject;
+                    metaData.objects[i].frfuNameObject = obj.frfuNameObject;
+                }
+                
+                var url = canvas.toDataURL('image/png');
+                $('#devis_svg').val(url);
+                //console.log(dataUrl);
+                $('#devis_photo').val(json);
+                $('#devis_metaData').val(JSON.stringify(metaData));
+                priceAndItems();
+                setTimeout(function(){
+                    $('#devis-form').trigger('submit');
+                }, 1000)
+                
+            });
+
+            $('#devis-form').submit(function(e){
+                e.preventDefault();
+                console.log('La requete est lancé');
+                $('#pass-step-5').prop('disabled', true);
+                
+                var form = new FormData($(this)[0]);
+                if(!processing){
+                    processing = true;
+                    $.ajax({
+                        url: '{{url('product-customize', {'id' : prod.id})}}',
+                        type: 'post',
+                        data: form,
+                        contentType: false, 
+                        processData: false, 
+                        success: function(response){
+                            console.log(response);
+                            $('#more_info_devis').append('<option value="'+response.devis+'" selected></option>');
+                            $('#pass-step-5').trigger('click');
+                            //$('#pass-step-5').prop('disabled', false);
+                        },
+                        error: function(error){
+                            console.log(error);
+                            processing = false;
+                        }
+                    });
+                }
+                
+            });
+
+            (function(){
+                var preload = $('#frfu-preload-all-img');
+                var preImgs = JSON.parse(preload.attr('data-preload'));
+                var countPreImgs = preImgs.length;
+                for(var k = 0; k < countPreImgs; k++){
+                    var imgToAppend = new Image();
+                    imgToAppend.src = preImgs[k];
+                    preload.append(imgToAppend);
+                } 
+            })();
+            
+
+            $('div.steps .active').trigger('click');
+            for(var i = 0; i < 6; i++){
+                addCustomTextElement.trigger('click');
+            }
+            
+        });
+    </script>
+        
+{% endblock %}

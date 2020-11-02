@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact | FuneraireFrance{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+    <div class="h6 mt-3"> <a href="/">Acceuil</a><span> / Contact</span> </div>
+        <div class="row">
+            
+            <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12 ml-auto mr-auto">
+                
+                <div class="h2 text-center"> Contact </div>
+                <form action="" method="POST" class="mt-3">
+                    {{ form_widget(form._token) }} 
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                {{ form_label(form.firstName, 'Prénoms') }}
+                                {{ form_widget(form.firstName, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            <div class="form-group col-md-6">
+                                {{ form_label(form.name, 'Nom') }}
+                                {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                                {{ form_label(form.email, 'Adresse e-mail') }}
+                                {{ form_widget(form.email, {'attr': {'class': 'form-control', 'type': 'email'}}) }}
+                        </div>
+                        <div class="form-group">
+                                {{ form_label(form.subject, 'Objet') }}
+                                {{ form_widget(form.subject, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                {{ form_label(form.message, 'Message') }}
+                                {{ form_widget(form.message, {'attr': {'class': 'form-control', 'rows': '5'}}) }}
+                            </div>
+                        </div>
+                        {#<div class="form-group">
+                            <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="gridCheck">
+                            <label class="form-check-label" for="gridCheck">
+                                Check me out
+                            </label>
+                            </div>
+                        </div>#}
+                        <button type="submit" class="btn btn-dark">Envoyer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,267 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Partage de produit{% endblock %}
+
+{% block body %}
+    <style>
+        .get-devis{
+            position: relative; 
+            margin-left: 22%;
+            margin-top: 25%; 
+        }
+        .get-devis:hover{
+            background-color: skyblue;
+            color: white;
+        }
+
+        .text-underline{
+            text-decoration: underline !important;
+        }
+
+        .share-product-label:before{
+            content: url('https://funerairefrance.com/images/pico/picto-mailto.png');
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
+            margin-right: 10px;
+        }
+        .stock-product-status:before{
+            content: url('https://funerairefrance.com/images/pico/picto-info-stock.png');
+            float: left;
+        }
+
+        .shipping-product-status:before{
+            content: url('https://funerairefrance.com/images/pico/picto-livraison.png');
+            float: left;
+        }
+
+        .frfu-select-text{
+            margin-bottom: 10px;
+            float: right;
+            width: 80%;
+            border-radius: 0 !important;
+        }
+
+        elect
+
+        .text-custom-block{
+            box-sizing: border-box;
+            border: 1px dashed #ccc;
+            background: #f7f7f7;
+        }
+
+        .frfu-tOrderCustomized{
+            width: 50%;
+            margin-left: 50%;
+            border-radius: 0 !important;
+        }
+
+        
+    </style>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 p-2">
+                <div class="h6 mt-3"> <span class="display-4 text-secondary">Envoyer à un ami</span></div>
+            </div>
+            <div class="col-12 p-2"> 
+                 <div class="row">
+                    <form id="frfu-share-frienf-form" class="col-12" action="{{url('user-share-product', {'id' : prod.id})}}" method="POST">
+                        <input type="hidden" name="_token" value="{{ csrf_token('share-product-friend-token') }}"/>
+                        <div class="row">
+                            <div class="col-12 pb-2 border-bottom">Expéditeur</div>
+                            <div class="col-12 mb-3">
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        <label>Nom</label> <input class="input-field" type="text" name="name" required minlength="4" value="{{app.user.firstName~' '~app.user.name}}">
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label>Email</label> <input class="input-field" type="email" name="email" required value="{{app.user.email}}">
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        <label>Message</label> <textarea class="" name="message" required></textarea>
+                                    </div>
+                                    <div class="col-md-6 form-group d-none">
+                                        <label>Message</label> <textarea id="metaData" class="" name="metaData" required></textarea>
+                                    </div>
+                                </div>  
+                            </div>
+                        </div>  
+                        <div class="row">
+                            <div class="col-12 pb-2 border-bottom">Invités</div>
+                            <div id="frfu-friend-block" class="col-12 mb-3">
+                                
+                            </div>
+                            <div class="col-12 pb-2"><span id="frfu-add-friend" class="btn btn-outline-secondary">Ajouter un destinaire</span></div>
+                        </div>  
+                        <div class="row">
+                            <div class="col-12">
+                            <button id="submit-button" type="submit" class="action-primary d-none">Envoyer un email</button>
+                            <button id="submit" type="button" class="action-primary">Envoyer un email</button>
+                            </div>
+                        </div>  
+                    </form>
+                </div>  
+            </div>
+        </div>
+    </div>
+    
+    
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+       $(function(){
+            var texte = 'Choisir votre texte';
+            var metaData = [];
+            var number = 0;
+            function uniqKey(){
+                var random = Math.floor(Math.random() * 1000000); 
+                var time = new Date().getTime();  
+                return String(random)+String(time);
+            }
+            
+
+            function buildMetadata(){
+                var tOrder = $('.frfu-tOrder');
+                console.log(tOrder);
+                var len = tOrder.length;
+                for(var i = 0; i < len; i++){
+                    var t = $(tOrder[i]);
+                    var obj = {};
+                    
+                    if(t.prop('selectedIndex') == 1){
+                        metaData.cus.push($('#tCustomized-'+t.attr('data-id')).val());
+                    }
+                    else if(t.prop('selectedIndex') != 0){
+                        metaData.tOrder.push(t.val());
+                    }
+
+                }
+
+                $('#metaData').val(JSON.stringify(metaData));
+                console.log($('#metaData').val());
+            }
+
+            function elmentExists(uniqId){
+                var i = 0;
+                var item = null;
+                var found = false;
+                objs = metaData;
+                objs.forEach(obj => {
+                    if(obj.id == uniqId){
+                        item = i;
+                        found =true;
+
+                    }
+                    i++;
+                });
+
+                if(found){
+                    return item;
+                }else{
+                    return false;
+                }
+                
+            }
+
+            $('#frfu-add-friend').click(function(){
+                var uniqId = uniqKey();
+                var del = number == 0 ? '' : '<div class="col-12 d-flex justify-content-center"><span data-id="'+uniqId+'" class="frfu-remove-friend text-secondary text-underline">Supprimer</span></div>';
+                var toAppend = '<div data-id="'+uniqId+'" class="row">\
+                                    <div class="col-md-6 form-group">\
+                                        <label>Nom</label> <input data-id="'+uniqId+'" class="input-field frfu-friend-name" type="text" required minlength="4">\
+                                    </div>\
+                                    <div class="col-md-6 form-group">\
+                                        <label>Email</label> <input data-id="'+uniqId+'" class="input-field frfu-friend-email" type="email" required>\
+                                    </div>\
+                                    '+del+'\
+                                </div>';
+                metaData.push({'id' : uniqId});
+                $('#frfu-friend-block').append(toAppend);
+                number++;
+            });
+
+            $('body').delegate('.frfu-friend-name', 'keyup', function(e){
+                //e.preventDefault();
+                
+                var value = $(this).val();
+                var dataId = $(this).attr('data-id');
+                var index = elmentExists(dataId);
+                if(index !== false){
+                   metaData[index].name = value; 
+                }
+                console.log(metaData);
+            });
+
+            $('body').delegate('.frfu-friend-email', 'keyup', function(e){
+                //e.preventDefault();
+                
+                var value = $(this).val();
+                var dataId = $(this).attr('data-id');
+                var index = elmentExists(dataId);
+                if(index !== false){
+                   metaData[index].email = value; 
+                }
+                console.log(metaData);
+            });
+
+             $('body').delegate('.frfu-remove-friend', 'click', function(e){
+                //e.preventDefault();
+                
+                var value = $(this).val();
+                var dataId = $(this).attr('data-id');
+                var index = elmentExists(dataId);
+                var md = [];
+                if(index !== false){
+                    objs = metaData;
+                    objs.forEach(obj => {
+                        if(obj.id != dataId){
+                            md.push(obj)
+                        }
+                        
+                    });
+                    metaData = md;
+                     $('#frfu-friend-block .row[data-id='+dataId+']').remove();
+                }
+                console.log(metaData);
+            });
+
+            $('#submit').click(function(e){
+                //e.preventDefault();
+                $('#metaData').val(JSON.stringify(metaData));
+                setTimeout(function(){
+                    $('#submit-button').trigger('click');
+                }, 1000)
+            });
+
+
+            $('#add-to-basket-form-submit').click(function(e){
+                //e.preventDefault();
+                $(this).attr('disabled', true);
+                buildMetadata();
+                setTimeout(function(){
+                   $('#add-to-basket-form').trigger('submit');
+                }, 1000);
+                
+            });
+            $('.frfu-rating-star').click(function(){
+                var ratings = $('.frfu-rating-star');
+                //console.log($(this)); 
+                var id = $(this).attr('id');
+                var indexArray = id.split('-');
+                var index = indexArray[1];
+                ratings.children().remove();
+                ratings.append('<i class="far fa-star"></i>');
+                $('#rating_level').val(Number(index)); 
+                console.log($('#rating_level').val());
+                for(var i = 0; i < index; i++){
+                    $(ratings[i]).children().remove();
+                    $(ratings[i]).append('<i class="fas fa-star"></i>');
+                }
+
+            });
+
+            $('#frfu-add-friend').trigger('click');
+       });
+    </script>
+{% endblock %}

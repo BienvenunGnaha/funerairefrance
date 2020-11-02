@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello UserDadhboardController!{% endblock %}
+
+
+{% block body %}
+
+    <div class="container-fluid mt-3 mb-3">
+        {#<div class="row position-absolute d-none">
+            <div class="col-lg-3 col-md-4 col-sm-12">
+            
+            </div>
+            <div class="col-lg- col-md-">
+            
+            </div>
+        </div>#}
+        {% set msg = '<span>Messagerie</span>' %}
+        {% set msg_count = unread(app.user) %}
+        {% if msg_count %}
+            {% set msg = '<span>Messagerie</span><span class="badge badge-danger">'~msg_count~'</span>' %}
+        {% endif %}
+        
+        <div class="row">
+            <div class="col-12 d-block d-sm-block d-md-none d-lg-none p-2">
+                <span id="frfu-menu-user-burger-dashboard"><i class="fas fa-bars"></i><span>Menu</span></span>
+            </div>
+            <div id="frfu-menu-user-dashboard" class="col-lg-3 col-md-4 d-none d-md-block d-lg-block p-2 border rounded">
+                <div class="p-2 text-dark">
+                     <a class="text-secondary frfu-dashboard-menu-item" href="{{url('user_dashboard')}}">Mon profil</a>
+                </div>
+                <div class="p-2">
+                     <a class="text-secondary frfu-dashboard-menu-item" href="{{url('carts-user')}}">Mes commandes</a> 
+                </div>
+                <div class="p-2">
+                     <a class="text-secondary frfu-dashboard-menu-item" href="{{url('user_carnet')}}">Carnet d’adresses</a> 
+                </div>
+                <div class="p-2 text-dark">
+                      <a class="text-secondary frfu-dashboard-menu-item" href="{{url('wishlist')}}">Liste de préférences</a>
+                </div>
+                <div class="p-2 text-dark">
+                      <a class="text-secondary frfu-dashboard-menu-item" href="{{url('user_edit')}}">Informations du compte</a>
+                </div>
+                <div class="p-2 text-dark">
+                      <a class="text-secondary frfu-dashboard-menu-item" href="{{url('user_list_rating')}}">Mes avis produit</a>
+                </div>
+                <div class="p-2 text-dark">
+                      <a class="text-secondary frfu-dashboard-menu-item" href="{{url('user_news_subscribe')}}">Abonnements aux lettres d’information</a>
+                </div>
+                <div class="p-2 text-dark">
+                     <a class="text-secondary frfu-dashboard-menu-item" href="{{url('messages')}}">{{msg|raw}}</a>
+                </div>
+                <div class="p-2 text-dark">
+                     <a class="text-secondary frfu-dashboard-menu-item" href="{{url('user-devis')}}">Mes devis</a>
+                </div>
+                <div class="p-2 text-dark">
+                     <a class="text-secondary" href="/logout">Déconnexion</a>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-8 col-sm-12">
+                {% block user_block %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}
+
+{% block js_user %}
+    <script>
+        $(function(){
+            //console.log(window.location.href);
+            var itemMenu = $(".frfu-dashboard-menu-item");
+            var length = itemMenu.length;
+            for(var i = 0; i < length; i++){
+                var item = itemMenu[i];
+                var elItem = $(item);
+                if(elItem.attr('href') == window.location.href){
+                    elItem.addClass('h4');
+                }
+            }
+        });
+    </script>
+    {% include 'includes/tracking.html.twig' %}
+{% endblock %}
+ 

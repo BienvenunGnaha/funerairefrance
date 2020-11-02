@@ -1,0 +1,761 @@
+{% extends '@!EasyAdmin/default/layout.html.twig' %}
+
+{% block title %}Hello AdminDevisController!{% endblock %}
+
+{% block head_custom_frfu_stylesheets %}
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,700;1,400;1,700&family=Charm&family=Italianno&family=Open+Sans&family=Roboto+Slab&display=swap" rel="stylesheet">
+    <style>
+        .border-choice{
+            border: 2px solid black !important;
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6">
+                <canvas id="frfu-devis-canvas"  width="500" height="500" style="position: absolute; width: 500px; height: 500px; left: 0px; top: 0px; user-select: none; cursor: default;">
+                </canvas>
+                {% set isPro = false %}
+                {% set tax_label = ' Prix(TTC) ' %}
+                {% if devis.user %}
+                    {% if devis.user.type and devis.user.type.id == 2 %}
+                        {% set isPro = true %}
+                        {% set tax_label = ' Prix(HT) ' %}
+                    {% endif %}
+                {% endif %}
+                {% set details = devis_details(devis, devis.user) %}
+                <div class="p-2 frfu-pl-custom-details">
+                    {% for detail in details.details %}
+                        <div>
+                            <span class="mr-2">{{detail.label~tax_label}}</span><span id="frfu-custom-price-text"  class="ml-2">{{detail.price~' € '}}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="p-2 frfu-pl-custom-details-total">
+                    {% set othFees = devis.otherFees ? devis.otherFees : 0 %}
+                    <div>
+                        <span class="mr-2">Frais supplémentaire</span><span class="ml-2">{{othFees~' € '}}</span>
+                    </div>
+                    <div>
+                        <span class="mr-2">Réduction</span><span class="ml-2">{{devis_details.discount~' € '}}</span>
+                    </div>
+                    <div>
+                        <span class="mr-2">Total (HT)</span><span id="frfu-price-devis-totalHt"  class="ml-2">{{devis_details.totalHT~' € '}}</span>
+                    </div>
+                    <div>
+                        <span class="mr-2">Total (TTC)</span><span id="frfu-price-devis-totalTtc"  class="ml-2">{{devis_details.total~' € '}}</span>
+                    </div>
+                </div>      
+            </div>
+            <div class="col-lg-6">
+                <div id="accordion">
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    Modification du granite
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body">
+                                <div class="row">
+                                    {% for gallery in devis.productId.galleries %}
+                                        {% set photo_granit = link_image(gallery.granit.photo) %}
+                                        <div class="col-4 border">
+                                            {% set ini_gprice = gallery.price %}
+                                            {% if devis.user %}
+                                                {% if devis.user.type %}
+                                                    {% if devis.user.type.id == 2 %}
+                                                        {% set ini_gprice = gallery.pricepro %}
+                                                    {% endif %}
+
+                                                {% endif %}
+                                            {% endif %}
+                                            <img class="col-12 img-granit" src="{{"/"~photo_granit}}" data-id="{{gallery.granit.id}}" data-gallery-id="{{gallery.id}}" data-price="{{ini_gprice}}" data-label="Granite" data-url="{{'/'~link_image(gallery.photo)}}">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Modification de la stèle
+                            </button>
+                        </h5>
+                        </div>
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                            <div class="card-body">
+                                <div class="row">
+                                    {% for gallery in devis.productId.galleries %}
+                                        {% set steles = decode_meta(gallery.metaData) %}
+                                        {% for stele in steles %}
+                                            {% set photo_stele = stele.file %}
+                                            {% set ini_sprice = stele.price %}
+                                            {% if devis.user %}
+                                                {% if devis.user.type %}
+                                                    {% if devis.user.type.id == 2 %}
+                                                        {% set ini_sprice = stele.pricepro %}
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endif %}
+                                            <div class="col-4 border">
+                                                <img class="col-12 img-stele" src="{{photo_stele}}" data-id="{{gallery.id}}" data-id-granit="{{gallery.granit.id}}" data-price="{{ini_sprice}}" data-label="Granite">
+                                            </div>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" id="headingThree">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    Modification des Textes et Images
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                            <div class="card-body">
+                                <div class="col-12 text-center">
+                                    Choississez la typographie du texte à graver
+                                </div>
+                                <div class="row">
+                                    {% for text in texts %}
+                                        <div class="col-6 border text-center frfu-custom-font-family" style="{{text.fontFamily}}">
+                                            {{text.name}}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-12 text-center">
+                                    Choississez la couleur  du texte à graver
+                                </div>
+                                <div class="row">
+                                    {% for color in colors %}
+                                        <div class="col-6 border d-flex justify-content-center frfu-custom-color" style="{{'background-color: '~color.value~';'}}">
+                                            {% if color.value == 'black' %} 
+                                                <span class="text-white">{{color.name}}</span>
+                                                {% else %}
+                                                <span class="text-dark">{{color.name}}</span>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                {#<div class="row mt-2">
+
+                                    <select id="frfu-select-field-motif" class="col-12" name="frfu-select-field-motif">
+                                        <option class="">Selectionner un motif</option>
+                                        {% for motif in motifs %}
+                                        <option value="{{motif.id}}" data-id="{{'#motif-selected-'~motif.id}}">{{motif.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="col-12 d-flex justify-content-center mt-2">
+                                        {% for motif in motifs %}
+                                        <div class="row motif-selected" id="{{'motif-selected-'~motif.id}}">
+                                            {% for photo in motif.photo %}
+                                                {% set photo = link_image(photo) %}
+                                                <div class="col-3 border">
+                                                    <img class="col-12 motif-image" src="{{"/"~photo}}" data-price="{{motif.price}}">
+                                                </div>
+                                            {% endfor %}
+                                        </div> 
+                                        {% endfor %}
+                                    </div>  
+                                </div>
+
+                                <div class="row mt-2 mb-2">
+                                    <div class="col-12">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="inputGroupFileAddon01"><i class="fas fa-file-upload"></i></span>
+                                            </div>
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="frfu-upload-custom-img" name="custom-img" accept=".png, .jpg, .jpeg" data-upload-url="{{url('product-upload-custom-img')}}"
+                                                data-price="{{getConfig('custom_motif_img').value}}" aria-describedby="inputGroupFileAddon01">
+                                                <label class="custom-file-label" for="inputGroupFile01">Importer un motif personnalisé</label>
+                                            </div>
+                                        </div>
+                                        <img id="frfu-custom-img" class="ml-auto mr-auto" src="" height="100">
+                                    </div>
+                                </div>#}
+
+                                <div class="row mt-2">
+                                    <div id="frfu-add-remove-custom-text" class="col-12">
+                                        
+                                    </div>
+                                    <div class="col-12 d-flex justify-content-center mt-2">
+                                        <input id="frfu-current-number-custom-text-field" type="hidden" value="0">
+                                        <span id="frfu-add-custom-text-element" class="btn btn-sm btn-dark">Ajouter un text supplémentaire</span>
+                                    </div>  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                {% if devis.download and devis.user %}
+                    <a class="btn btn-outline-dark ml-auto mr-auto" href="{{url('admin-devis-send-msg', {'id': devis.id})}}">Envoyer le devis au client</a>
+                {% endif %}
+                <a class="btn btn-outline-dark ml-auto mr-auto" href="{{url('admin_devis_download_images', {'id': devis.id})}}">Télécharger les images</a>
+                <form id="devis-form" class="m-2 ml-auto mr-auto" action="" method="POST">
+                    <input type="hidden" name="_token" value="{{ csrf_token('frfu-update-devis-token') }}"/>
+                    <input type="hidden" id="granit_choose" name="granit" value="{{devis.granit.id}}">
+                    <input type="hidden" id="devis_total" name="total" value="{{devis.total}}">
+                    <input type="hidden" id="devis_svg" name="svg" value="{{devis.svg}}">
+                    <input type="hidden" id="devis_photo" name="photo" value="{{devis.photo}}">
+                    <input type="hidden" id="devis_priceText" name="priceText" type="number" value="{{devis.priceText}}">
+                    <input type="hidden" id="devis_priceImage" name="priceImage" type="number" value="{{devis.priceImage}}">
+                    <input type="hidden" id="devis_gallery" name="gallery" type="number" value="{{devis.gallery.id}}">
+                    <textarea class="d-none" id="devis_metaData" name="metaData">{{devis.metaData|json_encode()}}</textarea>
+                    <span id="frfu-submit-devis" class="btn btn-dark">Modifier</span> 
+                </form>
+            </div>
+            
+        </div>
+    </div>
+    <input id="frfu-canvas-json" type="hidden" value="{{devis.metaData|json_encode()}}">
+    <input id="frfu-devis-user-type" type="hidden" value="{{isPro ? 1 : 0}}">
+{% endblock %}
+
+{% block body_javascript %}
+    <script src="/js/fabric.js"></script>
+    <script src="/js/notify.js"></script>
+    <script>
+        $(function(){
+            
+
+            var canvas = new fabric.Canvas('frfu-devis-canvas'),
+                applyButton = $('.frfu-add-custom-text-button'),
+                addCustomTextElement = $('#frfu-add-custom-text-element'),
+                toCustomize = $('.frfu-photo-product-to-customize'),
+                img_granit = $('.img-granit'),
+                img_stele = $('.img-stele'),
+                currentStep = 1,
+                metaData = [];
+                var processing = false;
+
+            var discount = {{devis_details.discount ? devis_details.discount : 0}};
+            var otherFees = {{devis.otherFees ? devis.otherFees : 0}};
+            var discount = {{devis.discount ? devis.discount : 0}};
+            var totalHT = {{devis_details.totalHT}};
+            var totalTTC = {{devis_details.total}};
+
+            console.log(discount);
+            var json = JSON.parse($('#frfu-canvas-json').val());
+            canvas.loadFromJSON(json, function() {
+            canvas.renderAll(); 
+            },function(o,object){
+            console.log(canvas)
+            });
+
+            for(var k = 0; k < json.objects.length; k++){
+                var obj = json.objects[k];
+                if(obj.text){
+                    addTextControl(obj.uniqId, obj.text);
+                }
+            }
+
+            function addTextControl(uniqId, text = null){
+                 var idApplyButton = uniqId;
+                var toAppend = '<div id="text-custom-'+idApplyButton+'" class="row p-2 bg-light m-2" style="both: clear; border-radius: 15px;"><div class="form-group col-6"><input class="form-control-sm col-6" value="'+text+'" id="text_'+idApplyButton+'"><span data-id="'+idApplyButton+'" class="btn btn-sm btn-dark frfu-add-custom-text-button" data-price="{{getConfig('cost_by_letter').value}}">Appliquer</span></div><div class="col-6"><div class="row"><div class="col-4 d-flex justify-content-center"><div class="h-100 text-center"><i data-id="'+idApplyButton+'" class="fas fa-arrow-left frfu-custom-text-position-left"></i></div><div><i data-id="'+idApplyButton+'" class="fas fa-arrow-up d-block frfu-custom-text-position-up"></i><i data-id="'+idApplyButton+'" class="fas fa-arrow-down d-block frfu-custom-text-position-down"></i></div><div class="h-100 text-center"><i data-id="'+idApplyButton+'" class="fas fa-arrow-right frfu-custom-text-position-right"></i></div></div><div class="col-4 d-flex justify-content-center"><span data-id="'+idApplyButton+'" class="mr-2 col-6 frfu-custom-text-size-plus">A <i class="fas fa-plus"></i></span><span data-id="'+idApplyButton+'" class="ml-2 frfu-custom-text-size-minus">A <i class="fas fa-minus"></i></span></div><div class="col-4 d-flex justify-content-center p-2"><span data-id="'+idApplyButton+'" class="btn btn-outline-danger frfu-remove-custom-text-button"><i class="fas fa-trash"></i></span></div></div></div></div>';
+                $('#frfu-add-remove-custom-text').append(toAppend);
+            }
+
+            function buildInsertMetaData(){
+                //var json = JSON.stringify(canvas);
+                var objs = canvas._objects;
+                var lenObjs = objs.length;
+                metaData = canvas.toObject();
+                for(var i = 0; i < lenObjs; i++){
+                    var obj = objs[i];
+                    metaData.objects[i].dataprice = obj.dataprice;
+                    metaData.objects[i].frfuNameObject = obj.frfuNameObject;
+                    metaData.objects[i].frfuLabelObject = obj.frfuLabelObject;
+                    metaData.objects[i].uniqId = obj.uniqId;
+                }
+                var json = JSON.stringify(metaData);
+                //console.log(json);
+                $('#devis_metaData').val(json);
+            }
+
+            function priceAndItems(){
+                var objects = canvas._objects;
+                var total = 0;
+                var total_text = 0;
+                var items = [];
+                var len_objects = objects.length;
+                var pro = Number($('#frfu-devis-user-type').val());
+                var proLabel = pro === 1 ? '(HT)' : '(TTC)';
+                console.log(pro);
+                //items.push({label: canvas.backgroundImage.frfuLabelObject, price: canvas.backgroundImage.dataprice})
+                for(var i =0; i < len_objects; i++){
+                    var object = objects[i];
+                    if(object.dataprice){
+                        total = total + Number(object.dataprice);
+                        total_text = total_text + Number(object.dataprice);
+                        items.push({label: object.frfuLabelObject, price: object.dataprice})
+                    }else{
+                        items.push({label: object.frfuLabelObject, price: 0})
+                    } 
+                }
+                
+                total = total + Number($($('.img-granit[data-id='+$('#granit_choose').val()+']')[0]).attr('data-price'));
+                
+                $('.frfu-custom-total-price').text(total);
+                $('#devis_total').val(total);
+                $('#devis_priceText').val(total_text);
+                $('.frfu-pl-custom-details').children().remove();//frfu-pl-custom-details
+                var lenItems = items.length;
+
+                $('.frfu-pl-custom-details').append('<div class="frfu-pl-custom-details-item">\
+                        <span class="mr-2">Granite'+proLabel+'</span><span class="" class="ml-2">'+$($('.img-granit[data-id='+$('#granit_choose').val()+']')[0]).attr('data-price')+'</span><span>€</span>\
+                    </div>');
+                
+                for(var j =0; j < lenItems; j++){
+                     
+                     var obj = items[j];
+                    $('.frfu-pl-custom-details').append('<div class="frfu-pl-custom-details-item">\
+                        <span class="mr-2">'+obj.label+proLabel+'</span><span class="" class="ml-2">'+obj.price+'</span><span>€</span>\
+                    </div>\
+                    ');
+                }
+            }
+
+            function uniqKey(){
+                var random = Math.floor(Math.random() * 1000000); 
+                var time = new Date().getTime();  
+                return String(random)+String(time);
+            }
+            
+            function elmentExists(uniqId){
+                var i = 0;
+                var item = null;
+                var found = false;
+                objs = canvas._objects;
+                objs.forEach(obj => {
+                    if(obj.uniqId == uniqId){
+                        item = i;
+                        found =true;
+
+                    }
+                    i++;
+                });
+
+                if(found){
+                    return item;
+                }else{
+                    return false;
+                }
+                
+            }
+
+
+            $('.frfu-custom-font-family').mouseover(function(){
+                if(!$(this).hasClass('border-choice')){
+                    $(this).addClass('border-choice');
+                }
+            });
+
+             $('.frfu-custom-font-family').mouseout(function(){
+                if($(this).hasClass('border-choice')){
+                    $(this).removeClass('border-choice');
+                }
+            });//
+
+             $('.frfu-custom-color').mouseover(function(){
+                if(!$(this).hasClass('border-choice')){
+                    $(this).addClass('border-choice');
+                }
+            });
+
+             $('.frfu-custom-color').mouseout(function(){
+                if($(this).hasClass('border-choice')){
+                    $(this).removeClass('border-choice');
+                }
+            });
+            
+
+            $('.motif-image').click(function(){
+                
+                var price = Number($(this).attr('data-price'));
+                var cprice = price + Number($('#frfu-custom-price-images').text());
+                var price_total = Number($($('.frfu-custom-total-price')[0]).text()) + price;
+                var pugImg = new Image();
+                pugImg.onload = function (img) {    
+                    var pug = new fabric.Image(pugImg, {
+                        angle: 45,
+                        width: 500,
+                        height: 500,
+                        left: 50,
+                        top: 70,
+                        scaleX: .25,
+                        scaleY: .25,
+                        dataprice: price
+                    });
+                    canvas.add(pug);
+                    $('#frfu-custom-price-images').text(cprice);
+                    $('#devis_priceImage').val(cprice);
+                    $('.frfu-custom-total-price').text(price_total); 
+                    $('#devis_total').val(price_total);
+                };
+                pugImg.src = $(this).attr('src');
+                $('.motif-image').parent().removeClass('border-choice');
+                $(this).parent().addClass('border-choice');
+            });
+
+            $('#frfu-select-field-motif').change(function(){
+                var value = $(this).val();
+                var id = '#motif-selected-'+value;
+                console.log(id);
+                $('.motif-selected').hide();
+                $(id).show();
+            });
+
+            $('.frfu-custom-font-family').click(function(){
+                canvas.getActiveObject().set("fontFamily", $(this).css('font-family'));
+                canvas.requestRenderAll();
+            });
+
+            $('.frfu-custom-color').click(function(){
+                canvas.getActiveObject().setColor($(this).css('background-color'));
+                canvas.requestRenderAll();
+                console.log('Hello les gars');
+            });
+
+           
+            addCustomTextElement.click(function(e){
+                
+                var uniqId = uniqKey();
+               
+                addTextControl(uniqId);
+                
+            });
+
+            img_granit.click(function(){
+                var id = $(this).attr('data-id');
+                var price = $(this).attr('data-price');
+                var label = $(this).attr('data-label');
+                var url_img = $(this).attr('data-url');
+                var selStele = 'img[data-id-granit="'+id+'"]';
+                $('#granit_choose').val(id);
+                $('#devis_gallery').val($(this).attr('data-gallery-id'));
+                $('.img-stele').parent().hide();
+                img_granit.parent().removeClass('border-choice');
+                $(this).parent().addClass('border-choice');
+                $(selStele).parent().show();
+                var img = new Image();
+                img.src = url_img;
+                canvas.setBackgroundImage(img.src, canvas.renderAll.bind(canvas), {
+                    scaleX: canvas.width / img.width,
+                    scaleY: canvas.height / img.height
+                });
+                priceAndItems();
+            });
+
+            img_stele.click(function(){
+                var id = $(this).attr('data-id');
+                var price = $(this).attr('data-price');
+                var selStele = 'img[data-id-granit="'+id+'"]';
+                var url = $(this).attr('src');
+                $('#stele_choose').val(id);
+                //bgImg.src = $(this).attr('src');
+                img_stele.parent().removeClass('border-choice');
+                $(this).parent().addClass('border-choice');
+                $('#frfu-custom-price-stele').text(price);
+
+                fabric.Image.fromURL(url, function(img) {
+                    var center = canvas.getCenter();
+
+                    var oImg = img.set({
+                        top: 0,
+                        left: 0,
+                        selectable: false,
+                        dataprice: price,
+                        frfuLabelObject: 'Stèle',
+                        frfuNameObject: 'stele',
+                        
+                    }).scale(0.9);
+
+                    objs = canvas._objects;
+                    lengthObjs = objs.length;
+                    var i = 0;
+                    var index = null;
+                    var found = false;
+                    objs.forEach(obj => {
+                        if(obj.frfuNameObject == 'stele'){
+                            index = i;
+                            found = true;
+                        }
+                        i++;
+                    });
+
+                    if(found){
+                        
+                        canvas._objects[index].dataprice = price;
+                        canvas._objects[index]._element.src = url;
+                        canvas.renderAll();
+                    }else{
+                        canvas.add(oImg);
+                        canvas.renderAll();
+                    }
+                    console.log(canvas);
+                    priceAndItems();
+                });
+            });
+
+             
+             function apply(){
+                var id = $(this).attr('id');
+                var input = $(this).parent().find('input');
+                console.log(input); 
+             }
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-add-custom-text-button', 'click', function(){
+                var id = $(this).attr('data-id');
+                var input = $('#text_'+id);
+                var val = input.val();
+                var txt_price = Number($(this).attr('data-price')) * val.length;
+                var elExist = elmentExists(id);
+                console.log(elExist);
+                if(elExist !== false ){
+                    var obj = canvas._objects[elExist];
+                    obj.text = val;
+                    obj.dataprice = txt_price;
+                    canvas._objects[elExist] = obj;
+                    canvas.requestRenderAll();
+                    priceAndItems();
+                }
+                else{
+                    var text = new fabric.Textbox(val, {
+                        width:250,
+                        cursorColor :"blue",
+                        top:10,
+                        left:10,
+                        editable: false,
+                        uniqId: id,
+                        dataprice: txt_price,
+                        frfuLabelObject: 'Texte Personnalise',
+                        frfuNameObject: 'text-custom'
+                    });
+                    canvas.add(text);
+                    canvas.requestRenderAll();
+                    priceAndItems();
+                }
+            });
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-remove-custom-text-button', 'click', function(){
+                var id = $(this).attr('data-id');
+                var elExist = elmentExists(id);
+                console.log(elExist);
+                if(elExist !== false ){
+                    var obj = canvas._objects[elExist];
+                    canvas.remove(obj);
+                    canvas.requestRenderAll();
+                    $('#text-custom-'+id).remove();
+                    priceAndItems();
+                }
+            })
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-custom-text-size-plus', 'mousedown', function(){
+                    var id = $(this).attr('data-id');
+                    var elExist = elmentExists(id);
+                    console.log(elExist);
+                    if(elExist !== false ){
+                        var obj = canvas._objects[elExist];
+                        obj.set('fontSize', obj.get('fontSize')+1);
+                        canvas._objects[elExist] = obj;
+                        canvas.requestRenderAll();
+                    }
+            });
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-custom-text-size-minus', 'mousedown', function(){
+                    var id = $(this).attr('data-id');
+                    var elExist = elmentExists(id);
+                    console.log(elExist);
+                    if(elExist !== false ){
+                        var obj = canvas._objects[elExist];
+                        obj.set('fontSize', obj.get('fontSize')-1);
+                        canvas._objects[elExist] = obj;
+                        canvas.requestRenderAll();
+                        priceAndItems();
+                    }
+            });
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-custom-text-position-up', 'mousedown', function(){
+                    var id = $(this).attr('data-id');
+                    var elExist = elmentExists(id);
+                    console.log(elExist);
+                    if(elExist !== false ){
+                        var obj = canvas._objects[elExist];
+                        obj.set('top', obj.get('top')-1);
+                        canvas._objects[elExist] = obj;
+                        canvas.requestRenderAll();
+                    }
+            });
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-custom-text-position-down', 'mousedown', function(){
+                var id = $(this).attr('data-id');
+                    var elExist = elmentExists(id);
+                    console.log(elExist);
+                    if(elExist !== false ){
+                        var obj = canvas._objects[elExist];
+                        obj.set('top', obj.get('top')+1);
+                        canvas._objects[elExist] = obj;
+                        canvas.requestRenderAll();
+                    }
+            });
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-custom-text-position-left', 'mousedown', function(){
+                    var id = $(this).attr('data-id');
+                    var elExist = elmentExists(id);
+                    console.log(elExist);
+                    if(elExist !== false ){
+                        var obj = canvas._objects[elExist];
+                        obj.set('left', obj.get('left')-1);
+                        canvas._objects[elExist] = obj;
+                        canvas.requestRenderAll();
+                    }
+            });
+
+            $('#frfu-add-remove-custom-text').delegate('.frfu-custom-text-position-right', 'mousedown', function(){
+                    var id = $(this).attr('data-id');
+                    var elExist = elmentExists(id);
+                    console.log(elExist);
+                    if(elExist !== false ){
+                        var obj = canvas._objects[elExist];
+                        obj.set('left', obj.get('left')+1);
+                        canvas._objects[elExist] = obj;
+                        canvas.requestRenderAll();
+                    }
+            });
+
+            canvas.on('text:changed', function(e) {
+
+                var objs = this._objects;
+                var txt = '';
+                objs.forEach(obj => {
+
+                        if(obj.text){
+                            txt += obj.text;
+                        }
+                });
+
+                var len = txt.length;
+                var txt_price = Number($('#frfu-custom-price-text').text());
+                var price = len * Number($('#frfu-add-remove-custom-text').find('.frfu-add-custom-text-button').attr('data-price'));
+                var price_total = (Number($($('.frfu-custom-total-price')[0]).text()) - txt_price) + price;
+
+                $('#frfu-custom-price-text').text(price);
+                $('#devis_priceText').val(price);
+                $('.frfu-custom-total-price').text(price_total);
+                $('#devis_total').val(price_total);
+            });
+
+            $('#frfu-upload-custom-img').change(function(){
+                var fd = new FormData(); 
+                var files = $(this)[0].files[0];
+                console.log($(this));
+                fd.append('custom-img', files); 
+                var price = Number($(this).attr('data-price'));
+                console.log(price);
+                $.ajax({ 
+                    url: $(this).attr('data-upload-url'), 
+                    type: 'post', 
+                    data: fd, 
+                    contentType: false, 
+                    processData: false, 
+                    success: function(response){ 
+                        
+                        var cprice = price + Number($('#frfu-custom-price-images').text());
+                        var price_total = Number($($('.frfu-custom-total-price')[0]).text()) + price;
+                        console.log(price);
+                        console.log(cprice);
+                        console.log(price_total);
+                        var pugImg = new Image();
+                        pugImg.onload = function (img) {    
+                            var pug = new fabric.Image(pugImg, {
+                                angle: 45,
+                                width: img.width/4,
+                                height: img.height/4,
+                                left: 50,
+                                top: 70,
+                                scaleX: .25,
+                                scaleY: .25,
+                                dataprice: price
+                            });
+                            canvas.add(pug);
+
+                            $('#frfu-custom-price-images').text(cprice);
+                            $('.frfu-custom-total-price').text(price_total);
+                            $('#devis_total').val(price_total);
+                            $('#frfu-custom-img').attr('src', '/'+response.location);
+                            $('#frfu-custom-img').show(); 
+                        };
+                        pugImg.src = '/'+response.location;
+                    },
+                    error: function(err){ 
+                        console.log(err);
+                    },
+                }); 
+            });
+
+
+            $('#frfu-submit-devis').click(function(){
+                buildInsertMetaData();
+                $('#devis_svg').val(canvas.toDataURL('image/png'));
+                $('#devis_photo').val(json);
+                $('#devis_metaData').val(JSON.stringify(metaData));
+                setTimeout(function(){
+                    $('#devis-form').trigger('submit');
+                }, 2000)
+                
+            });
+
+            $('#devis-form').submit(function(e){
+               /* e.preventDefault();
+                console.log('La requete est lancé');
+                $('#pass-step-5').prop('disabled', true);
+                
+                var form = new FormData($(this)[0]);
+                if(!processing){
+                    processing = true;
+                    $.ajax({
+                        url: window.location.href,
+                        type: 'post',
+                        data: form,
+                        contentType: false, 
+                        processData: false, 
+                        success: function(response){
+                            console.log(response);
+                            
+                            //$.notify('Devis Mise à jour', 'success');
+                            processing = false;
+                            //$('#pass-step-5').prop('disabled', false);
+                        },
+                        error: function(error){
+                            console.log(error);
+                            processing = false;
+                        }
+                    });
+                }*/
+                
+            });
+
+           // addCustomTextElement.trigger('click');
+
+        });
+
+        
+    </script>
+
+{% endblock %}

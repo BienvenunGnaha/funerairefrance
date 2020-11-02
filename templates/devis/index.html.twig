@@ -1,0 +1,46 @@
+{% extends 'user.html.twig' %}
+
+{% block title %}Devis | FuneraireFrance{% endblock %}
+
+{% block user_block %}
+    <div class="row p-2">
+        <table class="table table-striped">
+                    {% set isPro = false %}
+                        {% if app.user %}
+                            {% if app.user.type %}
+                                {% if app.user.type.id == 2 %}
+                                    {% set isPro = true %}
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    <thead>
+                        <tr>
+                        <th scope="col">Id du devis</th>
+                        <th scope="col">Nom du produit</th>
+                        <th scope="col">Prix {{isPro ? '(HT)' : '(TTC)'}}</th>
+                        <th scope="col">Etat</th>
+                        <th scope="col">Actions</th>
+                        
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        {% for devis in devises %}
+                            {% set details = devis_details(devis, app.user) %}
+                            <tr>
+                                <th scope="row" >{{devis.id}}</th>
+                                <td>{{devis.productId.name}}</td>
+                                <td>{{isPro ? details.totalHT~' €' : devis.total~' €'}}</td>
+                                <td>{{devis.status.name}}</td>
+                                <td>
+                                    <a class="btn btn-outline-secondary" href="{{url('devis-view', {'id': devis.id})}}"><i class="far fa-eye"></i> Voir</a>
+                                    {% if devis.colis != null %}
+                                        <span class="btn btn-outline-secondary ml-auto mr-auto tracking-chronopost" data-colis="{{devis.colis}}">Tracker</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+    </div>
+{% endblock %}

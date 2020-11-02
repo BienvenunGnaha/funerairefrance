@@ -1,0 +1,287 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Passez votre commande | FuneraireFrance{% endblock %}
+
+{% block stylesheets %}
+        <link rel="stylesheet" type="text/css" href="/css/step.min.css">
+{% endblock %}
+
+{% block body %}
+
+<div class="container-fluid">
+
+    <div class="row">
+       <div class="col-12">
+            <div class="row">
+                <div class="col-12">
+                   <div class="row">
+                     <div class="col-lg-6 col-md-6 p-2">
+                        <span>FUNERAIRE FRANCE</span>
+                     </div>
+
+                     <div class="col-lg-6 col-md-6 p-2">
+                        <div class="row">
+                            <div class="col-4">
+                                <div>
+                                    <img class="img-fluid" src="/images/picto-cart.png">
+                                </div>
+                                <div>
+                                </div>
+                            </div>
+                            <div class="col-4"><img class="img-fluid" src="/images/pct-connexion-bleu.png"></div>
+                            <div class="col-4"><img class="img-fluid" src="/images/pct-paiement.png"></div>
+                        </div>
+                     </div>
+                   </div>
+                </div>
+                
+                {% set pricing = price_cart(cart, app.user) %}
+                {% set cart_price = pricing.total %}
+                {% set cart_priceHT = pricing.totalHT %}
+                {% set shipping_price = pricing.shipping %}
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-12 border-bottom pb-3 pt-3 pl-3">
+                          <span class="h4">Informations de livraison et Paiement<span>
+                        </div>
+                        <div class="col-12 pb-3 pt-3 pl-3">
+                            <div id="" class="row conn-block mt-3">
+                                <div class="col-lg-5 p-2">
+                                    
+                                    <form action="{{url('checkout-cart-user-info')}}" method="POST">
+                                        {{ form_widget(formUser._token, {attr: {'class' : 'form-control'}}) }}
+                                        <div class="form-group">
+                                            {{ form_label(formUser.email, 'Email') }}
+                                            {{ form_widget(formUser.email, {attr: {'class' : 'form-control'}}) }}
+                                        </div>
+                                        <div class="form-group">
+                                            {{ form_label(formUser.phone, 'Numéro de téléphone') }}
+                                            {{ form_widget(formUser.phone, {attr: {'class' : 'form-control'}}) }}
+                                        </div>
+                                        <div class="form-group">
+                                            {{ form_label(formUser.address, 'Adresse') }}
+                                            {{ form_widget(formUser.address, {attr: {'class' : 'form-control'}}) }}
+                                        </div>
+                                        <div class="form-group">
+                                            {{ form_label(formUser.address2, 'Seconde adresse(faculatif)') }}
+                                            {{ form_widget(formUser.address2, {attr: {'class' : 'form-control'}}) }}
+                                        </div>
+                                        <div class="form-group">
+                                            {{ form_label(formUser.Country, 'Pays') }}
+                                            {{ form_widget(formUser.Country, {attr: {'class' : 'form-control'}}) }}
+                                        </div>
+                                        <div class="col-lg-6 form-group">
+                                            <input type="submit" class="btn btn-dark" value="Modifier l'adresse">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-lg-4 p-2">
+                                    <div class="col-12">
+                                        <label for="choose-other-address">J'utilise une autre adresse pour la livraison</label>
+                                        <input id="choose-other-address" type="checkbox" class="form-control">
+                                    </div>
+                                    <form class="other-address" action="{{url('checkout-cart-shipping-address')}}" method="POST">
+                                        {{ form_widget(formAddress._token, {attr: {'class' : 'form-control'}}) }}
+                                        <div class="col-lg-6 form-group">
+                                            {{ form_label(formAddress.name, 'Nom Complet') }}
+                                            {{ form_widget(formAddress.name, {attr: {'class' : 'form-control'}}) }}
+                                        </div>
+                                        <div class="col-lg-6 form-group">
+                                            {{ form_label(formAddress.zip, 'Code Postal') }}
+                                            {{ form_widget(formAddress.zip, {attr: {'class' : 'form-control'}}) }}
+                                        </div>
+                                        <div class="col-lg-6 form-group">
+                                            {{ form_label(formAddress.road, 'Adresse') }}
+                                            {{ form_widget(formAddress.road, {attr: {'class' : 'form-control'}}) }}
+                                        </div>
+                                        <div class="col-lg-6 form-group">
+                                            {{ form_label(formAddress.city, 'Ville') }}
+                                            {{ form_widget(formAddress.city, {attr: {'class' : 'form-control'}}) }}
+                                        </div>
+                                        <div class="col-lg-6 form-group">
+                                            {{ form_label(formAddress.country, 'Pays') }}
+                                            {{ form_widget(formAddress.country, {attr: {'class' : 'form-control'}}) }}
+                                        </div>
+                                        <div class="col-lg-6 form-group">
+                                            {{ form_label(formAddress.phone, 'Numéro de téléphone') }}
+                                            {{ form_widget(formAddress.phone, {attr: {'class' : 'form-control'}}) }}
+                                        </div>
+                                        <div class="col-lg-6 form-group d-none">
+                                            {{ form_label(formAddress.userId) }}
+                                            {{ form_widget(formAddress.userId, {attr: {'class' : 'form-control d-none'}}) }}
+                                        </div>
+
+                                        <div class="col-lg-6 form-group">
+                                            <input type="submit" class="btn btn-dark" value="Ajouter l'adresse">
+                                        </div>
+                                    </form>
+                                    <div class="col-12 border bg-light mt-3 p-2"> 
+                                        <input id="cardholder-name" type="text" class="form-control" placeholder="Full Name">
+                            <!-- placeholder for Elements -->
+                                        <form id="setup-form" >
+                                            <div class="p-3"></div>
+                                            <div id="card-element" class="m-2"></div>
+                                            <div style="height: 15px;"></div>
+                                            <button id="card-button" data-secret="{{clientSecret}}" class="btn btn-primary">Payer</button>
+                                        </form>
+                                        <form id="frfu-payment-stripe-form" class="d-none" action="{{ url('checkout-cart-stripe') }}" method="post">
+                                            {# the argument of csrf_token() is an arbitrary string used to generate the token #}
+                                            <input type="hidden" name="_token" value="{{ csrf_token('pay_form_token') }}"/>
+                                            <input id="frfu-stripe-pm" type="hidden" name="pm" value=""/>
+                                            <button type="submit">Valider le paiement</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-3 p-2">
+                                    <div class="col-12 border-bottom pb-3 pt-3 pl-3">
+                                        <span class="h4">Resumé<span>
+                                    </div>
+                                   {% set label = '(TTC)' %}
+                                    {% set isPro = false %}
+                                    {% if app.user %}
+                                        {% if app.user.type %}
+                                            {% if app.user.type.id == 2 %}
+                                                {% set label = '(HT)' %}
+                                                {% set isPro = true %}
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                    <div class="col-12 pb-3 pt-3">
+                                        <div class="row border bg-light p-2">
+                                            <div class="col-12 border-bottom">
+                                                <div class="d-flex justify-content-start">
+                                                    <span>Panier {{label}}</span>
+                                                </div>
+                                                <div class="d-flex justify-content-end">
+                                                    <span class="h4">{{isPro ? cart_priceHT : cart_price}} €</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 border-bottom">
+                                                <div class="d-flex justify-content-start">
+                                                    <span>Livraison</span>
+                                                </div>
+                                                <div class="d-flex justify-content-end">
+                                                    <span class="h4">{{shipping_price}} €</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 mb-2">
+                                                <div class="d-flex justify-content-start">
+                                                    <span>Total(TTC)</span>
+                                                </div>
+                                                <div class="d-flex justify-content-end">
+                                                    <span class="h4">{{cart_price + shipping_price}} €</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+          </div>
+       </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+     <script src="/js/semantic.min.js"></script>
+    <script>
+        $(function(){
+            
+          $('.other-address').hide();
+          $('#choose-other-address').change(function(e){
+              $('.other-address').toggle();
+          });
+
+          var stripe = Stripe("{{getConfig('stripe_pk').value}}");
+
+            var elements = stripe.elements();
+            var cardElement = elements.create('card', {hidePostalCode: true});
+            cardElement.mount('#card-element');
+            function closeModal() {
+                overlay.style.display='none';
+            }
+
+            var cardholderName = document.getElementById('cardholder-name');
+            var cardButton = document.getElementById('card-button');
+            var clientSecret = cardButton.dataset.secret;
+
+        cardButton.addEventListener('click', function(ev) {
+            ev.preventDefault();
+            stripe.confirmCardSetup(
+                clientSecret,
+                {
+                payment_method: {
+                card: cardElement,
+                billing_details: {
+                name: cardholderName.value,
+                },
+            },
+            }
+        ).then(function(result) {
+      if (result.error) {
+           console.log(result.error);
+           $.notify('Votre moyen de paiement n\'a pas été accepté.', 'error');
+      } else {
+          $.notify('Le paiement est en cours.', 'success');
+         // 
+           $('#frfu-stripe-pm').val(result.setupIntent.payment_method) ; 
+           setTimeout(function(){
+               $('#frfu-payment-stripe-form').trigger('submit');
+           }, 2000);
+        /*}else{
+            $.ajax({
+                    type: "GET",
+                    url : '/user/vendor/payment/card/'+result.setupIntent.payment_method, 
+                    success: function(data){
+                        console.log(data);
+                        $.notify('Votre paiement a été effectué avec succès', 'success');
+                        closeModal();
+                        setTimeout(function(){ window.location.reload(); }, 1000);
+                    },
+                    error: function(error) {
+                        $.notify('Votre paiemment a échoué. Veuillez reessayer ou enregistrer une nouvelle carte de crédit.', 'error');
+                        console.log(error);
+                    }
+            });
+        }*/
+     }   
+  })
+  
+  });
+        $('#frfu-payment-stripe-form').submit(function(e){
+            e.preventDefault();
+            var form = new FormData($(this)[0]);
+            $.ajax({
+                type: "POST",
+                url : "{{ url('checkout-cart-stripe') }}",
+                data: form,
+                processData: false,
+                contentType: false,
+                success: function(data){
+                    console.log(data);
+                    $.notify('Félicitation, Votre paiement et votre commande a été accepté.', 'success');
+                    
+                    setTimeout(function(){ window.location.href="{{url('carts-user')}}"; }, 2000);
+                },
+                error: function(error) {
+                    $.notify('Votre paiement n\'a pas été accepté.', 'error');
+                    setTimeout(function(){
+                        window.location.reload();
+                    }, 2000);
+                    console.log(error);
+                }
+            });
+        });
+
+
+       });
+    </script>
+        
+{% endblock %}

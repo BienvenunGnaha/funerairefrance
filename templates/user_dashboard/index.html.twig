@@ -1,0 +1,194 @@
+{% extends 'user.html.twig' %}
+
+{% block title %}Profil | FuneraireFrance{% endblock %}
+
+
+{% block user_block %}
+    <div class="container-fluid">
+        {#<div class="row bg-light border-bottom mb-3">
+            <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6 p-2">
+                {% if user.photo %}
+                    <img class="img-fluid" src="{{'/'~link_image(user.photo)}}"> 
+                {% else %}
+                    <img class="img-fluid" src="/images/pico/profile-icon-28.png">
+                {% endif %}
+            </div>
+            <div class="col-lg-9 col-md-8 col-sm-8 col-xs-6">
+                <div class="h-50">
+                   <div class="text-weight-bold p-2 mt-1">
+                        <span>{{user.firstname~' '~user.name}}</span>
+                   </div>
+                   <div class="text-weight-bold p-2 mt-1">
+                        {% if app.user.type %}
+
+                            {% if app.user.type.id == 2 %}
+
+                                <span class="text-muted">Compte Entreprise</span>
+
+                            {% else %}
+
+                                <span class="text-muted">Compte Particulier</span>
+
+                            {% endif %}
+
+                        {% else %}
+                                <span class="text-muted">Compte Particulier</span>
+                        {% endif %}
+                   </div>
+                </div>
+                <div class="h-50 d-flex justify-content">
+                    {#<div class="text-weight-bold p-2 mt-1">
+                        <a class="btn btn-outline-secondary" href="{{url('user_edit')}}"><i class="far fa-edit"></i>Editer votre profil</a>
+                    </div>
+
+                    <div class="text-weight-bold p-2 mt-1">
+                        <a class="btn btn-outline-secondary" href="{{url('user-reset-pw')}}">Modifier mon mot de passe</a>
+                    </div>
+                </div>
+            </div>
+        </div>#}
+        <div class="row">
+            <div class="col-lg-5 ml-auto mr-auto border mb-3">   
+                <div class="row">
+                    <div class="col-12 p-2 border-bottom">
+                        <span class="text-seconary h6">INFORMATIONS DE CONTACT</span>
+                    </div>
+                    <div class="col-12 p-2">
+                        <div class="row">
+                            <div class="col-12 p-1"><span class="text-secondary ml-2">{{user.firstname~' '~user.name}}</span></div>
+                            <div class="col-12 p-1" class="text-secondary"><span class="text-secondary ml-2">{{user.email}}</span></div> 
+                            <div class="col-12 p-1">
+                                <a class="btn text-underline" href="{{url('user_edit')}}"><i class="far fa-edit"></i>Modifier</a>
+                                <a class="btn" href="{{url('user-reset-pw')}}">Modifier mon mot de passe</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 ml-auto mr-auto border mb-3">
+                <div class="row">
+                    <div class="col-12 p-2 border-bottom">
+                        <span class="text-seconary h6">LETTRES D’INFORMATION</span>
+                    </div>
+                    <div class="col-12 p-2">
+                        <div class="row">
+                            <div class="col-12 p-2">
+                                {% if app.user.news == true %}
+                                    <span class="h6 text-secondary">Vous êtes inscrit à "l’abonnement général".</span>
+                                {% else %}
+                                    <span class="h6 text-secondary">Vous n’êtes pas abonné à notre lettre d’information.</span>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 p-2">
+                                <a class="text-underline text-secondary ml-3" href="{{url('user_news_subscribe')}}">Modifier</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-5 ml-auto mr-auto border mb-3">
+                <div class="row">
+                    <div class="col-12 p-2 border-bottom">
+                        <span class="text-seconary h6">ADRESSE DE FACTURATION PAR DÉFAUT</span>
+                    </div>
+                    <div class="col-12 p-2">
+                        <div class="row">
+                            {% if default %}
+                                <div class="col-12 p-2 bg-light mb-2">
+                                    <span class="text-secondary d-block">{{default.name}} </span>
+                                    <span class="text-secondary d-block">{{default.country~', '~default.city}} </span>
+                                    <span class="text-secondary d-block">{{default.zip~' '~default.road}} </span>
+                                    <span class="text-secondary d-block">{{default.phone}} </span>
+                                    <a class="text-underline text-secondary ml-3" href="{{url('user_address_edit', {id: default.id})}}">Modifier</a>
+                                </div>
+                            {% else %}
+                                <li><em>Aucune adresse de livraison trouvée</em></li>
+                                <div class="col-12 p-2 bg-light"><a class="btn" href="{{url('user_address_add')}}">Ajouter une nouvelle adresse</a></div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 ml-auto mr-auto border mb-3">
+                <div class="row">
+                    <div class="col-12 p-2 border-bottom">
+                        <span class="text-seconary h6">ADRESSE DE LIVRAISON PAR DÉFAUT</span>
+                    </div>
+                    <div class="col-12 p-2">
+                        <div class="row p-2">
+                            {% if default %}
+                                <div class="col-12 p-2 bg-light mb-2">
+                                    <span class="text-secondary d-block">{{default.name}} </span>
+                                    <span class="text-secondary d-block">{{default.country~', '~default.city}} </span>
+                                    <span class="text-secondary d-block">{{default.zip~' '~default.road}} </span>
+                                    <span class="text-secondary d-block">{{default.phone}} </span>
+                                    <a class="text-underline text-secondary ml-3" href="{{url('user_address_edit', {id: default.id})}}">Modifier</a>
+                                </div>
+                            {% else %}
+                                <li><em>Aucune adresse de livraison trouvée</em></li>
+                                <div class="col-12 p-2 bg-light"><a class="btn" href="{{url('user_address_add')}}">Ajouter une nouvelle adresse</a></div>
+                            {% endif %}
+                            {#{% for address in addresses %}
+                                {% if address.byDefault %}
+                                    <div class="col-12 p-2 bg-light mb-2"><a class="text-underline text-secondary">{{address.zip~' '~address.road}} </a><span>Par défatut</span><a class="text-underline text-secondary ml-3" href="{{url('user_address_edit', {id: address.id})}}">Modifier</a></div>
+                                {% else %}
+                                    <div class="col-12 p-2 bg-light mb-2"><a class="text-underline text-secondary">{{address.zip~' '~address.road}} </a><a class="text-underline text-secondary ml-3" href="{{url('user_address_default', {id: address.id})}}">Définir par défaut</a><a class="text-underline text-secondary ml-3" href="{{url('user_address_edit', {id: address.id})}}">Modifier</a><a class="text-underline text-danger ml-3" href="{{url('user_address_delete', {id: address.id})}}">Supprimer</a></div>
+                                {% endif %}
+                            {% else %}
+                                <li><em>Aucune adresse de livraison trouvée</em></li>
+                            {% endfor %}
+                            <div class="col-12 p-2 bg-light"><a class="btn" href="{{url('user_address_add')}}">Ajouter une nouvelle adresse</a></div>#}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {#<div class="col-12 p-2 mt-2">
+                <span class="ml-auto mr-auto h3 col-12 text-center">INFORMATIONS COMPLETES</span>
+            </div>
+            <div class="col-12 p-2 bg-light"> 
+                <div class="row border-bottom mb-2">
+                    <div class="col-6">Email</div>
+                    <div class="col-6">{{user.email}}</div>
+                </div>
+                <div class="row border-bottom mb-2">
+                    <div class="col-6">Numéro de téléphone</div>
+                    <div class="col-6">{{user.phone}}</div>
+                </div>
+                <div class="row border-bottom mb-2">
+                    <div class="col-6">Adresse</div>
+                    <div class="col-6">{{user.address}}</div>
+                </div>
+                <div class="row border-bottom mb-2">
+                    <div class="col-6">Seconde Adresse</div>
+                    <div class="col-6">{{user.address2}}</div>
+                </div>
+                <div class="row border-bottom mb-2">
+                    <div class="col-6">Date de Naissance</div>
+                    <div class="col-6">{{user.birthday|date('d-m-Y')}}</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-6">Pays</div>
+                    <div class="col-6">{{user.Country}}</div>
+                </div>
+                {% if app.user.type %}
+                    {% if app.user.type.id == 2 %}
+                        <div class="row border-top mb-2">
+                            <div class="col-6">Nom de l'entreprise</div>
+                            <div class="col-6">{{user.company}}</div>
+                        </div>
+                        <div class="row  border-top mb-2">
+                            <div class="col-6">SIRET</div>
+                            <div class="col-6">{{user.siret}}</div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                
+            </div>#}
+        </div>
+    </div>
+    
+{% endblock %}
+

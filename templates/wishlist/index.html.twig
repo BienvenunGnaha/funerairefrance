@@ -1,0 +1,85 @@
+{% extends 'user.html.twig' %}
+
+{% block title %}Wishlist | FuneraireFrance{% endblock %}
+
+{% block user_block %}
+
+    <div class="container-fluid">
+        <div class="row mt-3 mb-3">
+            <div class="col-12">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                        <th scope="col">Image</th>
+                        <th scope="col">Nom du produit</th>
+                        <th scope="col">Prix du produit</th>
+                        <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                            {% for prod in wishlist.product %}
+                            {% set ini_price = prod.cprice~' € TTC' %}
+                              {% if app.user %}
+                                        {% if app.user.type %}
+
+                                            {% if app.user.type.id == 2 %}
+                                                {% set ini_price = prod.pricepro~' € HT' %}
+                                            {% endif %}
+
+                                        {% endif %}
+                                
+                              {% endif %}
+                              {% set is_in = false %}
+                                {% if app.user %}
+                                    {% if app.user.wishlist %}
+                                        {% set wish_prods = app.user.wishlist.product %}
+                                    
+                                        {% for wish_prod in wish_prods %}
+                                            {% if prod.id == wish_prod.id %}
+                                                {% set is_in = true %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                    
+                                    
+                                {% endif %}
+                            <tr>
+                                <th scope="row" ><img class="img-fluid" src="{{'/'~link_image(prod.photo)}}" style="height: 40px;"></th>
+                                <td>{{prod.name}}</td>
+                                <td>{{ini_price}}</td>
+                                <td>
+                                    {% if app.user %}
+                                        {% if is_in %}
+                                            <div class="text-center frfu-cat-product-see-more mt-2 mb-2 p-2 rounded-circle ml-auto mr-auto bg-secondary" style="height: 40px; width: 40px; display: inline;">
+                                                <a data-id="{{prod.id}}" class="frfu-wishlist-remove-product" href="{{url('wishlist-rm-product', {'id' : prod.id})}}"><i class="fas fa-heart text-danger"></i></a>
+                                            </div>
+                                        {% else %}
+                                            <div class="text-center frfu-cat-product-see-more mt-2 mb-2 p-2 rounded-circle ml-auto mr-auto bg-secondary" style="height: 40px; width: 40px; display: inline;">
+                                                <a data-id="{{prod.id}}" class="frfu-wishlist-add-product" href="{{url('wishlist-add-product', {'id' : prod.id})}}"><i class="far fa-heart text-danger"></i></a>
+                                            </div>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="text-center frfu-cat-product-see-more mt-2 mb-2 p-2 rounded-circle ml-auto mr-auto bg-secondary" style="height: 40px; width: 40px; display: inline;">
+                                            <a data-id="{{prod.id}}" class="frfu-wishlist-add-product-sign" href="{{url('wishlist-add-product', {'id' : prod.id})}}"><i class="far fa-heart text-danger"></i></a>
+                                        </div>
+                                    {% endif %}
+                                    {% if prod.subCatId != null %}
+                                        {% if prod.subCatId.customizable %}
+                                                <a class="btn btn-outline-secondary float-right" href="{{url('product-customize', {'id' : prod.id})}}">Demander un devis</a>
+                                            {% else %}
+                                                <a class="btn btn-outline-secondary float-right" href="{{ path('product-show', {'id' : prod.id}) }}">Ajouter au panier</a>
+                                        {% endif %}
+                                    {% else %}
+                                        <a class="btn btn-outline-secondary float-right" href="{{ path('product-show', {'id' : prod.id}) }}">Ajouter au panier</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

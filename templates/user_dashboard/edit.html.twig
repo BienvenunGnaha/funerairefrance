@@ -1,0 +1,88 @@
+{% extends 'user.html.twig' %}
+
+{% block title %}Editer votre profil | FuneraireFrance{% endblock %}
+
+
+{% block user_block %}
+    <div class="container-fluid">
+        <div class="row bg-light border-bottom">
+            
+            <form class="col-lg-11 p-2" action="" method="POST" enctype="multipart/form-data">
+                    {{form_widget(form._token)}}
+                <div class="col-10 form-group">
+                    {{form_label(form.name, 'Nom')}}
+                    {{form_widget(form.name, {attr: {'class': 'form-control'}})}}
+                </div>
+                <div class="col-10 form-group">
+                    {{form_label(form.firstName, 'Prénoms')}}
+                    {{form_widget(form.firstName, {attr: {'class': 'form-control'}})}}
+                </div>
+                <div class="col-10 form-group">
+                    {{form_label(form.email, 'Adresse email')}}
+                    {{form_widget(form.email, {attr: {'class': 'form-control'}})}}
+                </div>
+                <div class="col-10 form-group">
+                    {{form_label(form.phone, 'Numéro de téléphone')}}
+                    {{form_widget(form.phone, {attr: {'class': 'form-control'}})}}
+                </div>
+                <div class="col-10 form-group">
+                    {{form_label(form.address, 'Adresse')}}
+                    {{form_widget(form.address, {attr: {'class': 'form-control'}})}}
+                </div>
+                <div class="col-10 form-group">
+                    {{form_label(form.address2, 'Seconde Adresse(facultatif)')}}
+                    {{form_widget(form.address2, {attr: {'class': 'form-control'}})}}
+                </div>
+                <div class="col-10 form-group">
+                    {{form_label(form.birthday, 'Date de naissance')}}
+                    {{form_widget(form.birthday, {attr: {'class': 'form-control'}})}}
+                </div>
+                <div class="col-10 form-group">
+                    {{form_label(form.Country, 'Pays')}}
+                    {{form_widget(form.Country, {attr: {'class': 'form-control'}})}}
+                </div>
+                <div class="col-10 form-group">
+                    {{form_label(form.photo, 'Photo')}}
+                    {{form_widget(form.photo, {attr: {'class': 'form-control'}})}}
+                </div>
+                {% if app.user.type %}
+                    {% if app.user.type.id == 2 %}
+                        <div class="col-10 form-group">
+                            {{form_label(form.company, "Nom de l'entreprise")}}
+                            {{form_widget(form.company, {attr: {'class': 'form-control'}})}}
+                        </div>
+                        <div class="col-10 form-group">
+                            {{form_label(form.siret, 'SIRET')}}
+                            {{form_widget(form.siret, {attr: {'class': 'form-control'}})}}
+                        </div>
+                    {% else %}
+
+                        <div class="col-10 form-group d-none">
+                            {{form_label(form.company, 'Nom')}}
+                            {{form_widget(form.company, {attr: {'class': 'form-control'}})}}
+                        </div>
+                        <div class="col-10 form-group d-none">
+                            {{form_label(form.siret, 'Nom')}}
+                            {{form_widget(form.siret, {attr: {'class': 'form-control'}})}}
+                        </div>
+
+                    {% endif %}
+                {% else %}
+                    <div class="col-10 form-group d-none">
+                        {{form_label(form.company, 'Nom')}}
+                        {{form_widget(form.company, {attr: {'class': 'form-control'}})}}
+                    </div>
+                    <div class="col-10 form-group d-none">
+                        {{form_label(form.siret, 'Nom')}}
+                        {{form_widget(form.siret, {attr: {'class': 'form-control'}})}}
+                    </div>
+                {% endif %}
+                
+                <div class="col-10 form-group">
+                    <input type="submit" class="btn btn-primary" value="Mettre à jour">
+                </div>
+            </form>
+        
+        </div>
+    </div>
+{% endblock %}

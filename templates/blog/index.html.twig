@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Les articles de blog | FuneraireFrance{% endblock %}
+
+{% block body %}
+    <div class="container-fluid bg-light mt-3 mb-3 pt-3 pb-3">
+        <div class="row">
+            <div class="col-lg-11 ml-auto mr-auto">
+                <div class="row">
+                    {% for blog in blogs %}
+                        <div class="col-lg-3 col-md-6 col-sm-12 ml-auto mr-auto border bg-white">
+                            <div class="overflow-hidden">
+                                <a href="{{url('blog-show', {'title' : blog.title})}}"><img class="img-fluid" src="{{'/'~link_image(blog.photo)}}"></a>
+                            </div>
+
+                            <div class="h6">
+                                <h2 class="h6"><a href="{{url('blog-show', {'title' : blog.title})}}">{{blog.title}}</a></h2>
+                            </div>
+
+                            <div>
+                                {{blog.content|striptags|easyadmin_truncate(200)|raw}}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-11 ml-auto mr-auto d-flex justify-content-center">
+                {{ knp_pagination_render(blogs) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

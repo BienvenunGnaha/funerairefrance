@@ -1,0 +1,128 @@
+{% for prod in products %}
+    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 h-auto border frfu-product">
+        {% set photo = link_image(prod.photo)%}
+        {% set isCustomizable = false %}
+        <div class="h-50 overflow-hidden">
+            <div class="w-100 h-50 position-absolute z-index-10 frfu-overlay-product" style="background-color: rgba(255,255,255, 0.4); display: none;">
+                
+            </div>
+            {% if prod.subCatId != null %}
+                    {% if prod.subCatId.customizable %}
+                        {% set isCustomizable = true%}
+                        {% if prod.subCatId.customizable and prod.needContact %}
+                            <div class="w-100 h-50 position-absolute z-index-20 frfu-overlay-product" style="display: none;">
+                                <a class="btn btn-white get-devis btn btn-white frfu-subcat-border frfu-subcat-bg-hover" href="{{path('product-devis-contact', {'id' : prod.id})~'?desktop=1'}}">OBTENIR UN DEVIS</a>
+                            </div>
+                        {% else %}
+                            <div class="w-100 h-50 position-absolute z-index-20 frfu-overlay-product" style="display: none;">
+                                <a class="btn btn-white get-devis btn btn-white frfu-subcat-border frfu-subcat-bg-hover" href="{{path('product-customize', {'id' : prod.id})~'?desktop=1'}}">OBTENIR UN DEVIS</a>
+                            </div>
+                        {% endif %}
+                        {% elseif prod.subCatId and prod.subCatId.customizableBeforeOrder %}
+                            <div class="w-100 h-50 position-absolute z-index-20 frfu-overlay-product" style="display: none;">
+                                <a class="btn btn-white get-devis btn btn-white frfu-subcat-border frfu-subcat-bg-hover" href="{{ path('product-before-customize-before', {'id' : prod.id})~'?desktop=1' }}">PERSONNALISER</a>
+                            </div>
+                        {% else %}
+                            <div class="w-100 h-50 position-absolute z-index-20 frfu-overlay-product" style="display: none;">
+                                <a class="btn btn-white get-devis btn btn-white frfu-subcat-border frfu-subcat-bg-hover" href="{{ path('product-show', {'id' : prod.id}) }}">DECOUVRIR</a>
+                            </div>
+                    {% endif %}
+                {% else %}
+                    <div class="w-100 h-50 position-absolute z-index-20 frfu-overlay-product" style="display: none;">
+                        <a class="btn btn-white get-devis btn btn-white frfu-subcat-border frfu-subcat-bg-hover" href="{{ path('product-show', {'id' : prod.id}) }}">DECOUVRIR</a>
+                    </div>
+            {% endif %}
+            {% if prod.subCatId != null %}
+                    {% if prod.subCatId.customizable %}
+                            {% if prod.subCatId.customizable and prod.needContact %}
+                                <a href="{{path('product-devis-contact', {'id' : prod.id})~'?desktop=1'}}"><img class="img-fluid" src="{{asset(photo)}}"></a>
+                            {% else %}
+                                <a href="{{path('product-customize', {'id' : prod.id})~'?desktop=1'}}"><img class="img-fluid" src="{{asset(photo)}}"></a>
+                            {% endif %}
+                        {% elseif prod.subCatId and prod.subCatId.customizableBeforeOrder %}
+                            <a href="{{path('product-before-customize-before', {'id' : prod.id})~'?desktop=1'}}"><img class="img-fluid" src="{{asset(photo)}}"></a>
+                        {% else %}
+                            <a href="{{url('product-show', {'id' : prod.id})}}"><img class="img-fluid" src="{{asset(photo)}}"></a>
+                    {% endif %}
+                {% else %}
+                    <a href="{{url('product-show', {'id' : prod.id})}}"><img class="img-fluid" src="{{asset(photo)}}"></a>
+            {% endif %} 
+        </div>
+        <div class="h-50">
+            {% if prod.subCatId != null %}
+                    {% if prod.subCatId.customizable %}
+                            {% if prod.subCatId.customizable and prod.needContact %}
+                                <div class="h-10 w-100 text-center frfu-subcat-text p-2 frfu-subcat-border-bottom"><a class="frfu-subcat-text" href="{path('product-customize', {'id' : prod.id})~'?desktop=1'}}">{{prod.name}}</a></div>
+                            {% else %}
+                                <div class="h-10 w-100 text-center frfu-subcat-text p-2 frfu-subcat-border-bottom"><a class="frfu-subcat-text" href="{{path('product-customize', {'id' : prod.id})~'?desktop=1'}}">{{prod.name}}</a></div>
+                            {% endif %}
+                        {% elseif prod.subCatId and prod.subCatId.customizableBeforeOrder %}
+                            <div class="h-10 w-100 text-center frfu-subcat-text p-2 frfu-subcat-border-bottom"><a class="frfu-subcat-text" href="{{ path('product-before-customize-before', {'id' : prod.id})~'?desktop=1' }}">{{prod.name}}</a></div>
+                        {% else %}
+                            <div class="h-10 w-100 text-center frfu-subcat-text p-2 frfu-subcat-border-bottom"><a class="frfu-subcat-text" href="{{ path('product-show', {'id' : prod.id}) }}">{{prod.name}}</a></div>
+                    {% endif %}
+                {% else %}
+                    <div class="h-10 w-100 text-center frfu-subcat-text p-2 frfu-subcat-border-bottom"><a class="frfu-subcat-text" href="{{ path('product-show', {'id' : prod.id}) }}">{{prod.name}}</a></div>
+            {% endif %}
+
+            <div class="d-flex justify-content-center">
+                <div class="text-center frfu-cat-product-see-more mt-2 mb-2 p-2 rounded-circle ml-auto mr-auto frfu-subcat-bg" style="height: 40px; width: 40px;">
+                    <a class="frfu-show-product-details" href="{{url('cat-prod-show', {'id' : prod.id})}}"><i class="fas fa-eye text-danger"></i></a>
+                </div>
+                {% set is_in = false %}
+                {% if app.user %}
+                    {% if app.user.wishlist %}
+                        {% set wish_prods = app.user.wishlist.product %}
+                    
+                        {% for wish_prod in wish_prods %}
+                            {% if prod.id == wish_prod.id %}
+                                {% set is_in = true %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    
+                    
+                {% endif %}
+                
+                {% if app.user %}
+                    {% if is_in %}
+                        <div class="text-center frfu-cat-product-see-more mt-2 mb-2 p-2 rounded-circle ml-auto mr-auto frfu-subcat-bg" style="height: 40px; width: 40px;">
+                            <a data-id="{{prod.id}}" class="frfu-wishlist-remove-product" href="{{url('wishlist-rm-product', {'id' : prod.id})}}"><i class="fas fa-heart text-danger"></i></a>
+                        </div>
+                    {% else %}
+                        <div class="text-center frfu-cat-product-see-more mt-2 mb-2 p-2 rounded-circle ml-auto mr-auto frfu-subcat-bg" style="height: 40px; width: 40px;">
+                            <a data-id="{{prod.id}}" class="frfu-wishlist-add-product" href="{{url('wishlist-add-product', {'id' : prod.id})}}"><i class="far fa-heart text-danger"></i></a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center frfu-cat-product-see-more mt-2 mb-2 p-2 rounded-circle ml-auto mr-auto frfu-subcat-bg" style="height: 40px; width: 40px;">
+                        <a data-id="{{prod.id}}" class="frfu-wishlist-add-product-sign" href="{{url('wishlist-add-product', {'id' : prod.id})}}"><i class="far fa-heart text-danger"></i></a>
+                    </div>
+                {% endif %}
+            </div>
+            <a ></a>
+            {% set ini_price = prod.cprice %}
+            {% if app.user %}
+                    {% if app.user.type %}
+
+                        {% if app.user.type.id == 2 %}
+                            {% set ini_price = prod.pricepro %}
+                        {% endif %}
+
+                    {% endif %}
+            
+            {% endif %}
+            <div class="p-1">{{prod.description|striptags|easyadmin_truncate(50)|raw}}</div>
+            {% if isCustomizable %}
+                {% if prod.subCatId.customizable and prod.needContact %}
+                    <i class="fas fa-pencil-alt text-secondary"></i><a class="p-2 text-secondary text-underline" href="{{path('product-devis-contact', {'id' : prod.id})~'?desktop=1'}}">PERSONALISER MAINTENANT</a> 
+                {% else %}
+                    <i class="fas fa-pencil-alt text-secondary"></i><a class="p-2 text-secondary text-underline" href="{{path('product-customize', {'id' : prod.id})~'?desktop=1'}}">PERSONALISER MAINTENANT</a> 
+                {% endif %}
+            {% elseif prod.subCatId and prod.subCatId.customizableBeforeOrder %}
+                <i class="fas fa-pencil-alt text-secondary"></i><a class="p-2 text-secondary text-underline" href="{{path('product-before-customize-before', {'id' : prod.id})~'?desktop=1'}}">PERSONALISER MAINTENANT</a>
+            {% endif %}
+            <div class="h-10 w-100 p-2 h5 frfu-subcat-text">{{(isCustomizable or (prod.subCatId and prod.subCatId.customizableBeforeOrder)) ? '<span></span>A partir de <span>' : ''}}{{ini_price~' €'}}</span></div>
+        </div>
+    </div>
+{% endfor %}

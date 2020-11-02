@@ -1,0 +1,40 @@
+{% extends 'user.html.twig' %}
+
+{% block title %}Devis | FuneraireFrance{% endblock %}
+
+{% block user_block %}
+    <div class="row p-2">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                <th scope="col">Crée</th>
+                <th scope="col">Nom du produit</th>
+                <th scope="col">Evaluation</th>
+                <th scope="col">Avis</th>
+                <th scope="col">Actions</th>
+                
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% for rating in ratings %}
+                    <tr>
+                        <th scope="row" >{{rating.createdAt|date('d/m/Y')}}</th>
+                        <td>{{rating.product.name}}</td>
+                        <td>
+                            {% for i in 1..5 %}
+                                {% if rating.level >= i %}
+                                    <span id="rating-1" class="text-warning frfu-rating-star"><i class="fas fa-star"></i></span>
+                                {% else %}
+                                    <span id="rating-1" class="text-warning frfu-rating-star"><i class="far fa-star"></i></span>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{rating.message}}</td>
+                        <td><a class="text-underline text-secondary" href="{{url('user_view_rating', {id: rating.id})}}"><i class="far fa-eye"></i> Voir les détails</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

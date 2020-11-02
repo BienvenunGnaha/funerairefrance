@@ -1,0 +1,518 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{prod.name}} | Personnalisation de plaque funéraire{% endblock %}
+
+{% block body %}
+    <style>
+        .get-devis{
+            position: relative; 
+            margin-left: 22%;
+            margin-top: 25%; 
+        }
+        .get-devis:hover{
+            background-color: skyblue;
+            color: white;
+        }
+
+        .frfu-subcat-hover:hover{
+            border: {{'3px solid'~prod.catId.color}};
+            
+        }
+
+        .frfu-subcat-text{
+            color: {{prod.catId.color}};
+        }
+
+        .frfu-subcat-bg{
+            background-color: {{prod.catId.color}};
+        }
+
+        .frfu-subcat-bg-hover:hover{
+            background-color: {{prod.catId.color}};
+        }
+
+        .frfu-text-white-hover:hover{
+            color: white;
+        }
+
+        .frfu-subcat-border{
+            border: {{'1.5px solid'~prod.catId.color}};  
+                 
+        }
+
+        .frfu-subcat-border-radius{
+            border: {{'0.7px '~prod.catId.color}};  
+                 
+        }
+
+        .frfu-subcat-border-top{
+            border-top: {{'0.7px solid'~prod.catId.color}};  
+                 
+        }
+
+        .frfu-subcat-border-bottom{
+            border-bottom: {{'0.7px solid'~prod.catId.color}};  
+                 
+        }
+
+        .text-underline{
+            text-decoration: underline !important;
+        }
+
+        .share-product-label:before{
+            content: url('https://funerairefrance.com/images/pico/picto-mailto.png');
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
+            margin-right: 10px;
+        }
+        .stock-product-status:before{
+            content: url('https://funerairefrance.com/images/pico/picto-info-stock.png');
+            float: left;
+        }
+
+        .shipping-product-status:before{
+            content: url('https://funerairefrance.com/images/pico/picto-livraison.png');
+            float: left;
+        }
+
+        .frfu-select-text{
+            margin-bottom: 10px;
+            float: right;
+            width: 80%;
+            border-radius: 0 !important;
+        }
+
+        elect
+
+        .text-custom-block{
+            box-sizing: border-box;
+            border: 1px dashed #ccc;
+            background: #f7f7f7;
+        }
+
+        .frfu-tOrderCustomized{
+            width: 50%;
+            margin-left: 50%;
+            border-radius: 0 !important;
+        }
+    </style>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 p-2 ">
+                <div class="h6 mt-3 mb-3 text-secondary"> <a class="text-secondary" href="/">Acceuil</a><a href="{{prod.catId ? url("category_product", {"id" : prod.catId.id}) : '' }}" class="text-secondary">{{prod.catId ? ' / '~prod.catId.name|capitalize : ''}}</a> <a href="{{prod.subCatId ? url('subcat-product', {'id' : prod.subCatId.id}) : '' }}" class="text-secondary">{{prod.subCatId ? ' / '~prod.subCatId.name|capitalize : ''}}</a> <a>{{prod ? ' / '~prod.name|capitalize : ''}}</a> </div> 
+            </div>
+            <div class="col-12 p-2"> 
+                 <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-8 ml-auto mr-auto"> 
+                        <div>
+                            <img class="img-fluid" src="{{'/'~link_image(prod.photo)}}">
+                        </div>
+                        <div class="p-3 w-100">
+                            <span class="frfu-subcat-text">{{prod.name}}</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 ml-auto mr-auto"> 
+                        <form id="add-to-basket-form" class="row" action="" method="post">
+                            <input type="hidden" name="_token" value="{{ csrf_token('add-to-basket') }}"/>
+                            <div class="row h1 p-2">
+                                <div class="col-12 frfu-subcat-text">{{prod.name}}</div>
+                            </div>
+                            <div class="row border-top">
+                                <div class="col-12">
+                                   {% if prod.subCatId %}
+                                        {% if prod.numberTextCustomize > 0 %}
+                                            <div class="row">Sélectionnez vos textes pour cette plaque :</div>
+                                            {% for i in  1..prod.numberTextCustomize %}
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label class="form-label">{{'Choix n° '~i}}</label></br>
+                                                        <select data-id="{{i}}" class="col-12 form-control frfu-tOrder frfu-select-text" name="{{'tOrder'~i}}">
+                                                            <option value="">Selectionner un motif</option>
+                                                            <option value="">Texte personnalisé | +25</option>
+                                                            {% for tOrder in load_option_entity_status("App\\Entity\\TextOrder") %}
+                                                                <option value="{{tOrder.id}}">{{tOrder.content}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group d-none frfu-tOrderCustomized-div text-custom-block p-2" data-id="{{i}}">
+                                                        <label class="form-label text-dsg font-weight-bold">Personnalier votre texte : </label></br>
+                                                        <input minlength="0" maxlength="30" class="form-control frfu-tOrderCustomized" id="{{'tCustomized-'~i}}" name="{{'tCustomized'~i}}">
+                                                        <p class="text-secondary text-muted">15 caractères par lignes et 2 lignes maximum par inter</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                   {% endif %}
+                                </div>
+                                <div class="col-12">
+                                    {% set price = prod.cprice %}
+                                    {% if app.user %}
+
+                                        {% if app.user.type %}
+
+                                            {% if app.user.type.id == 2 %}
+                                                {% set price = prod.pricepro %}
+                                            {% endif %}
+
+                                        {% endif %}
+                                        
+                                   {% endif %}
+
+                                <div class="row border-bottom">
+                                    <div class="col-3 p-2">
+                                        <div class="h3 frfu-subcat-text">{{price}}</div>
+                                        {% if prod.shCost == 0 %}
+                                            <div class="text-success">Livraison gratuite*</div>
+                                        {% else %}
+                                            <div class="text-success">{{'Livraison '~prod.shCost~' € '}}</div>
+                                        {% endif %}
+                                    </div> 
+                                    <div class="col-2 p-2">
+                                        <div class="text-dark">Quantity</div>
+                                        <input class="form-control" id="qty" type="number" name="qty" value="1" min="1" max="{{prod.stock}}"  required>
+                                    </div>
+                                    <div class="col-7 p-2">
+                                            {% set is_in = false %}
+                                            {% if app.user %}
+                                                {% if app.user.wishlist %}
+                                                    {% set wish_prods = app.user.wishlist.product %} 
+                                                
+                                                    {% for wish_prod in wish_prods %}
+                                                        {% if prod.id == wish_prod.id %}
+                                                            {% set is_in = true %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                                
+                                                
+                                            {% endif %}
+                                            
+                                            {#{% if app.user %}
+                                                {% if is_in %}
+                                                    <a data-id="{{prod.id}}" class="frfu-wishlist-remove-product btn btn-secondary" href="{{url('wishlist-rm-product', {'id' : prod.id})}}"><i class="fas fa-heart text-danger"></i></a>
+                                                {% else %}
+                                                    <a data-id="{{prod.id}}" class="frfu-wishlist-add-product btn btn-secondary" href="{{url('wishlist-add-product', {'id' : prod.id})}}"><i class="far fa-heart text-danger"></i></a>
+                                                {% endif %}
+                                            {% else %}
+                                                    <a data-id="{{prod.id}}" class="frfu-wishlist-add-product-sign btn btn-secondary" href="{{url('wishlist-add-product', {'id' : prod.id})}}"><i class="far fa-heart text-danger"></i></a>
+                                            {% endif %}#}
+                                            <button id="add-to-basket-form-submit" class="btn btn-lg frfu-text-white-hover frfu-subcat-bg-hover frfu-subcat-text frfu-subcat-border ml-2" type="button">Ajouter au panier</button>
+                                        
+                                    </div>   
+                                </div>
+                                <div class="row p-2 border">
+                                    <div class="col-6 stock-product-status">
+                                        <div class="h6 text-dsg p-2">
+                                            Informations Stock
+                                        </div>
+                                        {% if prod.stock > 0 %}
+                                            <div class="p-2">
+                                                <p><i class="fas fa-circle text-success"></i> <span>En stock</span></p>
+                                            </div>
+                                        {% else %}
+                                            <div class="p-2">
+                                                <p><i class="fas fa-circle text-danger"></i> <span>Bientôt disponible</span></p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-6  shipping-product-status">
+                                        <div class="h6 text-dsg">
+                                            Informations Livraison
+                                        </div>
+                                        <div>{{'Expédié en '~prod.shTime~' jours ouvrés'}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                
+                            </div>
+                            <input type="hidden" name="productId" value="{{prod.id}}">
+                            <textarea id="metaData" name="metaData" class="d-none">{}</textarea>
+                        </form>
+                    </div>
+                </div>  
+            </div>
+            <div class="col12 p-2 ml-auto mr-auto"> 
+                <div class="row">
+                    <div class="col-lg-9 col-md-12 ml-auto mr-auto">
+
+                       <div class="row">
+                            <div class="col-12 border-bottom text-center p-2"> DESCRIPTION DÉTAILLÉE </div>
+
+                            <div class="col-12 border-bottom text-center p-2 border bg-light"> 
+                                {{ prod.description|raw }}
+                            </div>
+                       </div>
+
+                        <div class="row">
+                            <div class="col-12 border-bottom text-center p-2"> FICHE TECHNIQUE </div>
+
+                            <div class="col-12 border-bottom text-center p-2 border bg-light">
+                                {% if prod.colorProduct %} 
+                                <div class="row p-2">
+                                    <div class="col-6 d-flex justify-content-start"><span>Couleurs</span></div>
+                                    <div class="col-6 d-flex justify-content-start"><span>{{prod.colorProduct.name}}</span></div>
+                                </div>
+                                {% endif %}
+                                {% if prod.size %}
+                                <div class="row p-2">
+                                    <div class="col-6 d-flex justify-content-start"><span>Tailles</span></div>
+                                    <div class="col-6 d-flex justify-content-start"><span>{{prod.size}}</span></div>
+                                </div>
+                                {% endif %}
+                                {% if prod.granitPlaque %}
+                                <div class="row p-2">
+                                    <div class="col-6 d-flex justify-content-start"><span>Matière</span></div>
+                                    <div class="col-6 d-flex justify-content-start"><span>{{prod.granitPlaque.name}}</span></div>
+                                </div>
+                                {% endif %}
+                                {% if prod.guaranted %}
+                                <div class="row p-2">
+                                    <div class="col-6 d-flex justify-content-start"><span>Garantie</span></div>
+                                    <div class="col-6 d-flex justify-content-start"><span>{{prod.guaranted}}</span></div>
+                                </div>
+                                {% endif %}
+                                {% if prod.fixation %}
+                                <div class="row p-2">
+                                    <div class="col-6 d-flex justify-content-start"><span>Fixation</span></div>
+                                    <div class="col-6 d-flex justify-content-start"><span>{{prod.fixxation.name}}</span></div>
+                                </div>
+                                {% endif %}
+                                {% if prod.typeGranit %}
+                                <div class="row p-2">
+                                    <div class="col-6 d-flex justify-content-start"><span>Type de Granite</span></div>
+                                    <div class="col-6 d-flex justify-content-start"><span>{{prod.typeGranit}}</span></div>
+                                </div>
+                                {% endif %}
+                                {% if prod.nbreColis %}
+                                <div class="row p-2">
+                                    <div class="col-6 d-flex justify-content-start"><span>Nombre de colis</span></div>
+                                    <div class="col-6 d-flex justify-content-start"><span>{{prod.nbreColis}}</span></div>
+                                </div>
+                                {% endif %}
+                                {% if prod.contenance %}
+                                <div class="row p-2">
+                                    <div class="col-6 d-flex justify-content-start"><span>Contenance</span></div>
+                                    <div class="col-6 d-flex justify-content-start"><span>{{prod.contenance}}</span></div>
+                                </div>
+                                {% endif %}
+                                {% if prod.motifUrne %}
+                                <div class="row p-2">
+                                    <div class="col-6 d-flex justify-content-start"><span>Motif de l'urne</span></div>
+                                    <div class="col-6 d-flex justify-content-start"><span>{{prod.UrneMotif.name}}</span></div>
+                                </div>
+                                {% endif %}
+                                {% if prod.eligibleUrne %}
+                                <div class="row p-2">
+                                    <div class="col-6 d-flex justify-content-start">Urne Eligible à<span></span></div>
+                                    <div class="col-6 d-flex justify-content-start"><span>{{prod.eligible.name}}</span></div>
+                                </div>
+                                {% endif %}
+                                <div class="row p-2">
+                                    <div class="col-6 d-flex justify-content-start"><span>Référence du produit</span></div>
+                                    <div class="col-6 d-flex justify-content-start"><span>{{prod.reference}}</span></div>
+                                </div>
+                            </div>
+                        </div> 
+                        {% set page = find_one_by('App\\Entity\\Page', {'slug' : 'modalite_livraison'}) %}
+                        {% if page %}
+                            <div class="row border bg-light mt-2">
+                                <div class="col-12 mb-2">
+                                    <h2 class="text-secondary">{{page.name|upper}}</h2>
+                                </div>
+
+                                <div class="col-12 mt-2 mb-2">
+                                    {{page.content|raw}}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                       <div class="row">
+                            {% if ratings|length > 0 %}
+                                <div class="col-12 border-bottom p-2">
+                                    <div class="col-12 text-center mb-2">AVIS DES CLIENTS</div>
+                                    <a class="btn btn-secondary" href="#post-rating-block">Rediger un avis</a>
+                                </div>
+                            {% endif %}
+                            {% for rating in ratings %}
+                                <div class="row mt-2 mb-2 p-2 border-bottom">
+                                    <div class="col-12 mb-1 text-secondary display-4">
+                                        {{rating.title}}
+                                    </div>
+                                    <div class="col-12 mb-1 text-secondary font-weight-bold">
+                                        {{rating.pseudo}}
+                                    </div>
+                                    <div class="col-12 mb-1">
+                                        {% for i in 0..4 %}
+                                            {% if i < rating.level %}
+                                                <span class="text-warning"><i class="fas fa-star"></i></span>
+                                            {% else %}
+                                                <span class="text-warning"><i class="far fa-star"></i></span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="col-12 text-secondary">
+                                        {{ rating.message }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            
+                        </div> 
+
+                        <div class="row" id="post-rating-block">
+                            <div class="col-12 border-bottom p-2">
+                                <div class="col-12 text-center">Votre avis</div>
+                            </div> 
+                            <form id="review-product" class="row" action="{{url('product-rating', {'id' : prod.id})}}" method="POST">
+                                    {{form_widget(formRating._token)}}
+                                <div class="form-group col-12">
+                                    {{form_label(formRating.level, 'Votre note')}}
+                                    <div class="col-12 d-flex justify-content-center">
+                                        <div id="frfu-rating-block">
+                                            <span id="rating-1" class="text-warning frfu-rating-star"><i class="far fa-star"></i></span>
+                                            <span id="rating-2" class="text-warning frfu-rating-star"><i class="far fa-star"></i></span>
+                                            <span id="rating-3" class="text-warning frfu-rating-star"><i class="far fa-star"></i></span>
+                                            <span id="rating-4" class="text-warning frfu-rating-star"><i class="far fa-star"></i></span>
+                                            <span id="rating-5" class="text-warning frfu-rating-star"><i class="far fa-star"></i></span>
+                                        </div>
+                                    </div>
+                                    
+                                    {{form_widget(formRating.level, {attr: {'class' : 'form-control d-none'}})}}
+                                </div>
+                                <div class="form-group col-12">
+                                    {{form_label(formRating.pseudo, 'Pseudo')}}
+                                    {{form_widget(formRating.pseudo, {attr: {'class' : 'form-control'}})}}
+                                </div>
+                                <div class="form-group col-12">
+                                    {{form_label(formRating.title, 'Résumé')}}
+                                    {{form_widget(formRating.title, {attr: {'class' : 'form-control'}})}}
+                                </div>
+                                <div class="form-group col-12">
+                                    {{form_label(formRating.message, 'Avis')}}
+                                    {{form_widget(formRating.message, {attr: {'class' : 'form-control'}})}}
+                                </div>
+                                <div class="form-group d-none">
+                                    {{form_label(formRating.product, '')}}
+                                    {{form_widget(formRating.product, {attr: {'class' : 'form-control'}})}}
+                                </div>
+                                <div class="form-group d-none">
+                                    {{form_widget(formRating.user, {attr: {'class' : 'form-control'}})}}
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-secondary" value="Soumettre">
+                                </div>
+                            </form>
+                        </div> 
+                        
+                    </div>
+                    <div class="col-lg-3 col-md-12">
+                        <img class="img-fluid" src="/images/pico/logoFaitMain.jpg">
+                        <div class="row p-1">
+                            <div class="h3 col-12 p-3 border-bottom">Partager</div>
+                            <div class="col-12"><p class="share-product-label">Envoyer cette fiche par <a class="text-secondary" href="{{url('user-share-product', {'id' : prod.id})}}">e-mail</a></p></div>
+                        </div>
+                    </div>
+                </div> 
+                <div class="row p-2">
+                    <div class="h3 col-12 p-3 border-bottom">Produits apparentés</div>
+                    {% include 'includes/products.html.twig' with {'products': related_prods} %}
+                </div>  
+            </div>
+        </div>
+
+        
+    </div>
+    {#<div class="row pt-3 pb-3 pr-1 pl-1 bg-light border-top border-bottom">
+        
+        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5"><div><img src="/images/pico/picto-10ans.png"></div><div class="align-middle">Payer en 24 fois</div></div>
+        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5"><div><img src="/images/pico/picto-24x.png"></div><div>Garantie décennale</div></div>
+        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5"><div><img src="/images/pico/picto-conseil.png"></div><div>Pose dans toute la France</div></div>
+        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5"><div><img src="/images/pico/picto-devis.png"></div><div>Nos conseillers vous accompagnent</div></div>
+        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5"><div><img src="/images/pico/picto-france.png"></div><div>Votre devis en 4 étapes</div></div>
+        <div class="col-lg-2 col-md-2 col-sm-4 col-xs-5"><div><img src="/images/pico/picto-pose.png"></div><div>Fabrication et granit Français</div></div>
+    
+    </div>#}
+    
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+       $(function(){
+            var texte = 'Choisir votre texte';
+            var metaData = {'cus' : [], 'tOrder' : []};
+            $('#order_text1').prepend('<option value="" selected>'+texte+'</option>');
+            $('#order_text2').prepend('<option value="" selected>'+texte+'</option>');
+            $('#order_t1').parent().hide();
+            $('#order_t2').parent().hide();
+
+            
+
+            function buildMetadata(){
+                var tOrder = $('.frfu-tOrder');
+                console.log(tOrder);
+                var len = tOrder.length;
+                for(var i = 0; i < len; i++){
+                    var t = $(tOrder[i]);
+                    var obj = {};
+                    
+                    if(t.prop('selectedIndex') == 1){
+                        metaData.cus.push($('#tCustomized-'+t.attr('data-id')).val());
+                    }
+                    else if(t.prop('selectedIndex') != 0){
+                        metaData.tOrder.push(t.val());
+                    }
+
+                }
+
+                $('#metaData').val(JSON.stringify(metaData));
+                console.log($('#metaData').val());
+            }
+
+            $('.frfu-tOrder').change(function(e){
+                //e.preventDefault();
+                
+                var value = $(this).val();
+                var dataId = $(this).attr('data-id');
+                console.log(value);
+                if((value === '' || value === null) && $(this).prop('selectedIndex') == 1){
+                    if($('.frfu-tOrderCustomized-div[data-id='+dataId+']').hasClass('d-none')){
+                        $('.frfu-tOrderCustomized-div[data-id='+dataId+']').removeClass('d-none');
+                    }
+                }else{
+                    if(!$('.frfu-tOrderCustomized-div[data-id='+dataId+']').hasClass('d-none')){
+                        $('.frfu-tOrderCustomized-div[data-id='+dataId+']').toggleClass('d-none');
+                    }
+                }
+            });
+
+            $('#add-to-basket-form-submit').click(function(e){
+                //e.preventDefault();
+                $(this).attr('disabled', true);
+                buildMetadata();
+                setTimeout(function(){
+                   $('#add-to-basket-form').trigger('submit');
+                }, 1000);
+                
+            });
+            $('.frfu-rating-star').click(function(){
+                var ratings = $('.frfu-rating-star');
+                //console.log($(this)); 
+                var id = $(this).attr('id');
+                var indexArray = id.split('-');
+                var index = indexArray[1];
+                ratings.children().remove();
+                ratings.append('<i class="far fa-star"></i>');
+                $('#rating_level').val(Number(index)); 
+                console.log($('#rating_level').val());
+                for(var i = 0; i < index; i++){
+                    $(ratings[i]).children().remove();
+                    $(ratings[i]).append('<i class="fas fa-star"></i>');
+                }
+
+            });
+       });
+    </script>
+{% endblock %}

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        {% include "includes/style-pdf.html.twig" %}
+    </head>
+    <body class="container">
+        <header class="row">
+            <div class="col-5">
+                <img style="width: auto; height: 80px;" src="https://funerairefrance.com/images/pico/logo.jpeg">
+            </div>
+            <div class="col-7 float-right">
+                <span class="h5">Devis Articles personnalisés | Funeraire France</span>
+            </div>
+        </header>
+        <section class="row mt-3">
+            <div class="col-12 p-2 bg-secondary mt-3">
+                <span class="text-white">Commande # {{ cart.id }}</span>
+                <span class="text-white">Date : {{ "now"|date("m/d/Y") }}</span>
+                <span class="text-white float-right">Votre conseiller</span>
+            </div>
+        </section>
+        <section class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Informations client</th>
+                        <th scope="col">Informations suplémentaires</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row" >{{cart.user.firstName~' '~cart.user.name}}</th>
+                        <td>Nom de la cimetière : </td>
+                    </tr>
+                    <tr>
+                        <th scope="row" >Email : {{cart.user.email}}</th>
+                        <td>Code postal : </td>
+                    </tr>
+                    <tr>
+                        <th scope="row" >Tel : {{cart.user.phone}}</th>
+                        <td>Ville : </td>
+                    </tr>
+                    <tr>
+                        <th scope="row" ></th>
+                        <td>Emplacement de la sépulture : </td>
+                    </tr>
+                    <tr>
+                        <th scope="row" ></th>
+                        <td>Type de la sépulture : </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="row mt-2">
+            <div class="col-12 p-2 bg-light mt-3">
+                <span class="h5 ">Informations complémentaires</span>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col-12 p-2 bg-light">
+                <div class="row" style="height: 60px;">
+                    
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="row">
+            
+            
+            <div class="col-12 mt-3 mb-3">
+                <div class="row">
+                    <table class="table table-striped">
+                        {% set isPro = false %}
+                        {% set tax_label = ' Prix(TTC) ' %}
+                        {% set detailsCart = price_cart(cart, cart.user) %}
+                        {% if cart.user %}
+                            {% if app.user.type and app.user.type.id == 2 %}
+                                {% set isPro = true %}
+                                {% set tax_label = ' Prix(HT) ' %}
+                            {% endif %}
+                        {% endif %}
+
+                        <thead>
+                            <tr>
+                                <th scope="col">Produits</th>
+                                <th scope="col">Réference</th>
+                                <th scope="col">Prix unitaire {{isPro ? '(HT)' : '(TTC)'}}</th>
+                                <th scope="col">Quantité</th>
+                                {% if isPro %}
+                                    <th scope="col">Sous total (HT)</th>
+                                {% endif %}
+                                <th scope="col">Sous total (TTC)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for details in detailsCart.details %}
+                                {% for list in details.list %}
+                                    <tr>
+                                        <th scope="row" >{{details.product}}</th>
+                                        <td>{{list.label}}</td>
+                                        <td>{{list.price~' € '}}</td>
+                                        <td>{{list.qty}}</td>
+                                        {% if isPro %}
+                                            <td>{{list.ht~' € '}}</td>
+                                        {% endif %}
+                                        <td>{{list.ttc~' € '}}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row mt-2">
+                    {% if isPro %}
+                        <div>
+                            <span>Total (HT): </span><span>{{detailsCart.totalHT~' €'}}</span>
+                        </div>
+                        <div>
+                            <span>Total (TTC): </span><span>{{detailsCart.total~' €'}}</span>
+                        </div>
+                        {% else %}
+                            <div>
+                                <span>Total (TTC): </span><span>{{detailsCart.total~' €'}}</span>
+                            </div>
+                    {% endif %}
+                </div>
+                <div class="row mt-2 mb-2">
+            
+                    {% for order in cart.orders %}
+                        {% if order.invoice %}
+                            <img src="{{order.invoice}}">
+                        {% endif %}
+                        
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        <footer class="row">
+            <p class="text-secondary">Les informations collectées sont nécessaires à la société France-Tombale pour traiter votre demande.
+Elles sont enregistrées dans notre fichier clients et peuvent donner lieu à l’exercice du droit d’accès et de rectification auprès de notre service clientèle.
+En aucun cas, vos données ne sont utilisées ou communiquées à des sociétés partenaires de France-Tombale, à des fins de prospection commerciale.
+Le présent document est établi selon les tarifs en vigueur à sa date d’établissement et restent valables 45 jours.</p>
+        </footer>
+              
+    </body>
+</html>
+
+

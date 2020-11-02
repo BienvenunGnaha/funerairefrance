@@ -1,0 +1,23 @@
+{% set msg = message %}
+<div class="{{(msg.sender.id == app.user.id) ? 'col-12 p-2 d-flex justify-content-end' : 'col-12 p-2 d-flex justify-content-start'}}">
+    <div class="{{(msg.sender.id == app.user.id) ? 'h-auto p-1' : 'h-auto p-1'}}" style="max-width: 60%">
+        <div class="{{(msg.sender.id == app.user.id) ? 'bg-primary rounded text-white w-auto p-2' : 'bg-light p-2 rounded text-secondary w-auto'}}">
+            {% if msg.photo %}
+            <img class="img-fluid" src="{{'/'~link_image(msg.photo)}}">
+            {% endif %}
+            <div>
+                <p>{{msg.content}}</p>
+                {% if msg.link and msg.labelLink %}
+                <p>
+                <a class="d-block btn btn-secondary h-auto" href="{{'/'~link_image(msg.link)}}">{{msg.labelLink}}</a>
+                </p>
+                {% endif %}
+                {% if msg.devis %}
+                <p>
+                <a class="d-block btn btn-secondary h-auto" href="{{url('devis-view', {'id' : msg.devis.id})}}">Payer</a>
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

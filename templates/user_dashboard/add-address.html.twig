@@ -1,0 +1,63 @@
+{% extends 'user.html.twig' %}
+
+{% block title %}Passez votre commande | FuneraireFrance{% endblock %}
+
+{% block stylesheets %}
+        <link rel="stylesheet" type="text/css" href="/css/step.min.css">
+{% endblock %}
+
+{% block user_block %}
+
+<div class="container-fluid">
+
+    <div class="row">
+       <div class="col-12">
+            <div class="row">
+                
+                <div class="col-12">
+                    <span class="text-secondary h4">Modifier l'adresse</span>
+                </div>
+                <div class="col-12 p-2">
+                    <form class="other-address" action="{{url('user_address_add')}}" method="POST">
+                        {{ form_widget(formAddress._token, {attr: {'class' : 'form-control'}}) }}
+                        <div class="col-lg-6 form-group">
+                            {{ form_label(formAddress.name, 'Nom Complet') }}
+                            {{ form_widget(formAddress.name, {attr: {'class' : 'form-control'}}) }}
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            {{ form_label(formAddress.zip, 'Code Postal') }}
+                            {{ form_widget(formAddress.zip, {attr: {'class' : 'form-control'}}) }}
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            {{ form_label(formAddress.road, 'Adresse') }}
+                            {{ form_widget(formAddress.road, {attr: {'class' : 'form-control'}}) }}
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            {{ form_label(formAddress.city, 'Ville') }}
+                            {{ form_widget(formAddress.city, {attr: {'class' : 'form-control'}}) }}
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            {{ form_label(formAddress.country, 'Pays') }}
+                            {{ form_widget(formAddress.country, {attr: {'class' : 'form-control'}}) }}
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            {{ form_label(formAddress.phone, 'Numéro de téléphone') }}
+                            {{ form_widget(formAddress.phone, {attr: {'class' : 'form-control'}}) }}
+                        </div>
+                        <div class="col-lg-6 form-group d-none">
+                            {{ form_label(formAddress.userId) }}
+                            {{ form_widget(formAddress.userId, {attr: {'class' : 'form-control d-none'}}) }}
+                        </div>
+
+                        <div class="col-lg-6 form-group">
+                            <input type="submit" class="btn btn-dark" value="Modifier l'adresse">
+                        </div>
+                    </form>
+                </div>
+          </div>
+       </div>
+    </div>
+
+</div>
+
+{% endblock %}

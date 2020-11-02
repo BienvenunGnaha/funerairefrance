@@ -1,0 +1,365 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panier | FuneraireFrance{% endblock %}
+
+{% block stylesheets %}
+        <style>
+            .stepwizard-step p {
+                margin-top: 0px;
+                color:#666;
+            }
+            .stepwizard-row {
+                display: table-row;
+            }
+            .stepwizard {
+                display: table;
+                width: 100%;
+                position: relative;
+            }
+            .stepwizard-step button[disabled] {
+                /*opacity: 1 !important;
+                filter: alpha(opacity=100) !important;*/
+            }
+            .stepwizard .btn.disabled, .stepwizard .btn[disabled], .stepwizard fieldset[disabled] .btn {
+                opacity:1 !important;
+                color:#bbb;
+            }
+            .stepwizard-row:before {
+                top: 14px;
+                bottom: 0;
+                position: absolute;
+                content:" ";
+                width: 100%;
+                height: 1px;
+                background-color: #ccc;
+                z-index: 0;
+            }
+            .stepwizard-step {
+                display: table-cell;
+                text-align: center;
+                position: relative;
+            }
+            .btn-circle {
+                width: 30px;
+                height: 30px;
+                text-align: center;
+                padding: 6px 0;
+                font-size: 12px;
+                line-height: 1.428571429;
+                border-radius: 15px;
+            }
+
+            .border-choice{
+                border: 2px solid black !important;
+            }
+
+        </style>  
+{% endblock %}
+
+{% block body %}
+
+<div class="container-fluid">
+
+    <div class="row">
+       <div class="col-12">
+          {% if cart %}
+            <div class="row">
+                <div class="col-lg-7 col-md-7 ml-auto mr-auto">
+                    <div class="row">
+                        <div class="col-12 border-bottom pb-3 pt-3 pl-3">
+                          <span class="h4">Mon panier<span>
+                        </div>
+                        <div class="col-12 pb-3 pt-3 pl-3">
+                            <div class="row">
+                                {% set pricing = price_cart(cart, app.user) %}
+                                {% set cart_price = pricing.total %}
+                                {% set cart_priceHT = pricing.totalHT %}
+                                {% set shipping_price = pricing.shipping %}
+                                
+                                {% for i, order in cart.orders %}
+                                    {% if order.productId.subCatId.customizableBeforeOrder %}
+
+                                         {% set meta = decode_meta(order.metaData) %}
+                                        
+                                        {% for obj in meta.objects %}
+                                            {% if obj.frfuNameObject == 'granit' %}
+                                                <div class="{{'col-12 border bg-light cart-order order-'~order.productId.id~'-'~order.id}}">
+                                                    <div class="row">
+                                                            <div class="col-6 d-flex">
+                                                                <div class="w-50">
+                                                                    <img class="img-fluid" src="{{'/'~link_image(order.productId.photo)}}">
+                                                                </div> 
+                                                                <div>
+                                                                    <div class="">
+                                                                        {{order.productId.name}}
+                                                                    </div>
+                                                                    <div class="text-muted">
+                                                                        {{order.gallery.granit.name}}
+                                                                    </div> 
+                                                                    <div>
+                                                                        {% set max = order.productId.stock - order.productId.sale %}
+                                                                    <span class="text-secondary">Quantité</span> <input min="1" max="{{max}}" style="width: 40px;" id="{{'qty-'~order.productId.id~'-'~order.id}}" type="number" name="{{'qty-'~order.productId.id~'-'~order.id}}" value="{{order.qty}}"> <a href="{{url('cart-update-qty', {'idOrder' : order.id, 'number' : order.qty})}}" class="btn text-success qty-update" data-target="{{'#qty-'~order.productId.id~'-'~order.id}}"><i class="fas fa-check"></i></a> <a href="{{url('cart-order-remove', {'idOrder' : order.id})}}" class="btn text-danger order-remove" data-target="{{'.order-'~order.productId.id~'-'~order.id}}"><i class="fas fa-trash"></i></a>
+                                                                    </div>
+                                                                </div>  
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div>
+                                                                    <span>{{(order.productId.stock > order.productId.sale) ? '<i class="fas fa-circle text-success"></i>' : '<i class="fas fa-circle text-warning"></i>'}}</span> <span>{{(order.productId.stock > order.productId.sale) ? 'En stock' : 'En réaprovisionnement'}}</span>
+                                                                </div>
+
+                                                                <div>
+                                                                    <span><i class="fas fa-truck"></i></span> <span>Livraison en 5jours</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-2">
+                                                                <div>
+                                                                    <span>{{obj.dataprice~' €'}}</span>
+                                                                </div>
+                                                            </div>
+                                                    </div>
+                                                    </div>
+                                            {% else %}
+                                                <div class="{{'col-12 border cart-order bg-light order-'~order.productId.id~'-'~order.id}}">
+                                                    <div class="row">
+                                                            <div class="col-6 d-flex">
+                                                                <div class="w-50">
+                                                                    <img class="img-fluid" src="{{'/'~link_image(order.productId.photo)}}">
+                                                                </div> 
+                                                                <div>
+                                                                    <div>
+                                                                        {{obj.frfuLabelObject}}
+                                                                    </div>
+                                                                    <div class="text-muted">
+                                                                        {% if obj.frfuNameObject == 'fixation' %}
+
+                                                                            <div>
+                                                                                {{order.fixation.name}}
+                                                                            </div>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </div>  
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div>
+                                                                    <span><i class="fas fa-circle text-success"></i></span> <span>En stock</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-2">
+                                                                <div>
+                                                                    <span>{{obj.dataprice~' €'}}</span>
+                                                                </div>
+                                                            </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        
+                                        <div class="{{'col-12 border bg-light cart-order order-'~order.productId.id~'-'~order.id}}">
+                                        <div class="row">
+                                                <div class="col-6 d-flex">
+                                                    <div class="w-50">
+                                                        <img class="img-fluid" src="{{'/'~link_image(order.productId.photo)}}">
+                                                    </div> 
+                                                    <div>
+                                                        <div class="">
+                                                            {{order.productId.name}}
+                                                        </div>
+                                                        <div class="text-muted">
+                                                            {{order.productId.matiere}}
+                                                        </div> 
+                                                        <div>
+                                                            {% set max = order.productId.stock - order.productId.sale %}
+                                                        <span class="text-secondary">Quantité</span> <input min="1" max="{{max}}" style="width: 40px;" id="{{'qty-'~order.productId.id~'-'~order.id}}" type="number" name="{{'qty-'~order.productId.id~'-'~order.id}}" value="{{order.qty}}"> <a href="{{url('cart-update-qty', {'idOrder' : order.id, 'number' : order.qty})}}" class="btn text-success qty-update" data-target="{{'#qty-'~order.productId.id~'-'~order.id}}"><i class="fas fa-check"></i></a> <a href="{{url('cart-order-remove', {'idOrder' : order.id})}}" class="btn text-danger order-remove" data-target="{{'.order-'~order.productId.id~'-'~order.id}}"><i class="fas fa-trash"></i></a>
+                                                        {% if order.colis %}
+                                                            <span class="tracking-chronopost" data-colis="{{order.colis}}">Suivi</span>
+                                                        {% endif %}
+                                                        
+                                                        </div>
+                                                    </div>  
+                                                </div>
+                                                <div class="col-4">
+                                                    <div>
+                                                        <span>{{(order.productId.stock > order.productId.sale) ? '<i class="fas fa-circle text-success"></i>' : '<i class="fas fa-circle text-warning"></i>'}}</span> <span>{{(order.productId.stock > order.productId.sale) ? 'En stock' : 'En réaprovisionnement'}}</span>
+                                                    </div>
+
+                                                    <div>
+                                                        <span><i class="fas fa-truck"></i></span> <span>Livraison en 5jours</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-2">
+                                                    {% set price = order.productId.cprice * order.qty %}
+                                                    {% if app.user %}
+
+                                                        {% if app.user.type %}
+
+                                                            {% if app.user.type.id == 2 %}
+                                                                {% set price = order.productId.pricepro * order.qty %}
+                                                            {% endif %}
+
+                                                        {% endif %}
+                                                            
+                                                    {% endif %}
+                                                    <div>
+                                                        <span>{{price~' €'}}</span>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                        </div>
+                                        {% if order.productId.numberTextCustomize > 0 %}
+                                            {% set meta = decode_meta(order.metaData) %}
+                                            {% for cus in meta.cus %}
+                                                <div class="{{'col-12 border cart-order bg-light order-'~order.productId.id~'-'~order.id}}">
+                                                <div class="row">
+                                                        <div class="col-6 d-flex">
+                                                            <div class="w-50">
+                                                                <img class="img-fluid" src="{{'/'~link_image(order.productId.photo)}}">
+                                                            </div> 
+                                                            <div>
+                                                                <div class="">
+                                                                    Texte Personnalisée
+                                                                </div>
+                                                                <div class="text-muted">
+                                                                    {{cus}}
+                                                                </div> 
+                                                            {# <div>
+                                                                <span class="text-secondary">Quantité</span> <input style="width: 40px;" id="{{'qty-'~order.productId.id~'-'~order.id}}" type="number" name="{{'qty-'~order.productId.id~'-'~order.id}}"> <a class="btn text-success qty-update" data-target="{{'qty-'~order.productId.id~'-'~order.id}}"><i class="fas fa-check"></i></a> <a class="btn text-danger order-remove" data-target="{{'qty-'~order.productId.id~'-'~order.id}}"><i class="fas fa-trash"></i></a>
+                                                                </div>#}
+                                                            </div>  
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <div>
+                                                                <span><i class="fas fa-circle text-success"></i></span> <span>En stock</span>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <div>
+                                                                <span>25 €</span>
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                                </div>
+                                            {% endfor %}
+
+                                            {% for tOrder in meta.tOrder %}
+                                                
+                                                <div class="{{'col-12 border cart-order bg-light order-'~order.productId.id~'-'~order.id}}">
+                                                <div class="row">
+                                                        <div class="col-6 d-flex">
+                                                            <div class="w-50">
+                                                                <img class="img-fluid" src="{{'/'~link_image(order.productId.photo)}}">
+                                                            </div> 
+                                                            <div>
+                                                                <div class="">
+                                                                    Texte à visser
+                                                                </div>
+                                                                <div class="text-muted">
+                                                                    {{load_by_id("App\\Entity\\TextOrder", tOrder).content}}
+                                                                </div> 
+                                                            {# <div>
+                                                                <span class="text-secondary">Quantité</span> <input style="width: 40px;" id="{{'qty-'~order.productId.id~'-'~order.id}}" type="number" name="{{'qty-'~order.productId.id~'-'~order.id}}"> <a class="btn text-success qty-update" data-target="{{'qty-'~order.productId.id~'-'~order.id}}"><i class="fas fa-check"></i></a> <a class="btn text-danger order-remove" data-target="{{'qty-'~order.productId.id~'-'~order.id}}"><i class="fas fa-trash"></i></a>
+                                                                </div>#}
+                                                            </div>  
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <div>
+                                                                <span><i class="fas fa-circle text-success"></i></span> <span>En stock</span>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <div>
+                                                                <span>Offerte</span>
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12 d-flex justify-content-end">
+                                    {% if cart.colis %}
+                                        <span class="tracking-chronopost" data-colis="{{cart.colis}}">Suivi</span>
+                                    {% endif %}
+                                    
+                                    <a id="cart-remove" href="{{url('cart-remove', {'id' : cart.id})}}">Vider le panier</a>
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 ml-auto mr-auto">
+                    <div class="row">
+                        <div class="col-12 border-bottom pb-3 pt-3 pl-3">
+                          <span class="h4">Resumé<span>
+                        </div>
+                        {% set label = '(TTC)' %}
+                        {% set isPro = false %}
+                        {% if app.user %}
+                            {% if app.user.type %}
+                                {% if app.user.type.id == 2 %}
+                                    {% set label = '(HT)' %}
+                                    {% set isPro = true %}
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                        <div class="col-12 pb-3 pt-3">
+                            <div class="row border bg-light p-2">
+                                <div class="col-12 border-bottom">
+                                    <div class="d-flex justify-content-start">
+                                        <span>Panier {{label}}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <span class="h4">{{isPro ? cart_priceHT : cart_price}} €</span>
+                                    </div>
+                                </div>
+                                <div class="col-12 border-bottom">
+                                    <div class="d-flex justify-content-start">
+                                        <span>Livraison</span>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <span class="h4">{{shipping_price}} €</span>
+                                    </div>
+                                </div>
+                                <div class="col-12 mb-2">
+                                    <div class="d-flex justify-content-start">
+                                        <span>Total(TTC)</span>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <span class="h4">{{cart_price + shipping_price}} €</span>
+                                    </div>
+                                </div>
+                                <div class="col-12 p-2 d-flex justify-content-center">
+                                        <a class="btn action-primary" href="{{app.user ? url('checkout-cart') : url('checkout-cart-auth-user')}}">Commander <i class="fas fa-shopping-cart"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+          </div>
+          {% else %}
+             <div>Aucun article dans votre panier.</div>
+             <div>Cliquez ici pour continuer vos achats.</div>
+          {% endif %}
+          
+       </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+
+    <script>
+       $(function(){
+           
+       });
+    </script>
+        
+{% endblock %}

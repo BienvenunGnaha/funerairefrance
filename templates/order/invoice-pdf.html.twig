@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link type="text/css" href="/css/bootstrap.min.css" rel="stylesheet" />
+    <meta charset="utf-8">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row m-3">
+            <div class="col-12">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                        <th scope="col">Image</th>
+                        <th scope="col">Nom du produit</th>
+                        <th scope="col">Quantité</th>
+                        <th scope="col">Prix Unitaire</th>
+                        <th scope="col">Prix total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set total = 0 %}
+                        {% set totalPro = 0 %}
+                        {% set isPro = false %}
+                        {% if app.user %}
+                            {% if app.user.type %}
+                                {% if app.user.type.id == 2 %}
+                                    {% set isPro = true %}
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                        {% for order in cart.orders %}
+                            {% set ini_price = order.productId.cprice~' € TTC' %}
+                            {% set price = order.productId.cprice %}
+                            {% if app.user %}
+                                {% if app.user.type %}
+                                    {% if app.user.type.id == 2 %}
+                                        {% set ini_price = order.productId.pricepro~' € HT' %}
+                                        {% set price = order.productId.pricepro %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                            <tr>
+                                <th scope="row" ><img class="img-fluid" src="{{'/'~link_image(order.productId.photo)}}" style="height: 40px;"></th>
+                                <td>{{order.productId.name}}</td>
+                                <td>{{order.qty}}</td>
+                                <td>{{ini_price}}</td>
+                                <td><span>{{price * order.qty}}</span><span>{{isPro ? ' € HT' : ' € TTC'}}</span></td>
+                                {% if isPro %}
+                                    {% if order.productId.tva %}
+                                        {% set total = total + ((price * order.qty) + ((price * order.qty) * floatVal(order.productId.tva.value) )) %}
+                                    {% else %}
+                                        {% set total = total + ((price * order.qty) + ((price * order.qty) * tva )) %}
+                                    {% endif %}
+                                {% else %}
+                                    {% set total = total + (price * order.qty) %}
+                                {% endif %}
+                                
+                            </tr>
+                            {% if order.t1 %}
+                                    <tr>
+                                        <th scope="row" ><img class="img-fluid" src="{{'/funeraj/www/france-funeraire/public/'~link_image(order.productId.photo)}}" style="height: 40px;"></th>
+                                        <td>{{'Textes personnalisés "'~order.t1~'"'}}</td>
+                                        <td>1</td>
+                                        <td><span>25</span><span>{{isPro ? ' € HT' : ' € TTC'}}</span></td>
+                                        <td><span>25</span><span>{{isPro ? ' € HT' : ' € TTC'}}</span></td>
+                                        {% set total = total + 25 %}
+                                    </tr>
+                            {% endif %}
+                            {% if order.t2 %}
+                                    <tr>
+                                        <th scope="row" ><img class="img-fluid" src="{{'/funeraj/www/france-funeraire/public/'~link_image(order.productId.photo)}}" style="height: 40px;"></th>
+                                        <td>{{'Textes personnalisés "'~order.t2~'"'}}</td>
+                                        <td>1</td>
+                                        <td><span>25</span><span>{{isPro ? ' € HT' : ' € TTC'}}</span></td>
+                                        <td><span>25</span><span>{{isPro ? ' € HT' : ' € TTC'}}</span></td>
+                                        {% set total = total + 25 %}
+                                    </tr>
+                            {% endif %}
+
+                            {% if order.text1 %}
+                                <tr>
+                                    <th scope="row" ><img class="img-fluid" src="{{'https://funerairefrance.com/'~link_image(order.productId.photo)}}" style="height: 40px;"></th>
+                                    <td>{{'Text à visser "'~order.text1.content~'"'}}</td>
+                                    <td>1</td>
+                                    <td><span>0</span><span>{{isPro ? ' € HT' : ' € TTC'}}</span></td>
+                                    <td>Offerte</td>
+                                </tr>
+                            {% endif %}
+                            {% if order.text2 %}
+                                <tr>
+                                    <th scope="row" ><img class="img-fluid" src="{{'https://funerairefrance.com/'~link_image(order.productId.photo)}}" style="height: 40px;"></th>
+                                    <td>{{'Text à visser "'~order.text2.content~'"'}}</td>
+                                    <td>1</td>
+                                    <td><span>0</span><span>{{isPro ? ' € HT' : ' € TTC'}}</span></td>
+                                    <td>Offerte</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                            <tr>
+                                <td colspan="4">Total (TTC)</td>
+                                <td colspan="1">{{total~' €'}}</td> 
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

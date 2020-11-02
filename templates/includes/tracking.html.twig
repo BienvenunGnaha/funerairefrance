@@ -1,0 +1,32 @@
+
+<button id="button-tracking-modal" type="button" class="btn btn-primary d-none" data-toggle="modal" data-target="#trackingModal"></button>
+<div id="trackingModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Suivi de commande</h2></div>
+            <div class="modal-body"><h2></h2></div>
+        </div>
+    </div>
+</div>
+<script>
+   $(function(){
+       //var key = 
+        $('.tracking-chronopost').click(function(){
+            var nColis = $(this).attr('data-colis');
+            $('#trackingModal .modal-dialog .modal-content .modal-body').children().remove();
+            $('#button-tracking-modal').trigger('click');
+            $.ajax({
+                url: '/user/tracking/'+nColis,
+                type: 'get',
+                success: function(res){
+
+                    $('#trackingModal .modal-dialog .modal-content .modal-body').append(res.html);
+                    
+                },
+                error: function(error){
+                    $('#trackingModal .modal-dialog .modal-content .modal-body').append('<p>Cliquez sur ce lien ici pour <a href="https://www.chronopost.fr/tracking-no-cms/suivi-page?listeNumerosLT='+nColis+'&langue=fr">suivre votre commande</a></p>');
+                }
+            });
+        });
+   });
+</script>

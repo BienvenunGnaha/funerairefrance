@@ -1,0 +1,83 @@
+{% extends 'user.html.twig' %}
+
+{% block title %}Hello WishlistController!{% endblock %}
+
+{% block user_block %}
+
+    <div class="container-fluid">
+        <div class="row mt-3 mb-3">
+            <div class="col-12">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                        <th scope="col">Id du panier</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Reste à payer / Mois restants</th>
+                        <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                            {% for cart in carts %}
+                                <tr>
+                                    <td>{{cart.id}}</td>
+                                    <td>{{cart.status.name}}</td>
+                                    <td></td>
+                                    <td>
+                                        <a href="{{url('cart-user-view', {'uniqId': cart.uniqId})}}" class="btn btn-outline-secondary ml-auto mr-auto">Consulter le panier</a>
+                                        {% if cart.colis != null %}
+                                            <span class="btn btn-outline-secondary ml-auto mr-auto tracking-chronopost" data-colis="{{cart.colis}}">Tracker</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% if cart.paid != 1 %} 
+                                    <tr>
+                                       <td colspan="1">
+                                            <a href="{{url('checkout-cart')}}" class="btn btn-secondary ml-auto mr-auto">Finaliser la commande</a>
+                                       </td>
+                                       <td colspan="1">
+                                            <a href="{{url('cart')}}" class="btn btn-secondary ml-auto mr-auto">Modifier votre commande</a>
+                                       </td>
+                                       <td></td>
+                                       <td colspan="1">
+                                            <a href="{{url('carts-invoice-pdf', {'id': cart.id})}}" class="btn btn-secondary ml-auto mr-auto">Obtenir la facture</a>
+                                       </td>
+                                    </tr>
+                                {% endif %}
+                                
+                            {% endfor %}
+
+                           {# {% for devis in devises %}
+                                {% if devis.method %}
+                                {% set see_devis = 'Voir / Payer' %}
+                                <tr>
+                                    <td>{{devis.id}}</td>
+                                    <td>{{devis.status.name}}</td>
+                                    {% if devis.method.id == 1 and devis.secondFeePayed == false and devis.firstFeePayed == false %}
+                                        <td>100% du montant</td>
+                                    {% elseif devis.method.id == 1 and devis.secondFeePayed == false and devis.firstFeePayed == true %}
+                                        <td>70% du montant</td>
+                                    {% elseif devis.method.id == 1 and devis.secondFeePayed == true and devis.firstFeePayed == true %}
+                                        {% set see_devis = 'Voir' %}
+                                        <td>0€</td>
+                                    {% elseif devis.method.id == 2 or devis.method.id == 3 %}
+                                        {% if devis.cycle == 0 %}
+                                            {% set see_devis = 'Voir' %}
+                                            <td>0 €</td>
+                                            {% else %}
+                                            <td>{{devis.cycle~' mois'}}</td>
+                                        {% endif %}
+                                    
+                                    {% endif %}
+
+                                    <td><a href="{{url('devis-view', {'id': devis.id})}}" class="btn btn-outline-secondary ml-auto mr-auto">{{see_devis}}</a> <a href="{{'/'~link_image(devis.download)}}" class="btn btn-secondary ml-auto mr-auto">Obtenir la facture</a></td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}#}
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
